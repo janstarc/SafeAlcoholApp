@@ -1,0 +1,28 @@
+<resources>
+    <string name="app_name">Safe Alcohol App</string>
+    <string name="button">button</string>
+    <string name="textField">textField</string>
+    <string name="secondActivity">Drinking history</string>
+    <string name="title">Add title</string>
+    <string name="name">Amount (dl)</string>
+    <string name="addButton">Add the drink</string>
+    <string name="testFieldToDelete">testFieldToDelete</string>
+    <string name="thirdActivity">Third activity</string>
+    <string name="android_image">Android Image</string>
+    <string name="description_of_the_image">Description of the image</string>
+    <string name="sortButton">Sort List</string>
+    <string name="filter">Filter</string>
+    <string name="searchEditText">Search</string>
+    <string name="button2">Button</string>
+    <string name="delete">Delete</string>
+    <string-array name="drinks_array">
+        <item>Drink 1</item>
+        <item>Drink 2</item>
+        <item>Drink 3</item>
+        <item>Drink 4</item>
+        <item>Drink 5</item>
+        <item>Drink 6</item>
+        <item>Drink 7</item>
+        <item>Drink 8</item>
+    </string-array>
+</resources>
