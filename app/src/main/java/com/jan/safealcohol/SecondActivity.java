@@ -1,6 +1,7 @@
 package com.jan.safealcohol;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -13,9 +14,11 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 import android.database.sqlite.*;
 
 public class SecondActivity extends AppCompatActivity implements Serializable {
+
 
     private ListView myList;
     private ListAdapter adapter;
@@ -29,6 +32,16 @@ public class SecondActivity extends AppCompatActivity implements Serializable {
     private int unitsSum;
     private TextView alcoUnits;
     private TextView alcoLevel;
+    //Context context = this  ;
+
+    private FeedReaderDbHelper mDbHelper = new FeedReaderDbHelper(this);
+    private Cursor cursor;
+    private List itemIds = new ArrayList<>();
+    private List name = new ArrayList<>();
+    private List amount = new ArrayList<>();
+    private List units = new ArrayList<>();
+    private List timestamp = new ArrayList<>();
+
 
     protected void onCreate(Bundle savedInstanceState){
 
@@ -67,8 +80,73 @@ public class SecondActivity extends AppCompatActivity implements Serializable {
 
         alcoUnits.setText(Integer.toString(unitsSum));
         alcoLevel.setText(Integer.toString(unitsSum*2));
+        readFromDb();
 
     }
+
+    public void readFromDb(){
+        SQLiteDatabase db = mDbHelper.getReadableDatabase();
+        Log.d("debug", "DB:" + db);
+
+        // Define a projection that specifies which columns from the database
+        // you will actually use after this query.
+        String[] projection = {
+                FeedReaderContract.FeedEntry._ID,
+                FeedReaderContract.FeedEntry.COLUMN_NAME_NAME,
+                FeedReaderContract.FeedEntry.COLUMN_NAME_AMOUNT,
+                FeedReaderContract.FeedEntry.COLUMN_NAME_UNITS,
+                FeedReaderContract.FeedEntry.COLUMN_NAME_TIMESTAMP
+        };
+
+        // Filter results WHERE "title" = 'My Title'
+        //String selection = FeedReaderContract.FeedEntry.COLUMN_NAME_TITLE + " = ";
+        //String[] selectionArgs = { "My Title" };
+
+        // How you want the results sorted in the resulting Cursor
+        String sortOrder =
+                FeedReaderContract.FeedEntry._ID + " ASC";
+
+        cursor = db.query(
+                FeedReaderContract.FeedEntry.TABLE_NAME,        // The table to query
+                projection,                                     // The columns to return
+                null,                                           // The columns for the WHERE clause
+                null,                                           // The values for the WHERE clause
+                null,                                           // don't group the rows
+                null,                                           // don't filter by row groups
+                sortOrder                                       // The sort order
+        );
+
+
+        while(cursor.moveToNext()) {
+            long itemId = cursor.getLong(
+                    cursor.getColumnIndexOrThrow(FeedReaderContract.FeedEntry._ID));
+            itemIds.add(itemId);
+
+            String nameField = cursor.getString(
+                    cursor.getColumnIndexOrThrow(FeedReaderContract.FeedEntry.COLUMN_NAME_NAME));
+            name.add(nameField);
+
+            int amountField = cursor.getInt(
+                    cursor.getColumnIndexOrThrow(FeedReaderContract.FeedEntry.COLUMN_NAME_AMOUNT));
+            amount.add(amountField);
+
+            int unitField = cursor.getInt(
+                    cursor.getColumnIndexOrThrow(FeedReaderContract.FeedEntry.COLUMN_NAME_UNITS));
+            units.add(unitField);
+
+            String timestampField = cursor.getString(
+                    cursor.getColumnIndexOrThrow(FeedReaderContract.FeedEntry.COLUMN_NAME_TIMESTAMP));
+            timestamp.add(timestampField);
+
+        }
+        cursor.close();
+
+        Log.d("debug", "Item:   | Name:  | Amount: | Units: | Timestamp: ");
+        for(int i = 0; i < itemIds.size(); i++){
+            Log.d("debug", "Item: " + itemIds.get(i) + " | " + name.get(i) + " | " + amount.get(i) + " | " + units.get(i) + " | " + timestamp.get(i));
+        }
+    }
+
 
     View.OnClickListener filterList = new Button.OnClickListener(){
 
