@@ -47,5 +47,24 @@
         android:layout_height="wrap_content"
         android:text="@string/addButton"/>
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/testing_custom_time_and_date"
+        android:textColor="@android:color/black"/>
+
+    <EditText
+        android:id="@+id/customDateTime"
+        android:layout_width="208dp"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="@string/time"/>
+
+    <CheckBox
+        android:id="@+id/checkBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/use_custom_datetime" />
+
 
 </LinearLayout>

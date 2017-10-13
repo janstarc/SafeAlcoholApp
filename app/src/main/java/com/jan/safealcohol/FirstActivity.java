@@ -3,7 +3,6 @@ package com.jan.safealcohol;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -11,6 +10,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Spinner;
 
@@ -18,7 +18,6 @@ import java.io.Serializable;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 import static com.jan.safealcohol.R.id.spinnerDesign;
 
@@ -34,6 +33,9 @@ public class FirstActivity extends AppCompatActivity implements Serializable {
     private boolean newItemsAdded = false;
     private Spinner spinner;
     FeedReaderDbHelper mDbHelper = new FeedReaderDbHelper(context);
+    private EditText customDateTime;
+    private CheckBox customDateTimeCheckBox;
+    
 
 
     protected void onCreate(Bundle savedInstanceState){
@@ -61,6 +63,11 @@ public class FirstActivity extends AppCompatActivity implements Serializable {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         // Apply the adapter to the spinner
         spinner.setAdapter(adapter);
+
+        customDateTime = (EditText) findViewById(R.id.customDateTime);
+        customDateTime.setText(DateFormat.getDateTimeInstance().format(new Date()));
+        customDateTimeCheckBox = (CheckBox) findViewById(R.id.checkBox);
+
 
         // Create DB
         new FeedReaderDbHelper(context);
@@ -93,7 +100,13 @@ public class FirstActivity extends AppCompatActivity implements Serializable {
             values.put(FeedReaderContract.FeedEntry.COLUMN_NAME_NAME, spinner.getSelectedItem().toString());
             values.put(FeedReaderContract.FeedEntry.COLUMN_NAME_AMOUNT, Float.parseFloat(amount));
             values.put(FeedReaderContract.FeedEntry.COLUMN_NAME_UNITS, Float.parseFloat(amount)*1.4);
-            values.put(FeedReaderContract.FeedEntry.COLUMN_NAME_TIMESTAMP, DateFormat.getDateTimeInstance().format(new Date()));
+
+            if(!customDateTimeCheckBox.isChecked()){
+                values.put(FeedReaderContract.FeedEntry.COLUMN_NAME_TIMESTAMP, DateFormat.getDateTimeInstance().format(new Date()));
+            } else {
+                values.put(FeedReaderContract.FeedEntry.COLUMN_NAME_TIMESTAMP, customDateTime.getText().toString());
+            }
+
 
             // Insert the new row, returning the primary key value of the new row
             long newRowId = db.insert(FeedReaderContract.FeedEntry.TABLE_NAME, null, values);
