@@ -47,11 +47,5 @@
         android:layout_height="wrap_content"
         android:text="@string/addButton"/>
 
-    <Button
-        android:id="@+id/readDB"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/readdbtest" />
-
 
 </LinearLayout>

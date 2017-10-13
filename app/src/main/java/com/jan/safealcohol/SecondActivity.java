@@ -30,6 +30,7 @@ public class SecondActivity extends AppCompatActivity implements Serializable {
     private boolean itemsFiltered = false;
     ArrayList<ListItem> filteredItems;
     private int unitsSum;
+
     private TextView alcoUnits;
     private TextView alcoLevel;
     //Context context = this  ;
@@ -49,18 +50,15 @@ public class SecondActivity extends AppCompatActivity implements Serializable {
         setContentView(R.layout.secondactivitydesign);
         myList = (ListView) findViewById(R.id.listView);
 
-        Intent intent = getIntent();
+        readFromDb();
 
-        if(intent.getBooleanExtra("itemsAdded", true)){      // Combine items list with the items, that already exist
-            Log.d("debug", "Here");
-
-            ArrayList<String> thingsToAdd = intent.getStringArrayListExtra("newItems");
-            Log.d("debug", "Size of list: " + thingsToAdd.size());
-            for(int i = 0; i < thingsToAdd.size(); i += 2){
-                Log.i("debug", "Value: " + i + " = " + thingsToAdd.get(i));
-                items.add(new ListItem(thingsToAdd.get(i).toString(), R.drawable.ic_opacity_black_48dp, "Amount: " + thingsToAdd.get(i+1).toString() + "dl"));
-                unitsSum += Integer.parseInt(thingsToAdd.get(i+1));
+        if(itemIds.size() > 0){
+            for(int i = 0; i < itemIds.size(); i++){
+                ListItem item = new ListItem(name.get(i).toString(), R.drawable.ic_opacity_black_48dp, "Amount: " + amount.get(i).toString() + "dl [" + timestamp.get(i).toString() +"]");
+                items.add(item);
+                unitsSum += Integer.parseInt(units.get(i).toString());
             }
+
         } else {
             items.add(new ListItem("No drinks added", R.drawable.ic_code_black_48dp, ""));
         }
@@ -80,7 +78,6 @@ public class SecondActivity extends AppCompatActivity implements Serializable {
 
         alcoUnits.setText(Integer.toString(unitsSum));
         alcoLevel.setText(Integer.toString(unitsSum*2));
-        readFromDb();
 
     }
 
