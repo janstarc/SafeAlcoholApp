@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -79,7 +80,24 @@ public class SecondActivity extends AppCompatActivity implements Serializable {
         alcoUnits.setText(Integer.toString(unitsSum));
         alcoLevel.setText(Integer.toString(unitsSum*2));
 
+        // TODO - Delete option on long click
+        //myList.setLongClickable(true);
+        //myList.setOnItemLongClickListener(longClickListener);
+
     }
+
+    /*
+    myList.setOnItemLongClickListener(new OnItemLongClickListener() {
+        @Override
+        public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
+        int pos, long id) {
+            // TODO Auto-generated method stub
+
+            Log.v("long clicked","pos: " + pos);
+
+            return true;
+        }
+    });*/
 
     public void readFromDb(){
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
@@ -143,6 +161,8 @@ public class SecondActivity extends AppCompatActivity implements Serializable {
             Log.d("debug", "Item: " + itemIds.get(i) + " | " + name.get(i) + " | " + amount.get(i) + " | " + units.get(i) + " | " + timestamp.get(i));
         }
     }
+
+
 
 
     View.OnClickListener filterList = new Button.OnClickListener(){

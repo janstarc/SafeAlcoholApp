@@ -21,7 +21,6 @@ import java.util.Date;
 
 import static com.jan.safealcohol.R.id.spinnerDesign;
 
-
 public class FirstActivity extends AppCompatActivity implements Serializable {
 
 
@@ -43,36 +42,28 @@ public class FirstActivity extends AppCompatActivity implements Serializable {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.firstactivitydesign);
 
-
         // Defining the variables
         secondActivityButton = (Button) findViewById(R.id.secondActivity);
         description = (EditText) findViewById(R.id.description);
         addButton = (Button) findViewById(R.id.addButton);
+        spinner = (Spinner) findViewById(spinnerDesign);
+        customDateTime = (EditText) findViewById(R.id.customDateTime);
+        customDateTime.setText(DateFormat.getDateTimeInstance().format(new Date()));
+        customDateTimeCheckBox = (CheckBox) findViewById(R.id.checkBox);
 
         // Calling event listeners
         secondActivityButton.setOnClickListener(startSecondActivity);
         secondActivityButton.setOnLongClickListener(startSecondActivityLong);
         addButton.setOnClickListener(addNewElement);
 
+        // Dropdown menu
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.drinks_array, android.R.layout.simple_spinner_item);    // Create an ArrayAdapter using the string array and a default spinner layout
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);             // Specify the layout to use when the list of choices appears
+        spinner.setAdapter(adapter);                // Apply the adapter to the spinner
 
-        spinner = (Spinner) findViewById(spinnerDesign);
-
-        // Create an ArrayAdapter using the string array and a default spinner layout
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.drinks_array, android.R.layout.simple_spinner_item);
-        // Specify the layout to use when the list of choices appears
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        // Apply the adapter to the spinner
-        spinner.setAdapter(adapter);
-
-        customDateTime = (EditText) findViewById(R.id.customDateTime);
-        customDateTime.setText(DateFormat.getDateTimeInstance().format(new Date()));
-        customDateTimeCheckBox = (CheckBox) findViewById(R.id.checkBox);
-
-
-        // Create DB
+        // Create DB if not created
         new FeedReaderDbHelper(context);
     }
-
 
     // Adds new entry to the itemsList
     View.OnClickListener addNewElement = new Button.OnClickListener() {
@@ -85,34 +76,7 @@ public class FirstActivity extends AppCompatActivity implements Serializable {
             if(amount.equals("")) amount = "1";
             itemsList.add(amount);
             newItemsAdded = true;
-            //Log.d("debug", "Title:")
-            Log.d("debug", "-----> HERE!!!!");
-
-
-            // TODO Test - put info into the DB
-
-            // Gets the data repository in write mode
-            SQLiteDatabase db = mDbHelper.getWritableDatabase();
-            Log.d("debug", "DB: " + db);
-
-            // Create a new map of values, where column names are the keys
-            ContentValues values = new ContentValues();
-            values.put(FeedReaderContract.FeedEntry.COLUMN_NAME_NAME, spinner.getSelectedItem().toString());
-            values.put(FeedReaderContract.FeedEntry.COLUMN_NAME_AMOUNT, Float.parseFloat(amount));
-            values.put(FeedReaderContract.FeedEntry.COLUMN_NAME_UNITS, Float.parseFloat(amount)*1.4);
-
-            if(!customDateTimeCheckBox.isChecked()){
-                values.put(FeedReaderContract.FeedEntry.COLUMN_NAME_TIMESTAMP, DateFormat.getDateTimeInstance().format(new Date()));
-            } else {
-                values.put(FeedReaderContract.FeedEntry.COLUMN_NAME_TIMESTAMP, customDateTime.getText().toString());
-            }
-
-
-            // Insert the new row, returning the primary key value of the new row
-            long newRowId = db.insert(FeedReaderContract.FeedEntry.TABLE_NAME, null, values);
-
-            // TODO Test END
-
+            insertIntoDB();
         }
     };
 
@@ -138,6 +102,34 @@ public class FirstActivity extends AppCompatActivity implements Serializable {
             return true;
         }
     };
+
+    public void insertIntoDB(){
+
+        String descriptionText = description.getText().toString();
+        if(descriptionText.equals("")) descriptionText = "1.0";
+        float amount = Float.parseFloat(descriptionText);
+
+        // Gets the data repository in write mode
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+        Log.d("debug", "DB: " + db);
+
+        // Create a new map of values, where column names are the keys
+        ContentValues values = new ContentValues();
+        values.put(FeedReaderContract.FeedEntry.COLUMN_NAME_NAME, spinner.getSelectedItem().toString());
+        values.put(FeedReaderContract.FeedEntry.COLUMN_NAME_AMOUNT, amount);
+        values.put(FeedReaderContract.FeedEntry.COLUMN_NAME_UNITS, amount * 1.4);
+
+        if(!customDateTimeCheckBox.isChecked()){
+            values.put(FeedReaderContract.FeedEntry.COLUMN_NAME_TIMESTAMP, DateFormat.getDateTimeInstance().format(new Date()));
+        } else {
+            values.put(FeedReaderContract.FeedEntry.COLUMN_NAME_TIMESTAMP, customDateTime.getText().toString());
+        }
+
+
+        // Insert the new row, returning the primary key value of the new row
+        long newRowId = db.insert(FeedReaderContract.FeedEntry.TABLE_NAME, null, values);
+
+    }
 
     public void runSecondActivity (boolean b, boolean itemsAdded, ArrayList<String> itemsList) {
 
