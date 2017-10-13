@@ -19,6 +19,7 @@
     <string name="test">TEST</string>
     <string name="expected_level">Alco level:</string>
     <string name="_0">0</string>
+    <string name="readdbtest">ReadDBTest</string>
     <string-array name="drinks_array">
         <item>Drink 1</item>
         <item>Drink 2</item>
