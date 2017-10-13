@@ -3,21 +3,17 @@ package com.jan.safealcohol;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-
-
+import android.database.sqlite.*;
 
 public class SecondActivity extends AppCompatActivity implements Serializable {
 
@@ -41,7 +37,6 @@ public class SecondActivity extends AppCompatActivity implements Serializable {
         myList = (ListView) findViewById(R.id.listView);
 
         Intent intent = getIntent();
-
 
         if(intent.getBooleanExtra("itemsAdded", true)){      // Combine items list with the items, that already exist
             Log.d("debug", "Here");
@@ -72,7 +67,6 @@ public class SecondActivity extends AppCompatActivity implements Serializable {
 
         alcoUnits.setText(Integer.toString(unitsSum));
         alcoLevel.setText(Integer.toString(unitsSum*2));
-
 
     }
 
@@ -109,8 +103,6 @@ public class SecondActivity extends AppCompatActivity implements Serializable {
         }
     };
 
-
-
     View.OnClickListener sortList = new Button.OnClickListener() {
 
         @Override
@@ -129,7 +121,6 @@ public class SecondActivity extends AppCompatActivity implements Serializable {
             }
         }
     };
-
 
     public void showModifiedList(ArrayList<ListItem> items){
         adapter = new ListAdapter(this, items);
