@@ -30,8 +30,9 @@ public class SecondActivity extends AppCompatActivity implements Serializable {
     private boolean noResults;
     private boolean itemsFiltered = false;
     ArrayList<ListItem> filteredItems;
-    private int alcoSum;
-    private TextView drinksSumText;
+    private int unitsSum;
+    private TextView alcoUnits;
+    private TextView alcoLevel;
 
     protected void onCreate(Bundle savedInstanceState){
 
@@ -49,8 +50,8 @@ public class SecondActivity extends AppCompatActivity implements Serializable {
             Log.d("debug", "Size of list: " + thingsToAdd.size());
             for(int i = 0; i < thingsToAdd.size(); i += 2){
                 Log.i("debug", "Value: " + i + " = " + thingsToAdd.get(i));
-                items.add(new ListItem(thingsToAdd.get(i).toString(), R.drawable.ic_code_black_48dp, "Amount: " + thingsToAdd.get(i+1).toString() + "dl"));
-                alcoSum += Integer.parseInt(thingsToAdd.get(i+1));
+                items.add(new ListItem(thingsToAdd.get(i).toString(), R.drawable.ic_opacity_black_48dp, "Amount: " + thingsToAdd.get(i+1).toString() + "dl"));
+                unitsSum += Integer.parseInt(thingsToAdd.get(i+1));
             }
         } else {
             items.add(new ListItem("No drinks added", R.drawable.ic_code_black_48dp, ""));
@@ -66,41 +67,14 @@ public class SecondActivity extends AppCompatActivity implements Serializable {
         filterButton.setOnClickListener(filterList);
         filterText = (EditText) findViewById(R.id.filterText);
         
-        drinksSumText = (TextView) findViewById(R.id.drinksSumText);
+        alcoUnits = (TextView) findViewById(R.id.drinksSumText);
+        alcoLevel = (TextView) findViewById(R.id.alcoLevel);
 
+        alcoUnits.setText(Integer.toString(unitsSum));
+        alcoLevel.setText(Integer.toString(unitsSum*2));
 
-
-        //Log.d("debug", "AlcoSum=" + alcoSum);
-
-        //delButton = (Button) findViewById(R.id.delButton);
-        //delButton.setOnClickListener(deleteFilteredItems);
 
     }
-
-    /*
-    View.OnClickListener deleteFilteredItems = new Button.OnClickListener(){
-
-        @Override
-        public void onClick(View v){
-            for(int i = 0; i < filteredItems.size(); i++){
-                for(int j = 0; j < items.size(); j++){
-
-                    Log.d("debug", "FilItems: " + filteredItems.get(i).getTitle());
-                    Log.d("debug", "Items: " + items.get(j).getTitle());
-
-
-                    if(filteredItems.get(i).getTitle().equals(items.get(j).getTitle())){
-                        Log.d("debug", "HERE!");
-                        filteredItems.remove(i);
-                        items.remove(j);
-                        break;
-                    }
-                }
-            }
-            showModifiedList(items);
-        }
-    };
-    */
 
     View.OnClickListener filterList = new Button.OnClickListener(){
 

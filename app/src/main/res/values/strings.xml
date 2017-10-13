@@ -15,6 +15,10 @@
     <string name="searchEditText">Search</string>
     <string name="button2">Button</string>
     <string name="delete">Delete</string>
+    <string name="alcohol_units">Alcohol units:</string>
+    <string name="test">TEST</string>
+    <string name="expected_level">Alco level:</string>
+    <string name="_0">0</string>
     <string-array name="drinks_array">
         <item>Drink 1</item>
         <item>Drink 2</item>

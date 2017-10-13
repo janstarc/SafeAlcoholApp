@@ -8,13 +8,11 @@
         android:layout_height="match_parent"
         android:layout_gravity="center_vertical">
 
-
         <Button
             android:id="@+id/sortButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/sortButton" />
-
 
         <ListView
             android:id="@+id/listView"
@@ -35,7 +33,6 @@
             android:hint="@string/searchEditText"
             android:inputType="textPersonName" />
 
-
         <Button
             android:id="@+id/filterButton"
             android:layout_width="wrap_content"
@@ -48,27 +45,56 @@
             android:text="@string/filter" />
 
         <TextView
-            android:id="@+id/drinksSumText"
+            android:id="@+id/uiText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="11dp"
-            android:text="Alcohol units: "
+            android:text="@string/alcohol_units"
             android:textColor="@android:color/black"
             android:textSize="20sp"
             android:layout_below="@+id/sortButton"
             android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true" />
+            android:layout_alignParentStart="true"
+            android:layout_marginLeft="5dp"
+            android:layout_marginStart="5dp"/>
 
-        <!--
-        <Button
-            android:id="@+id/delButton"
+        <TextView
+            android:id="@+id/drinksSumText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_toLeftOf="@+id/filterButton"
-            android:layout_toStartOf="@+id/filterButton"
-            android:text="@string/delete" />
-            -->
+            android:text="@string/test"
+            android:layout_alignBottom="@+id/uiText"
+            android:layout_toRightOf="@+id/uiText"
+            android:layout_marginLeft="5dp"
+            android:layout_marginStart="5dp"
+            android:layout_toEndOf="@+id/uiText"
+            android:layout_below="@+id/filterText"
+            android:textSize="20sp"/>
+
+        <TextView
+            android:id="@+id/uiText2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/filterText"
+            android:layout_toEndOf="@+id/drinksSumText"
+            android:layout_toRightOf="@+id/drinksSumText"
+            android:text="@string/expected_level"
+            android:layout_marginStart="15dp"
+            android:layout_marginLeft="15dp"
+            android:textSize="20sp"
+            android:textColor="@android:color/black"
+            />
+
+        <TextView
+            android:id="@+id/alcoLevel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/filterText"
+            android:layout_toEndOf="@+id/uiText2"
+            android:layout_toRightOf="@+id/uiText2"
+            android:text="@string/_0"
+            android:layout_marginLeft="5dp"
+            android:layout_marginStart="5dp"
+            android:textSize="20sp"/>
 
     </RelativeLayout>
 
