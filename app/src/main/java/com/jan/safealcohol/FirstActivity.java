@@ -160,30 +160,17 @@ public class FirstActivity extends AppCompatActivity implements Serializable {
 
     public void readUserData(){
 
-
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
         cursor = db.rawQuery("SELECT * FROM " + TABLE2_NAME, null);
+        cursor.moveToNext();
 
-        cursor.moveToNext();
-        Log.d("db", "DB output: " + cursor.getString(cursor.getColumnIndexOrThrow(FeedReaderContract.FeedEntry.COLUMN_NAME_FIRSTNAME)));
-        /*
-        cursor.moveToNext();
         firstname.setText(cursor.getString(cursor.getColumnIndexOrThrow(FeedReaderContract.FeedEntry.COLUMN_NAME_FIRSTNAME)));
-        cursor.moveToNext();
         lastname.setText(cursor.getString(cursor.getColumnIndexOrThrow(FeedReaderContract.FeedEntry.COLUMN_NAME_LASTNAME)));
-        cursor.moveToNext();
         weight.setText(cursor.getString(cursor.getColumnIndexOrThrow(FeedReaderContract.FeedEntry.COLUMN_NAME_WEIGHT)));
-        cursor.moveToNext();
         gender.setText(cursor.getString(cursor.getColumnIndexOrThrow(FeedReaderContract.FeedEntry.COLUMN_NAME_GENDER)));
-        cursor.moveToNext();
         height.setText(cursor.getString(cursor.getColumnIndexOrThrow(FeedReaderContract.FeedEntry.COLUMN_NAME_HEIGHT)));
-        cursor.moveToNext();
         sizeofmeal.setText(cursor.getString(cursor.getColumnIndexOrThrow(FeedReaderContract.FeedEntry.COLUMN_NAME_SIZEOFMEAL)));
-        cursor.moveToNext();
         mealtime.setText(cursor.getString(cursor.getColumnIndexOrThrow(FeedReaderContract.FeedEntry.COLUMN_NAME_MEALTIME)));
-        cursor.close();
-        */
-
     }
 
     public void saveUserData(){
@@ -193,19 +180,19 @@ public class FirstActivity extends AppCompatActivity implements Serializable {
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
         Log.d("debug", "DB: " + db);
 
+        String query = "UPDATE userDataNew SET " +
+                "firstname = '" + firstname.getText().toString() + "', " +
+                "lastname = '" + lastname.getText().toString() + "', " +
+                "weight = '" + weight.getText().toString() + "', " +
+                "gender = '" + gender.getText().toString() + "', " +
+                "height = '" + height.getText().toString() + "', " +
+                "sizeofmeal = '" + sizeofmeal.getText().toString() + "', " +
+                "mealtime = '" + mealtime.getText().toString() + "' " +
+                "WHERE _id = 0;";
 
-        // Create a new map of values, where column names are the keys
-        ContentValues values = new ContentValues();
-        values.put(FeedReaderContract.FeedEntry.COLUMN_NAME_FIRSTNAME, firstname.getText().toString());
-        values.put(FeedReaderContract.FeedEntry.COLUMN_NAME_LASTNAME, lastname.getText().toString());
-        values.put(FeedReaderContract.FeedEntry.COLUMN_NAME_WEIGHT, Integer.parseInt(weight.getText().toString()));
-        values.put(FeedReaderContract.FeedEntry.COLUMN_NAME_GENDER, gender.getText().toString());
-        values.put(FeedReaderContract.FeedEntry.COLUMN_NAME_HEIGHT, Integer.parseInt(height.getText().toString()));
-        values.put(FeedReaderContract.FeedEntry.COLUMN_NAME_SIZEOFMEAL, Integer.parseInt(sizeofmeal.getText().toString()));
-        values.put(FeedReaderContract.FeedEntry.COLUMN_NAME_MEALTIME, mealtime.getText().toString());
-
-        // Insert the new row, returning the primary key value of the new row
-        long newRowId = db.insert(FeedReaderContract.FeedEntry.TABLE2_NAME, null, values);
+        Log.d("db", "QUERY: " + query);
+        db.execSQL(query);
+        readUserData();
 
     }
 
