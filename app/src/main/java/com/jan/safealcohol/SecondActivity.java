@@ -12,16 +12,13 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-
 import static com.jan.safealcohol.FeedReaderContract.FeedEntry.COLUMN_NAME_TIMESTAMP;
 import static com.jan.safealcohol.FeedReaderContract.FeedEntry.TABLE_NAME;
 
 public class SecondActivity extends AppCompatActivity implements Serializable {
-
 
     private ListView myList;
     private ListAdapter adapter;
@@ -33,10 +30,8 @@ public class SecondActivity extends AppCompatActivity implements Serializable {
     private boolean itemsFiltered = false;
     ArrayList<ListItem> filteredItems;
     private int unitsSum;
-
     private TextView alcoUnits;
     private TextView alcoLevel;
-
     private FeedReaderDbHelper mDbHelper = new FeedReaderDbHelper(this);
     private Cursor cursor;
     private List itemIds = new ArrayList<>();
@@ -111,34 +106,7 @@ public class SecondActivity extends AppCompatActivity implements Serializable {
         timestamp = new ArrayList<>();
 
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
-
-        // Define a projection that specifies which columns from the database
-        // you will actually use after this query.
-        String[] projection = {
-                FeedReaderContract.FeedEntry._ID,
-                FeedReaderContract.FeedEntry.COLUMN_NAME_NAME,
-                FeedReaderContract.FeedEntry.COLUMN_NAME_AMOUNT,
-                FeedReaderContract.FeedEntry.COLUMN_NAME_UNITS,
-                COLUMN_NAME_TIMESTAMP
-        };
-
-        // Filter results WHERE "title" = 'My Title'
-        //String selection = FeedReaderContract.FeedEntry.COLUMN_NAME_TITLE + " = ";
-        //String[] selectionArgs = { "My Title" };
-
-        // How you want the results sorted in the resulting Cursor
-        String sortOrder =
-                FeedReaderContract.FeedEntry._ID + " ASC";
-
-        cursor = db.query(
-                TABLE_NAME,        // The table to query
-                projection,                                     // The columns to return
-                null,                                           // The columns for the WHERE clause
-                null,                                           // The values for the WHERE clause
-                null,                                           // don't group the rows
-                null,                                           // don't filter by row groups
-                sortOrder                                       // The sort order
-        );
+        cursor = db.rawQuery("SELECT * FROM " + TABLE_NAME, null);
 
         copyToArrayLists(cursor);
     }
@@ -193,21 +161,15 @@ public class SecondActivity extends AppCompatActivity implements Serializable {
      */
     public void deleteFromDb(String timestamp){
 
-        Log.d("debug", "Timestamp: " + timestamp);
-
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
 
         db.execSQL("DELETE FROM " + FeedReaderContract.FeedEntry.TABLE_NAME + " WHERE " + FeedReaderContract.FeedEntry.COLUMN_NAME_TIMESTAMP + " = '" + timestamp + "'");
         Log.d("debug", "SUCCESS DELETING ITEM WITH TIMESTAMP: " + timestamp);
-        //Log.d("debug", "Return statement: " + returnStatus);
         Toast.makeText(getApplicationContext(), "Drink successfully deleted", Toast.LENGTH_SHORT).show();
 
-        //db.endTransaction();
         updateListView();
         dbToLog();
     }
-
-
 
     View.OnClickListener filterList = new Button.OnClickListener(){
 

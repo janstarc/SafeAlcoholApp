@@ -55,7 +55,7 @@
 
     <EditText
         android:id="@+id/customDateTime"
-        android:layout_width="208dp"
+        android:layout_width="292dp"
         android:layout_height="wrap_content"
         android:ems="10"
         android:hint="@string/time"/>
