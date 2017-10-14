@@ -111,7 +111,6 @@ public class SecondActivity extends AppCompatActivity implements Serializable {
         copyToArrayLists(cursor);
     }
 
-
     public void copyToArrayLists(Cursor cursor){
         while(cursor.moveToNext()) {
             long itemId = cursor.getLong(

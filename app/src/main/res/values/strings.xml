@@ -20,11 +20,13 @@
     <string name="expected_level">Alco level:</string>
     <string name="_0">0</string>
     <string name="readdbtest">ReadDBTest</string>
-    <string name="testing_custom_time_and_date">[TESTING] Custom Time And Date</string>
+    <string name="testing_custom_time_and_date">[TESTING] Custom Time And Date + UpdateDB</string>
     <string name="custom_date_and_time">Custom date and time</string>
     <string name="time">Time</string>
     <string name="date">Date</string>
     <string name="use_custom_datetime">Use custom DateTime</string>
+    <string name="testing_userdata_from_db">[TESTING] Userdata from DB</string>
+    <string name="update_db">Update DB</string>
     <string-array name="drinks_array">
         <item>Drink 1</item>
         <item>Drink 2</item>

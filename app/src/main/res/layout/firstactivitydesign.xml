@@ -66,5 +66,65 @@
         android:layout_height="wrap_content"
         android:text="@string/use_custom_datetime" />
 
+    <EditText
+        android:id="@+id/firstnameET"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="textPersonName" />
+
+    <EditText
+        android:id="@+id/lastnameET"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="textPersonName" />
+
+    <EditText
+        android:id="@+id/weightET"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="numberSigned"
+        />
+
+    <EditText
+        android:id="@+id/genderET"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="textPersonName"
+         />
+
+    <EditText
+        android:id="@+id/heightET"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="numberSigned"
+        />
+
+    <EditText
+        android:id="@+id/sizeofmealET"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="numberSigned"
+        />
+
+    <EditText
+        android:id="@+id/mealTimeET"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="textPersonName"
+        />
+
+    <Button
+        android:id="@+id/updateDbButton"
+        android:layout_width="216dp"
+        android:layout_height="wrap_content"
+        android:text="@string/update_db" />
+
 
 </LinearLayout>
