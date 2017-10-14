@@ -26,7 +26,7 @@ public class FirstActivity extends AppCompatActivity implements Serializable {
 
     private Button secondActivityButton;
     private Context context = this;
-    private EditText description;
+    private EditText amount;
     private Button addButton;
     private ArrayList<String> itemsList = new ArrayList<>();                // Used to transfer data between activities
     private boolean newItemsAdded = false;
@@ -44,7 +44,7 @@ public class FirstActivity extends AppCompatActivity implements Serializable {
 
         // Defining the variables
         secondActivityButton = (Button) findViewById(R.id.secondActivity);
-        description = (EditText) findViewById(R.id.description);
+        amount = (EditText) findViewById(R.id.amount);
         addButton = (Button) findViewById(R.id.addButton);
         spinner = (Spinner) findViewById(spinnerDesign);
         customDateTime = (EditText) findViewById(R.id.customDateTime);
@@ -53,7 +53,6 @@ public class FirstActivity extends AppCompatActivity implements Serializable {
 
         // Calling event listeners
         secondActivityButton.setOnClickListener(startSecondActivity);
-        secondActivityButton.setOnLongClickListener(startSecondActivityLong);
         addButton.setOnClickListener(addNewElement);
 
         // Dropdown menu
@@ -72,9 +71,9 @@ public class FirstActivity extends AppCompatActivity implements Serializable {
         public void onClick(View v){
 
             itemsList.add(spinner.getSelectedItem().toString());
-            String amount = description.getText().toString();
-            if(amount.equals("")) amount = "1";
-            itemsList.add(amount);
+            String amountS = amount.getText().toString();
+            if(amount.equals("")) amountS = "1";
+            itemsList.add(amountS);
             newItemsAdded = true;
             insertIntoDB();
         }
@@ -84,30 +83,15 @@ public class FirstActivity extends AppCompatActivity implements Serializable {
 
         @Override
         public void onClick(View v){
-            if(newItemsAdded){                  // Send the array list with added items to the second activity
-                runSecondActivity(true, newItemsAdded, itemsList);
-
-            } else {                            // Start normally
-                runSecondActivity(true, newItemsAdded, null);
-            }
-
-        }
-    };
-
-    View.OnLongClickListener startSecondActivityLong = new Button.OnLongClickListener() {
-
-        @Override
-        public boolean onLongClick(View v){
-            runSecondActivity(false, false, null);
-            return true;
+            runSecondActivity();
         }
     };
 
     public void insertIntoDB(){
 
-        String descriptionText = description.getText().toString();
-        if(descriptionText.equals("")) descriptionText = "1.0";
-        float amount = Float.parseFloat(descriptionText);
+        String amountText = amount.getText().toString();
+        if(amountText.equals("")) amountText = "1.0";
+        float amount = Float.parseFloat(amountText);
 
         // Gets the data repository in write mode
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
@@ -131,13 +115,9 @@ public class FirstActivity extends AppCompatActivity implements Serializable {
 
     }
 
-    public void runSecondActivity (boolean b, boolean itemsAdded, ArrayList<String> itemsList) {
+    public void runSecondActivity () {
 
         Intent intent = new Intent(context, SecondActivity.class);
-        intent.putExtra("flag", b);
-        intent.putExtra("itemsAdded", itemsAdded);
-        intent.putExtra("newItems", itemsList);
-
         context.startActivity(intent);
     }
 }
