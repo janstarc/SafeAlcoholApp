@@ -11,7 +11,7 @@
     <string name="android_image">Android Image</string>
     <string name="description_of_the_image">Description of the image</string>
     <string name="sortButton">Sort List</string>
-    <string name="filter">Filter</string>
+    <string name="search">Search</string>
     <string name="searchEditText">Search</string>
     <string name="button2">Button</string>
     <string name="delete">Delete</string>

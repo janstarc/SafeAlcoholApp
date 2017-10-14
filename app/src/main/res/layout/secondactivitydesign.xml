@@ -8,41 +8,35 @@
         android:layout_height="match_parent"
         android:layout_gravity="center_vertical">
 
-        <Button
-            android:id="@+id/sortButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/sortButton" />
-
         <ListView
             android:id="@+id/listView"
             android:layout_width="match_parent"
             android:layout_height="520dp"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
-            android:layout_below="@+id/sortButton"
-            android:layout_marginTop="42dp" />
+            android:layout_below="@+id/searchButton"
+            android:layout_marginTop="68dp" />
 
         <EditText
-            android:id="@+id/filterText"
+            android:id="@+id/searchText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_above="@+id/listView"
-            android:layout_toRightOf="@+id/sortButton"
+            android:layout_alignBottom="@+id/searchButton"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
             android:ems="10"
             android:hint="@string/searchEditText"
             android:inputType="textPersonName" />
 
         <Button
-            android:id="@+id/filterButton"
+            android:id="@+id/searchButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
             android:layout_alignParentTop="true"
-            android:layout_toEndOf="@+id/filterText"
-            android:layout_toRightOf="@+id/filterText"
-            android:text="@string/filter" />
+            android:layout_toEndOf="@+id/searchText"
+            android:text="@string/search" />
 
         <TextView
             android:id="@+id/uiText"
@@ -51,50 +45,49 @@
             android:text="@string/alcohol_units"
             android:textColor="@android:color/black"
             android:textSize="20sp"
-            android:layout_below="@+id/sortButton"
+            android:layout_alignBaseline="@+id/drinksSumText"
+            android:layout_alignBottom="@+id/drinksSumText"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
-            android:layout_marginLeft="5dp"
-            android:layout_marginStart="5dp"/>
+            android:layout_marginLeft="10dp"
+            android:layout_marginStart="10dp" />
 
         <TextView
             android:id="@+id/drinksSumText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="6dp"
+            android:layout_marginStart="6dp"
             android:text="@string/test"
-            android:layout_alignBottom="@+id/uiText"
+            android:textSize="20sp"
+            android:layout_below="@+id/searchText"
             android:layout_toRightOf="@+id/uiText"
-            android:layout_marginLeft="5dp"
-            android:layout_marginStart="5dp"
-            android:layout_toEndOf="@+id/uiText"
-            android:layout_below="@+id/filterText"
-            android:textSize="20sp"/>
+            android:layout_toEndOf="@+id/uiText" />
 
         <TextView
             android:id="@+id/uiText2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/filterText"
+            android:layout_below="@+id/searchText"
+            android:layout_marginLeft="15dp"
+            android:layout_marginStart="15dp"
             android:layout_toEndOf="@+id/drinksSumText"
             android:layout_toRightOf="@+id/drinksSumText"
             android:text="@string/expected_level"
-            android:layout_marginStart="15dp"
-            android:layout_marginLeft="15dp"
-            android:textSize="20sp"
             android:textColor="@android:color/black"
-            />
+            android:textSize="20sp" />
 
         <TextView
             android:id="@+id/alcoLevel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/filterText"
+            android:layout_below="@+id/searchText"
+            android:layout_marginLeft="5dp"
+            android:layout_marginStart="5dp"
             android:layout_toEndOf="@+id/uiText2"
             android:layout_toRightOf="@+id/uiText2"
             android:text="@string/_0"
-            android:layout_marginLeft="5dp"
-            android:layout_marginStart="5dp"
-            android:textSize="20sp"/>
+            android:textSize="20sp" />
 
     </RelativeLayout>
 

@@ -1,7 +1,7 @@
 package com.jan.safealcohol;
 
-import android.content.Intent;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -11,12 +11,14 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
-import android.database.sqlite.*;
+
+import static com.jan.safealcohol.FeedReaderContract.FeedEntry.COLUMN_NAME_TIMESTAMP;
+import static com.jan.safealcohol.FeedReaderContract.FeedEntry.TABLE_NAME;
 
 public class SecondActivity extends AppCompatActivity implements Serializable {
 
@@ -24,8 +26,8 @@ public class SecondActivity extends AppCompatActivity implements Serializable {
     private ListView myList;
     private ListAdapter adapter;
     private Button sortButton;
-    private Button filterButton;
-    private EditText filterText;
+    private Button searchButton;
+    private EditText searchText;
     ArrayList<ListItem> items = new ArrayList<>();
     private boolean noResults;
     private boolean itemsFiltered = false;
@@ -34,7 +36,6 @@ public class SecondActivity extends AppCompatActivity implements Serializable {
 
     private TextView alcoUnits;
     private TextView alcoLevel;
-    //Context context = this  ;
 
     private FeedReaderDbHelper mDbHelper = new FeedReaderDbHelper(this);
     private Cursor cursor;
@@ -51,7 +52,29 @@ public class SecondActivity extends AppCompatActivity implements Serializable {
         setContentView(R.layout.secondactivitydesign);
         myList = (ListView) findViewById(R.id.listView);
 
+        searchButton = (Button) findViewById(R.id.searchButton);
+        searchButton.setOnClickListener(filterList);
+        searchText = (EditText) findViewById(R.id.searchText);
+        
+        alcoUnits = (TextView) findViewById(R.id.drinksSumText);
+        alcoLevel = (TextView) findViewById(R.id.alcoLevel);
+
+        updateListView();
+
+    }
+
+    /**
+     * 1.) Reads from DB --> Updates ArrayLists
+     * 2.) Adds items from all ArrayLists to ArrayList<ListItem> items --> The one that is passed to the adapter
+     * 3.) Updates values
+     * 4.) Updates ListView
+     */
+    public void updateListView(){
+
+        unitsSum = 0;
+
         readFromDb();
+        items = new ArrayList<>();
 
         if(itemIds.size() > 0){
             for(int i = 0; i < itemIds.size(); i++){
@@ -61,47 +84,33 @@ public class SecondActivity extends AppCompatActivity implements Serializable {
             }
 
         } else {
-            items.add(new ListItem("No drinks added", R.drawable.ic_code_black_48dp, ""));
+            items.add(new ListItem("No drinks on the list", R.drawable.ic_code_black_48dp, ""));
         }
-
-        adapter = new ListAdapter(this, items);
-        myList.setAdapter(adapter);
-
-        sortButton = (Button) findViewById(R.id.sortButton);
-        sortButton.setOnClickListener(sortList);
-
-        filterButton = (Button) findViewById(R.id.filterButton);
-        filterButton.setOnClickListener(filterList);
-        filterText = (EditText) findViewById(R.id.filterText);
-        
-        alcoUnits = (TextView) findViewById(R.id.drinksSumText);
-        alcoLevel = (TextView) findViewById(R.id.alcoLevel);
 
         alcoUnits.setText(Integer.toString(unitsSum));
         alcoLevel.setText(Integer.toString(unitsSum*2));
 
-        // TODO - Delete option on long click
-        //myList.setLongClickable(true);
-        //myList.setOnItemLongClickListener(longClickListener);
-
+        // Adapter
+        adapter = new ListAdapter(this, items);
+        myList.setAdapter(adapter);
+        myList.setOnItemLongClickListener(lvLongClick);
     }
 
-    /*
-    myList.setOnItemLongClickListener(new OnItemLongClickListener() {
-        @Override
-        public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
-        int pos, long id) {
-            // TODO Auto-generated method stub
-
-            Log.v("long clicked","pos: " + pos);
-
-            return true;
-        }
-    });*/
-
+    /**
+     * 1.) Creates new instances of all ArrayLists
+     * 2.) Executes SELECT statement on the DB
+     * 3.) Copies values from cursor to ArrayLists
+     *
+     */
     public void readFromDb(){
+
+        itemIds = new ArrayList<>();
+        name = new ArrayList<>();
+        amount = new ArrayList<>();
+        units = new ArrayList<>();
+        timestamp = new ArrayList<>();
+
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
-        Log.d("debug", "DB:" + db);
 
         // Define a projection that specifies which columns from the database
         // you will actually use after this query.
@@ -110,7 +119,7 @@ public class SecondActivity extends AppCompatActivity implements Serializable {
                 FeedReaderContract.FeedEntry.COLUMN_NAME_NAME,
                 FeedReaderContract.FeedEntry.COLUMN_NAME_AMOUNT,
                 FeedReaderContract.FeedEntry.COLUMN_NAME_UNITS,
-                FeedReaderContract.FeedEntry.COLUMN_NAME_TIMESTAMP
+                COLUMN_NAME_TIMESTAMP
         };
 
         // Filter results WHERE "title" = 'My Title'
@@ -122,7 +131,7 @@ public class SecondActivity extends AppCompatActivity implements Serializable {
                 FeedReaderContract.FeedEntry._ID + " ASC";
 
         cursor = db.query(
-                FeedReaderContract.FeedEntry.TABLE_NAME,        // The table to query
+                TABLE_NAME,        // The table to query
                 projection,                                     // The columns to return
                 null,                                           // The columns for the WHERE clause
                 null,                                           // The values for the WHERE clause
@@ -131,7 +140,11 @@ public class SecondActivity extends AppCompatActivity implements Serializable {
                 sortOrder                                       // The sort order
         );
 
+        copyToArrayLists(cursor);
+    }
 
+
+    public void copyToArrayLists(Cursor cursor){
         while(cursor.moveToNext()) {
             long itemId = cursor.getLong(
                     cursor.getColumnIndexOrThrow(FeedReaderContract.FeedEntry._ID));
@@ -150,18 +163,49 @@ public class SecondActivity extends AppCompatActivity implements Serializable {
             units.add(unitField);
 
             String timestampField = cursor.getString(
-                    cursor.getColumnIndexOrThrow(FeedReaderContract.FeedEntry.COLUMN_NAME_TIMESTAMP));
+                    cursor.getColumnIndexOrThrow(COLUMN_NAME_TIMESTAMP));
             timestamp.add(timestampField);
 
         }
         cursor.close();
-
-        Log.d("debug", "Item:   | Name:  | Amount: | Units: | Timestamp: ");
-        for(int i = 0; i < itemIds.size(); i++){
-            Log.d("debug", "Item: " + itemIds.get(i) + " | " + name.get(i) + " | " + amount.get(i) + " | " + units.get(i) + " | " + timestamp.get(i));
-        }
     }
 
+    /**
+     * 1.) Sends timestamp to deleteFromDb function
+     */
+
+    ListView.OnItemLongClickListener lvLongClick = new AdapterView.OnItemLongClickListener() {
+
+        @Override
+        public boolean onItemLongClick(AdapterView<?> arg0, View arg1, int pos, long id) {
+
+            Log.d("debug","LongClicked: " + pos);
+            String timestampS = timestamp.get(pos).toString();
+            deleteFromDb(timestampS);
+
+            return true;
+        }
+    };
+
+    /**
+     * 1.) Deletes value with timestamp from the DB
+     * 2.) Updates the list view
+     */
+    public void deleteFromDb(String timestamp){
+
+        Log.d("debug", "Timestamp: " + timestamp);
+
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+
+        db.execSQL("DELETE FROM " + FeedReaderContract.FeedEntry.TABLE_NAME + " WHERE " + FeedReaderContract.FeedEntry.COLUMN_NAME_TIMESTAMP + " = '" + timestamp + "'");
+        Log.d("debug", "SUCCESS DELETING ITEM WITH TIMESTAMP: " + timestamp);
+        //Log.d("debug", "Return statement: " + returnStatus);
+        Toast.makeText(getApplicationContext(), "Drink successfully deleted", Toast.LENGTH_SHORT).show();
+
+        //db.endTransaction();
+        updateListView();
+        dbToLog();
+    }
 
 
 
@@ -169,7 +213,7 @@ public class SecondActivity extends AppCompatActivity implements Serializable {
 
         @Override
         public void onClick(View v){
-            String text = filterText.getText().toString();
+            String text = searchText.getText().toString();
             int textLen = text.length();
             filteredItems = new ArrayList<>();
             Log.d("debug", "TextLen: " + textLen);
@@ -198,34 +242,16 @@ public class SecondActivity extends AppCompatActivity implements Serializable {
         }
     };
 
-    View.OnClickListener sortList = new Button.OnClickListener() {
-
-        @Override
-        public void onClick(View v){
-
-            //Log.d("debug", "Sort button pressed. Num of items: " + items.size());
-            if(itemsFiltered){
-                Log.d("debug", "Sorting filtered items");
-                Collections.sort(filteredItems, new CustomComparator());
-                showModifiedList(filteredItems);
-
-            } else {
-                Log.d("debug", "Sorting non-filtered items");
-                Collections.sort(items, new CustomComparator());
-                showModifiedList(items);
-            }
-        }
-    };
-
     public void showModifiedList(ArrayList<ListItem> items){
         adapter = new ListAdapter(this, items);
         myList.setAdapter(adapter);
     }
-}
 
-class CustomComparator implements Comparator<ListItem> {
-    @Override
-    public int compare(ListItem o1, ListItem o2) {
-        return o1.getTitle().toLowerCase().compareTo(o2.getTitle().toLowerCase());
+    public void dbToLog(){
+
+        Log.d("debug", "Item:   | Name:  | Amount: | Units: | Timestamp: ");
+        for(int i = 0; i < itemIds.size(); i++){
+            Log.d("debug", "Item: " + itemIds.get(i) + " | " + name.get(i) + " | " + amount.get(i) + " | " + units.get(i) + " | " + timestamp.get(i));
+        }
     }
 }
