@@ -36,9 +36,8 @@ public class UserDataActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.userdataactivity);
-
-        updateDBbutton.setOnClickListener(updateDB);
         defineVariables();
+        updateDBbutton.setOnClickListener(updateDB);
         fillUserDataForm();
 
     }
