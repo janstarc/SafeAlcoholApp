@@ -8,6 +8,7 @@ public class ListItem {
     private String description;
 
     public ListItem(){              // Constructor for the object without parameters
+
     }
 
     public ListItem(String title, int imageId, String description){
@@ -39,6 +40,5 @@ public class ListItem {
     public void setDescription(String newDescription){
         this.description = newDescription;
     }
-
 
 }

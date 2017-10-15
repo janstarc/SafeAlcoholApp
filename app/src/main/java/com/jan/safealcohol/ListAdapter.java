@@ -37,7 +37,6 @@ public class ListAdapter extends ArrayAdapter<ListItem> {
         image.setImageResource(item.getImageId());
 
         return v;
-
     }
 
 
