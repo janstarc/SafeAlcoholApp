@@ -2,13 +2,13 @@
     <string name="app_name">Safe Alcohol App</string>
     <string name="button">button</string>
     <string name="textField">textField</string>
-    <string name="secondActivity">Drinking history</string>
+    <string name="secondActivity">Drink history</string>
     <string name="title">Add title</string>
     <string name="name">Amount (dl)</string>
-    <string name="addButton">Add the drink</string>
+    <string name="addButton">Add new drink</string>
     <string name="testFieldToDelete">testFieldToDelete</string>
     <string name="thirdActivity">Third activity</string>
-    <string name="android_image">Android Image</string>
+    <string name="android_image">Set your personal data</string>
     <string name="description_of_the_image">Description of the image</string>
     <string name="sortButton">Sort List</string>
     <string name="search">Search</string>
@@ -20,13 +20,26 @@
     <string name="expected_level">Alco level:</string>
     <string name="_0">0</string>
     <string name="readdbtest">ReadDBTest</string>
-    <string name="testing_custom_time_and_date">[TESTING] Custom Time And Date + UpdateDB</string>
+    <string name="testing_custom_time_and_date">[TESTING] Custom Time And Date</string>
     <string name="custom_date_and_time">Custom date and time</string>
     <string name="time">Time</string>
     <string name="date">Date</string>
     <string name="use_custom_datetime">Use custom DateTime</string>
     <string name="testing_userdata_from_db">[TESTING] Userdata from DB</string>
-    <string name="update_db">Update DB</string>
+    <string name="update_db">Add new meal</string>
+    <string name="first_name">First name</string>
+    <string name="last_name">Last name</string>
+    <string name="weight">Weight (kg)</string>
+    <string name="gender">Gender</string>
+    <string name="height">Height (cm)</string>
+    <string name="set_user_data">Set user data</string>
+    <string name="what_was_your_last_drink">Add a new drink</string>
+    <string name="when_was_your_last_meal">Add a new meal</string>
+    <string name="snack">Snack</string>
+    <string name="mid_size">Mid-size</string>
+    <string name="full_meal">Full meal</string>
+    <string name="meal_size">Meal size:</string>
+    <string name="update_user_data">Update user data</string>
     <string-array name="drinks_array">
         <item>Drink 1</item>
         <item>Drink 2</item>

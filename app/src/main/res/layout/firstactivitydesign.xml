@@ -2,7 +2,19 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    >
+    android:weightSum="1">
+
+    <TextView
+        android:id="@+id/welcomeMessage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@android:color/black"
+        android:textSize="20sp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="10dp"
+        android:text="Welcome message" />
 
     <LinearLayout
         android:layout_width="380dp"
@@ -17,6 +29,18 @@
             android:text="@string/secondActivity"/>
 
     </LinearLayout>
+
+    <View style="@style/Divider"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/what_was_your_last_drink"
+        android:textSize="20sp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="10dp"
+        android:textColor="@android:color/black"/>
 
     <LinearLayout
         android:layout_width="380dp"
@@ -41,24 +65,12 @@
             android:inputType="textPersonName" />
     </LinearLayout>
 
-    <Button
-        android:id="@+id/addButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/addButton"/>
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/testing_custom_time_and_date"
-        android:textColor="@android:color/black"/>
-
     <EditText
         android:id="@+id/customDateTime"
-        android:layout_width="292dp"
+        android:layout_width="278dp"
         android:layout_height="wrap_content"
         android:ems="10"
-        android:hint="@string/time"/>
+        android:hint="@string/time" />
 
     <CheckBox
         android:id="@+id/checkBox"
@@ -66,65 +78,85 @@
         android:layout_height="wrap_content"
         android:text="@string/use_custom_datetime" />
 
-    <EditText
-        android:id="@+id/firstnameET"
-        android:layout_width="wrap_content"
+    <Button
+        android:id="@+id/addButton"
+        android:layout_width="214dp"
         android:layout_height="wrap_content"
-        android:ems="10"
-        android:inputType="textPersonName" />
+        android:text="@string/addButton"
+        android:layout_marginBottom="10dp"/>
 
-    <EditText
-        android:id="@+id/lastnameET"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:inputType="textPersonName" />
+    <View style="@style/Divider"/>
 
-    <EditText
-        android:id="@+id/weightET"
-        android:layout_width="wrap_content"
+    <TextView
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:ems="10"
-        android:inputType="numberSigned"
-        />
+        android:text="@string/when_was_your_last_meal"
+        android:textSize="20sp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="10dp"
+        android:textColor="@android:color/black"/>
 
-    <EditText
-        android:id="@+id/genderET"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:inputType="textPersonName"
-         />
 
-    <EditText
-        android:id="@+id/heightET"
-        android:layout_width="wrap_content"
+    <TextView
+        android:id="@+id/lastMeal"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:ems="10"
-        android:inputType="numberSigned"
-        />
-
-    <EditText
-        android:id="@+id/sizeofmealET"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:inputType="numberSigned"
+        android:layout_marginLeft="5dp"
         />
 
     <EditText
         android:id="@+id/mealTimeET"
-        android:layout_width="wrap_content"
+        android:layout_width="268dp"
         android:layout_height="wrap_content"
         android:ems="10"
-        android:inputType="textPersonName"
-        />
+        android:inputType="textPersonName" />
+
+    <RadioGroup xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/mealSize1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/snack"
+            android:layout_marginRight="10dp"
+            android:layout_marginEnd="10dp"/>
+
+        <RadioButton
+            android:id="@+id/mealSize2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/mid_size"
+            android:layout_marginRight="10dp"
+            android:layout_marginEnd="10dp" />
+
+        <RadioButton
+            android:id="@+id/mealSize3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/full_meal" />
+    </RadioGroup>
 
     <Button
         android:id="@+id/updateDbButton"
         android:layout_width="216dp"
         android:layout_height="wrap_content"
-        android:text="@string/update_db" />
+        android:text="@string/update_db"
+        android:layout_marginBottom="10dp"
+        />
+
+    <View style="@style/Divider"/>
+
+    <Button
+        android:id="@+id/userDataButton"
+        android:layout_width="216dp"
+        android:layout_height="wrap_content"
+        android:text="@string/set_user_data"
+        android:layout_weight="0.02" />
 
 
 </LinearLayout>
