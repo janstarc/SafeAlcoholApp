@@ -42,27 +42,27 @@
             android:id="@+id/uiText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/alcohol_units"
-            android:textColor="@android:color/black"
-            android:textSize="20sp"
             android:layout_alignBaseline="@+id/drinksSumText"
             android:layout_alignBottom="@+id/drinksSumText"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:layout_marginLeft="10dp"
-            android:layout_marginStart="10dp" />
+            android:layout_marginStart="10dp"
+            android:text="@string/alcohol_units"
+            android:textColor="@android:color/black"
+            android:textSize="20sp" />
 
         <TextView
             android:id="@+id/drinksSumText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_below="@+id/searchText"
             android:layout_marginLeft="6dp"
             android:layout_marginStart="6dp"
-            android:text="@string/test"
-            android:textSize="20sp"
-            android:layout_below="@+id/searchText"
+            android:layout_toEndOf="@+id/uiText"
             android:layout_toRightOf="@+id/uiText"
-            android:layout_toEndOf="@+id/uiText" />
+            android:text="@string/test"
+            android:textSize="20sp" />
 
         <TextView
             android:id="@+id/uiText2"
@@ -88,6 +88,28 @@
             android:layout_toRightOf="@+id/uiText2"
             android:text="@string/_0"
             android:textSize="20sp" />
+
+        <Spinner
+            android:id="@+id/spinnerTime"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/uiText"
+            android:layout_marginEnd="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="13dp" />
+
+        <Button
+            android:id="@+id/testButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_below="@+id/searchButton"
+            android:text="@string/test2" />
 
     </RelativeLayout>
 

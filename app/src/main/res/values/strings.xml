@@ -40,6 +40,10 @@
     <string name="full_meal">Full meal</string>
     <string name="meal_size">Meal size:</string>
     <string name="update_user_data">Update user data</string>
+    <string name="prev"><![CDATA[< Prev]]></string>
+    <string name="next"><![CDATA[Next >]]></string>
+    <string name="selected_date">Selected date</string>
+    <string name="test2">TEST</string>
     <string-array name="drinks_array">
         <item>Drink 1</item>
         <item>Drink 2</item>
@@ -49,5 +53,10 @@
         <item>Drink 6</item>
         <item>Drink 7</item>
         <item>Drink 8</item>
+    </string-array>
+    <string-array name="time_array">
+        <item>Last 8 hours</item>
+        <item>Last 24 hours</item>
+        <item>Last 3 days</item>
     </string-array>
 </resources>

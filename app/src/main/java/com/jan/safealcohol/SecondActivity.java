@@ -1,5 +1,7 @@
 package com.jan.safealcohol;
 
+import android.annotation.SuppressLint;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -7,15 +9,20 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 import java.io.Serializable;
+import java.text.DecimalFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
-
 import static com.jan.safealcohol.FeedReaderContract.FeedEntry.COLUMN_NAME_AMOUNT;
 import static com.jan.safealcohol.FeedReaderContract.FeedEntry.COLUMN_NAME_NAME;
 import static com.jan.safealcohol.FeedReaderContract.FeedEntry.COLUMN_NAME_TIMESTAMP;
@@ -41,7 +48,15 @@ public class SecondActivity extends AppCompatActivity implements Serializable {
     private List amount = new ArrayList<>();
     private List units = new ArrayList<>();
     private List timestamp = new ArrayList<>();
+    private Spinner spinnerTime;
+    private Cursor cursor;
 
+    @SuppressLint("SimpleDateFormat")
+    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    SharedPreferences.Editor editor;
+    SharedPreferences prefs;
+    private Button testButton;
+    public static final String MY_PREFS_FILE = "MyPrefsFile";
 
     protected void onCreate(Bundle savedInstanceState){
 
@@ -49,6 +64,7 @@ public class SecondActivity extends AppCompatActivity implements Serializable {
         setContentView(R.layout.secondactivitydesign);
         defineVariables();
         updateListView();
+        createDropdownMenu();
     }
 
     public void defineVariables(){
@@ -59,6 +75,11 @@ public class SecondActivity extends AppCompatActivity implements Serializable {
         searchText = (EditText) findViewById(R.id.searchText);
         alcoUnits = (TextView) findViewById(R.id.drinksSumText);
         alcoLevel = (TextView) findViewById(R.id.alcoLevel);
+        spinnerTime = (Spinner) findViewById(R.id.spinnerTime);
+
+        // TODO --> To delete below
+        testButton = (Button) findViewById(R.id.testButton);
+        testButton.setOnClickListener(testButtonListener);
     }
 
     /**
@@ -88,11 +109,32 @@ public class SecondActivity extends AppCompatActivity implements Serializable {
         }
     };
 
+    // TODO To delete!!! --> Just for testing data storage!
+    View.OnClickListener testButtonListener = new Button.OnClickListener(){
+
+        @Override
+        public void onClick(View v){
+            // try-catch cause of parse exception
+            try {
+                handleDateDifference();
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
+    };
+
     /**
      *  [END] Event listeners
      */
 
-    // Implementation of the search feature
+    public void createDropdownMenu(){
+
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.time_array, android.R.layout.simple_spinner_item);    // Create an ArrayAdapter using the string array and a default spinner layout
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);             // Specify the layout to use when the list of choices appears
+        spinnerTime.setAdapter(adapter);                // Apply the adapter to the spinner
+    }
+
+    /** Implementation of the search feature */
     public void filterList(){
 
         String text = searchText.getText().toString();              // Get query
@@ -131,7 +173,10 @@ public class SecondActivity extends AppCompatActivity implements Serializable {
         int unitsSum = 0;
 
         getDrinksFromDb();                   // 1.) Stores data to name, amount, timestamp... ArrayLists
+        copyToArrayLists();                  // 2.) Copies data to 4 ArrayLists
         items = new ArrayList<>();
+
+
 
         // 2.) Copies data from other ArrayLists to the items ArrayList --> Passed to adapter
         if(itemIds.size() > 0){
@@ -145,9 +190,12 @@ public class SecondActivity extends AppCompatActivity implements Serializable {
             items.add(new ListItem("No drinks on the list", R.drawable.ic_code_black_48dp, ""));
         }
 
-        // Updates values
-        alcoUnits.setText(Integer.toString(unitsSum));
-        alcoLevel.setText(Integer.toString(unitsSum *2));
+        // TODO Finish the calculation --> // Updates values
+        prefs = getSharedPreferences(MY_PREFS_FILE, MODE_PRIVATE);
+        float unitsFloat = prefs.getFloat("units", (float) 0.0);
+        DecimalFormat numberFormat = new DecimalFormat("0.0");
+        alcoUnits.setText(String.valueOf(numberFormat.format(unitsFloat)));
+        alcoLevel.setText(String.valueOf(numberFormat.format(unitsFloat/3.6)));
 
         // Pass values to adapter
         adapter = new ListAdapter(this, items);
@@ -169,9 +217,7 @@ public class SecondActivity extends AppCompatActivity implements Serializable {
         timestamp = new ArrayList<>();
 
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_NAME, null);
-
-        copyToArrayLists(cursor);
+        cursor = db.rawQuery("SELECT * FROM " + TABLE_NAME, null);
     }
 
     /**
@@ -179,7 +225,7 @@ public class SecondActivity extends AppCompatActivity implements Serializable {
      *
      */
 
-    public void copyToArrayLists(Cursor cursor){
+    public void copyToArrayLists(){
         while(cursor.moveToNext()) {
             long itemId = cursor.getLong(
                     cursor.getColumnIndexOrThrow(FeedReaderContract.FeedEntry._ID));
@@ -200,7 +246,6 @@ public class SecondActivity extends AppCompatActivity implements Serializable {
             String timestampField = cursor.getString(
                     cursor.getColumnIndexOrThrow(COLUMN_NAME_TIMESTAMP));
             timestamp.add(timestampField);
-
         }
         cursor.close();
     }
@@ -232,5 +277,50 @@ public class SecondActivity extends AppCompatActivity implements Serializable {
         for(int i = 0; i < itemIds.size(); i++){
             Log.d("debug", "Item: " + itemIds.get(i) + " | " + name.get(i) + " | " + amount.get(i) + " | " + units.get(i) + " | " + timestamp.get(i));
         }
+    }
+
+    // TODO Testnig method, to delete later!!!
+    public void handleDateDifference() throws ParseException {
+
+        // TODO dateFormat defined in the upper part!
+        // TODO Date handling
+        Date myDate = new Date();
+        String date = dateFormat.format(myDate);
+
+        editor = getSharedPreferences(MY_PREFS_FILE, MODE_PRIVATE).edit();
+        editor.putString("time", date);
+        editor.apply();
+
+        prefs = getSharedPreferences(MY_PREFS_FILE, MODE_PRIVATE);
+        String dateFromDb = prefs.getString("time", null);
+        Toast.makeText(getApplicationContext(), "DateFromDB: " + dateFromDb, Toast.LENGTH_LONG).show();
+
+        Log.d("time123", "HERE0");
+        Date d1 = dateFormat.parse(dateFromDb);
+        Date d2 = dateFormat.parse("2017-10-19 06:55:00");
+        Log.d("time123", "HERE0");
+
+        long minutesDiff = calculateTimeDifference(d1, d2);
+        Log.d("time123", "MinutesDiff: " + minutesDiff);
+    }
+
+    public long calculateTimeDifference(Date date1, Date date2){
+
+        Log.d("time123", "HERE!!!!!");
+        long second = 1000l;
+        long minute = 60l * second;
+        long hour = 60l * minute;
+
+        // calculation
+        long diff = date2.getTime() - date1.getTime();
+
+        // printing output
+        Log.d("time123", String.format("%02d", diff / hour) + " hours, ");
+        Log.d("time123", String.format("%02d", (diff % hour) / minute) + " minutes, ");
+        Log.d("time123", String.format("%02d", (diff % minute) / second) + " seconds");
+        long hoursOut = diff/hour;
+        long minOut = (diff % hour) / minute;
+
+        return hoursOut*60+minOut;
     }
 }

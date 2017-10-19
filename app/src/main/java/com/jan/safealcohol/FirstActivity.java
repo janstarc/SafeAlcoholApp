@@ -1,8 +1,10 @@
 package com.jan.safealcohol;
 
+import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -17,7 +19,7 @@ import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 import java.io.Serializable;
-import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import static com.jan.safealcohol.FeedReaderContract.FeedEntry.COLUMN_NAME_AMOUNT;
@@ -51,6 +53,11 @@ public class FirstActivity extends AppCompatActivity implements Serializable {
     private RadioButton mealSize2Radio;
     private RadioButton mealSize3Radio;
     private TextView lastMeal;
+    @SuppressLint("SimpleDateFormat")
+    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    SharedPreferences.Editor editor;
+    SharedPreferences prefs;
+    public static final String MY_PREFS_FILE = "MyPrefsFile";
 
     protected void onCreate(Bundle savedInstanceState){
 
@@ -77,7 +84,9 @@ public class FirstActivity extends AppCompatActivity implements Serializable {
         addButton = (Button) findViewById(R.id.addButton);
         spinner = (Spinner) findViewById(spinnerDesign);
         customDateTime = (EditText) findViewById(R.id.customDateTime);
-        customDateTime.setText(DateFormat.getDateTimeInstance().format(new Date()));
+        Date myDate = new Date();
+        String date = dateFormat.format(myDate);
+        customDateTime.setText(date);
         customDateTimeCheckBox = (CheckBox) findViewById(R.id.checkBox);
         mealtime = (EditText) findViewById(R.id.mealTimeET);
         saveButton = (Button) findViewById(R.id.updateDbButton);
@@ -165,14 +174,31 @@ public class FirstActivity extends AppCompatActivity implements Serializable {
         ContentValues values = new ContentValues();
         values.put(COLUMN_NAME_NAME, spinner.getSelectedItem().toString());
         values.put(COLUMN_NAME_AMOUNT, amount);
+        float units = (float) (amount * 1.4);
         values.put(COLUMN_NAME_UNITS, amount * 1.4);              // TODO To add the units - new DB for drinks
+
+        prefs = getSharedPreferences(MY_PREFS_FILE, MODE_PRIVATE);
+        float unitsOld = prefs.getFloat("units", (float) 0.0);
+        editor = getSharedPreferences(MY_PREFS_FILE, MODE_PRIVATE).edit();
+        editor.putFloat("units", units + unitsOld);
+        editor.apply();
+
+        /**
+         * 1.) Ko se drink doda, se level alkohola itak dvigne za vrednost dodatka
+         * 2.) Vpise se datum zadnjega izracuna --> IZRACUN: Potreben datum zadnjega izracuna + time difference do trenutnega casa
+         *      --> Faktor upadanja levela na minuto
+         *
+         */
 
         // Custom timestamp
         if(!customDateTimeCheckBox.isChecked()){
-            values.put(COLUMN_NAME_TIMESTAMP, DateFormat.getDateTimeInstance().format(new Date()));
+            Date myDate = new Date();
+            String date = dateFormat.format(myDate);
+            values.put(COLUMN_NAME_TIMESTAMP, date);
         } else {
             values.put(COLUMN_NAME_TIMESTAMP, customDateTime.getText().toString());
         }
+
 
         // Insert the new row, returning the primary key value of the new row
         long newRowId = db.insert(TABLE_NAME, null, values);
@@ -180,6 +206,7 @@ public class FirstActivity extends AppCompatActivity implements Serializable {
 
     // Welcome message and last meal message
     public void updateUserMessages(){
+
 
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
 
@@ -217,6 +244,7 @@ public class FirstActivity extends AppCompatActivity implements Serializable {
     public void addMealToDB(){
 
         // Gets the data repository in write mode
+
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
 
         int radioButton = 0;
@@ -231,7 +259,9 @@ public class FirstActivity extends AppCompatActivity implements Serializable {
 
         Log.d("db", "QUERY: " + query);
         db.execSQL(query);
+
         updateUserMessages();
+
 
     }
 
