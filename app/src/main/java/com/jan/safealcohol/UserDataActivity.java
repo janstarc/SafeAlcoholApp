@@ -1,22 +1,14 @@
 package com.jan.safealcohol;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-
-import static com.jan.safealcohol.FeedReaderContract.FeedEntry.COLUMN_NAME_FIRSTNAME;
-import static com.jan.safealcohol.FeedReaderContract.FeedEntry.COLUMN_NAME_GENDER;
-import static com.jan.safealcohol.FeedReaderContract.FeedEntry.COLUMN_NAME_HEIGHT;
-import static com.jan.safealcohol.FeedReaderContract.FeedEntry.COLUMN_NAME_LASTNAME;
-import static com.jan.safealcohol.FeedReaderContract.FeedEntry.COLUMN_NAME_WEIGHT;
-import static com.jan.safealcohol.FeedReaderContract.FeedEntry.TABLE2_NAME;
 
 
 public class UserDataActivity extends AppCompatActivity {
@@ -30,6 +22,10 @@ public class UserDataActivity extends AppCompatActivity {
     private EditText gender;
     private EditText height;
     private Button updateDBbutton;
+
+    SharedPreferences.Editor editor;
+    SharedPreferences prefs;
+    public static final String MY_PREFS_FILE = "MyPrefsFile";
 
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,34 +57,27 @@ public class UserDataActivity extends AppCompatActivity {
 
     public void fillUserDataForm(){
 
-        SQLiteDatabase db = mDbHelper.getReadableDatabase();
-        cursor = db.rawQuery("SELECT * FROM " + TABLE2_NAME, null);
-        cursor.moveToNext();
+        prefs = getSharedPreferences(MY_PREFS_FILE, MODE_PRIVATE);
+        firstname.setText(prefs.getString("firstname", null));
+        lastname.setText(prefs.getString("lastname", null));
+        weight.setText(Integer.toString(prefs.getInt("weight", 0)));
+        gender.setText(prefs.getString("gender", null));
+        height.setText(Integer.toString(prefs.getInt("height", 0)));
 
-        firstname.setText(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_NAME_FIRSTNAME)));
-        lastname.setText(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_NAME_LASTNAME)));
-        weight.setText(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_NAME_WEIGHT)));
-        gender.setText(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_NAME_GENDER)));
-        height.setText(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_NAME_HEIGHT)));
     }
 
     public void updateUserData(){
 
-        // Gets the data repository in write mode
-        SQLiteDatabase db = mDbHelper.getWritableDatabase();
-        Log.d("debug", "DB: " + db);
+        editor = getSharedPreferences(MY_PREFS_FILE, MODE_PRIVATE).edit();
+        editor.putString("firstname", firstname.getText().toString());
+        editor.putString("lastname", lastname.getText().toString());
+        editor.putString("gender", gender.getText().toString());
+        editor.putInt("weight", Integer.parseInt(weight.getText().toString()));
+        editor.putInt("height", Integer.parseInt(height.getText().toString()));
+        editor.apply();
 
-        String query = "UPDATE userDataNew SET " +
-                "firstname = '" + firstname.getText().toString() + "', " +
-                "lastname = '" + lastname.getText().toString() + "', " +
-                "weight = '" + weight.getText().toString() + "', " +
-                "gender = '" + gender.getText().toString() + "', " +
-                "height = '" + height.getText().toString() + "' " +
-                "WHERE _id = '1'";
-
-        Log.d("db", "QUERY: " + query);
-        db.execSQL(query);
         Toast.makeText(getApplicationContext(), "User data updated successfully", Toast.LENGTH_SHORT).show();
         fillUserDataForm();
+
     }
 }

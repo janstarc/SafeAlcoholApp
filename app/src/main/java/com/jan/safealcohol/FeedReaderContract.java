@@ -14,6 +14,7 @@ public final class FeedReaderContract {
         public static final String COLUMN_NAME_UNITS = "units";
         public static final String COLUMN_NAME_TIMESTAMP = "timestamp";
 
+        /*
         public static final String TABLE2_NAME = "userDataNew";
         public static final String COLUMN_NAME_FIRSTNAME = "firstname";
         public static final String COLUMN_NAME_LASTNAME = "lastname";
@@ -22,5 +23,6 @@ public final class FeedReaderContract {
         public static final String COLUMN_NAME_HEIGHT = "height";
         public static final String COLUMN_NAME_SIZEOFMEAL = "sizeofmeal";
         public static final String COLUMN_NAME_MEALTIME = "mealtime";
+        */
     }
 }

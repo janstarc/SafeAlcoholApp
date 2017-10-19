@@ -9,7 +9,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -18,19 +17,15 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.TextView;
+
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import static com.jan.safealcohol.FeedReaderContract.FeedEntry.COLUMN_NAME_AMOUNT;
-import static com.jan.safealcohol.FeedReaderContract.FeedEntry.COLUMN_NAME_FIRSTNAME;
-import static com.jan.safealcohol.FeedReaderContract.FeedEntry.COLUMN_NAME_LASTNAME;
-import static com.jan.safealcohol.FeedReaderContract.FeedEntry.COLUMN_NAME_MEALTIME;
 import static com.jan.safealcohol.FeedReaderContract.FeedEntry.COLUMN_NAME_NAME;
-import static com.jan.safealcohol.FeedReaderContract.FeedEntry.COLUMN_NAME_SIZEOFMEAL;
 import static com.jan.safealcohol.FeedReaderContract.FeedEntry.COLUMN_NAME_TIMESTAMP;
 import static com.jan.safealcohol.FeedReaderContract.FeedEntry.COLUMN_NAME_UNITS;
-import static com.jan.safealcohol.FeedReaderContract.FeedEntry.TABLE2_NAME;
 import static com.jan.safealcohol.FeedReaderContract.FeedEntry.TABLE_NAME;
 import static com.jan.safealcohol.R.id.spinnerDesign;
 
@@ -84,9 +79,12 @@ public class FirstActivity extends AppCompatActivity implements Serializable {
         addButton = (Button) findViewById(R.id.addButton);
         spinner = (Spinner) findViewById(spinnerDesign);
         customDateTime = (EditText) findViewById(R.id.customDateTime);
+
+        // OK - new implementation
         Date myDate = new Date();
         String date = dateFormat.format(myDate);
         customDateTime.setText(date);
+        // OK End
         customDateTimeCheckBox = (CheckBox) findViewById(R.id.checkBox);
         mealtime = (EditText) findViewById(R.id.mealTimeET);
         saveButton = (Button) findViewById(R.id.updateDbButton);
@@ -187,7 +185,7 @@ public class FirstActivity extends AppCompatActivity implements Serializable {
          * 1.) Ko se drink doda, se level alkohola itak dvigne za vrednost dodatka
          * 2.) Vpise se datum zadnjega izracuna --> IZRACUN: Potreben datum zadnjega izracuna + time difference do trenutnega casa
          *      --> Faktor upadanja levela na minuto
-         *
+         *  // http://www.izberisam.org/alkopedija/alko-osnove/izracun-alkohola-v-krvi/
          */
 
         // Custom timestamp
@@ -207,22 +205,15 @@ public class FirstActivity extends AppCompatActivity implements Serializable {
     // Welcome message and last meal message
     public void updateUserMessages(){
 
-
-        SQLiteDatabase db = mDbHelper.getReadableDatabase();
-
-        // Welcome message
-        cursor = db.rawQuery("SELECT * FROM " + TABLE2_NAME, null);
-        cursor.moveToNext();
-
-        String fn = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_NAME_FIRSTNAME));
-        String ln = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_NAME_LASTNAME));
+        prefs = getSharedPreferences(MY_PREFS_FILE, MODE_PRIVATE);
+        String fn = prefs.getString("firstname", null);
+        String ln = prefs.getString("lastname", null);
 
         welcomeMessage.setText("Welcome, " + fn + " " + ln);
 
-        // Last meal message
-        String mealType = "";
+        int sizeOfMeal = prefs.getInt("sizeofmeal", 1);
 
-        int sizeOfMeal = Integer.parseInt(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_NAME_SIZEOFMEAL)));
+        String mealType = "";
         switch(sizeOfMeal) {
             case 1:
                 mealType = "snack";
@@ -235,34 +226,32 @@ public class FirstActivity extends AppCompatActivity implements Serializable {
                 break;
         }
 
-        String mt = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_NAME_MEALTIME));
-        mealtime.setText(customDateTime.getText().toString());
+        String mt = prefs.getString("timeofmeal", null);
+        Date myDate = new Date();
+        String date = dateFormat.format(myDate);
+        mealtime.setText(date);
         lastMeal.setText("Your last meal was a " + mealType + " on " + mt);
+
     }
 
     // Adds last meal to the db
     public void addMealToDB(){
 
         // Gets the data repository in write mode
+        editor = getSharedPreferences(MY_PREFS_FILE, MODE_PRIVATE).edit();
 
-        SQLiteDatabase db = mDbHelper.getWritableDatabase();
 
         int radioButton = 0;
         if(mealSize1Radio.isChecked()) radioButton = 1;
         else if(mealSize2Radio.isChecked()) radioButton = 2;
         else radioButton = 3;
 
-        String query = "UPDATE userDataNew SET " +
-                "sizeofmeal = '" + radioButton + "', " +
-                "mealtime = '" + mealtime.getText().toString() + "' " +
-                "WHERE _id = '1'";
-
-        Log.d("db", "QUERY: " + query);
-        db.execSQL(query);
-
+        editor.putInt("sizeofmeal", radioButton);
+        Date myDate = new Date();
+        String date = dateFormat.format(myDate);
+        editor.putString("timeofmeal", date);
+        editor.apply();
         updateUserMessages();
-
-
     }
 
     /**
