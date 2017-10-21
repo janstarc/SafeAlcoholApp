@@ -106,10 +106,20 @@
             android:id="@+id/testButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
+            android:text="@string/test2"
+            android:layout_alignBaseline="@+id/alcoLevel"
+            android:layout_alignBottom="@+id/alcoLevel"
             android:layout_alignParentRight="true"
-            android:layout_below="@+id/searchButton"
-            android:text="@string/test2" />
+            android:layout_alignParentEnd="true" />
+
+        <Button
+            android:id="@+id/resetButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/testButton"
+            android:layout_alignStart="@+id/testButton"
+            android:layout_alignTop="@+id/spinnerTime"
+            android:text="@string/reset" />
 
     </RelativeLayout>
 

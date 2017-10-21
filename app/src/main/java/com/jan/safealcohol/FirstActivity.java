@@ -9,7 +9,9 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -17,8 +19,10 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.Serializable;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -53,6 +57,8 @@ public class FirstActivity extends AppCompatActivity implements Serializable {
     SharedPreferences.Editor editor;
     SharedPreferences prefs;
     public static final String MY_PREFS_FILE = "MyPrefsFile";
+    private TextView unitsTextView;
+    private Button updateUnitsButton;
 
     protected void onCreate(Bundle savedInstanceState){
 
@@ -65,12 +71,23 @@ public class FirstActivity extends AppCompatActivity implements Serializable {
         callEventListeners();
         createDropdownMenu();
         updateUserMessages();
+
+        try {
+            updateUnits((float) 0.0);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void onResume() {
         super.onResume();  // Always call the superclass method first
         updateUserMessages();
+        try {
+            updateUnits((float) 0.0);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
     }
 
     public void defineVariables(){
@@ -95,6 +112,8 @@ public class FirstActivity extends AppCompatActivity implements Serializable {
         mealSize2Radio = (RadioButton) findViewById(R.id.mealSize2);
         mealSize3Radio = (RadioButton) findViewById(R.id.mealSize3);
         lastMeal = (TextView) findViewById(R.id.lastMeal);
+        unitsTextView = (TextView) findViewById(R.id.unitsDisplay);
+        updateUnitsButton = (Button) findViewById(R.id.updateUnitsButton);
     }
 
     /**
@@ -106,7 +125,10 @@ public class FirstActivity extends AppCompatActivity implements Serializable {
         addButton.setOnClickListener(addDrinkListener);
         saveButton.setOnClickListener(addMealToDBListener);
         userDataButton.setOnClickListener(startUserDataListener);
+        updateUnitsButton.setOnClickListener(updateUnitsListener);
     }
+
+
 
     // Starts UserDataActivity
     View.OnClickListener startUserDataListener = new Button.OnClickListener(){
@@ -131,7 +153,11 @@ public class FirstActivity extends AppCompatActivity implements Serializable {
 
         @Override
         public void onClick(View v){
-            addDrinkToDB();
+            try {
+                addDrinkToDB();
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
         }
     };
 
@@ -141,6 +167,18 @@ public class FirstActivity extends AppCompatActivity implements Serializable {
         @Override
         public void onClick(View v){
             runSecondActivity();
+        }
+    };
+
+    View.OnClickListener updateUnitsListener = new Button.OnClickListener(){
+
+        @Override
+        public void onClick(View v){
+            try {
+                updateUnits((float) 0.0);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
         }
     };
 
@@ -159,7 +197,7 @@ public class FirstActivity extends AppCompatActivity implements Serializable {
         spinner.setAdapter(adapter);                // Apply the adapter to the spinner
     }
 
-    public void addDrinkToDB(){
+    public void addDrinkToDB() throws ParseException {
 
         String amountText = amount.getText().toString();
         if(amountText.equals("")) amountText = "1.0";               // If the field is empty
@@ -172,21 +210,11 @@ public class FirstActivity extends AppCompatActivity implements Serializable {
         ContentValues values = new ContentValues();
         values.put(COLUMN_NAME_NAME, spinner.getSelectedItem().toString());
         values.put(COLUMN_NAME_AMOUNT, amount);
-        float units = (float) (amount * 1.4);
         values.put(COLUMN_NAME_UNITS, amount * 1.4);              // TODO To add the units - new DB for drinks
+        float newDrinkUnits = (float) (amount * 1.4);                     // TODO!!!
 
-        prefs = getSharedPreferences(MY_PREFS_FILE, MODE_PRIVATE);
-        float unitsOld = prefs.getFloat("units", (float) 0.0);
-        editor = getSharedPreferences(MY_PREFS_FILE, MODE_PRIVATE).edit();
-        editor.putFloat("units", units + unitsOld);
-        editor.apply();
-
-        /**
-         * 1.) Ko se drink doda, se level alkohola itak dvigne za vrednost dodatka
-         * 2.) Vpise se datum zadnjega izracuna --> IZRACUN: Potreben datum zadnjega izracuna + time difference do trenutnega casa
-         *      --> Faktor upadanja levela na minuto
-         *  // http://www.izberisam.org/alkopedija/alko-osnove/izracun-alkohola-v-krvi/
-         */
+        Log.d("drinkCalc", "newDrinkUnits: " + newDrinkUnits);
+        updateUnits(newDrinkUnits);                               // Recalculate the units, put on screen, update SharedPref file!
 
         // Custom timestamp
         if(!customDateTimeCheckBox.isChecked()){
@@ -197,9 +225,53 @@ public class FirstActivity extends AppCompatActivity implements Serializable {
             values.put(COLUMN_NAME_TIMESTAMP, customDateTime.getText().toString());
         }
 
-
         // Insert the new row, returning the primary key value of the new row
         long newRowId = db.insert(TABLE_NAME, null, values);
+    }
+
+
+    /**
+     * 1.) Ko se drink doda, se level alkohola itak dvigne za vrednost dodatka
+     * 2.) Vpise se datum zadnjega izracuna --> IZRACUN: Potreben datum zadnjega izracuna + time difference do trenutnega casa
+     *      --> Faktor upadanja levela na minuto
+     *  // http://www.izberisam.org/alkopedija/alko-osnove/izracun-alkohola-v-krvi/
+     */
+
+    public void updateUnits(float newDrinkUnits) throws ParseException {
+
+        // Get current date
+        Date currentTimestamp = new Date();
+
+        // Get the unitsOld and unitsTimestamp from the SharedPref
+        prefs = getSharedPreferences(MY_PREFS_FILE, MODE_PRIVATE);
+        float unitsOld = prefs.getFloat("units", (float) 0.0);                        // Gets info from the SharedPref
+        Log.d("drinkCalc", "Units old: " + unitsOld);
+        String unitsTimestampString = prefs.getString("unitsTimestamp", dateFormat.format(currentTimestamp));        // Gets the timestamp from the DB
+
+        // Convert unistTimestamp from SharedPref to Date + Calculate timeDiff
+        Date unitsTimestamp = dateFormat.parse(unitsTimestampString);
+        long timeDifferenceMin = calculateTimeDifference(currentTimestamp, unitsTimestamp);
+        Log.d("drinkCalc", "Diff in min: " + timeDifferenceMin);
+
+        if(timeDifferenceMin > 0 || newDrinkUnits != 0.0) {                 // To prevent changing timeStamp, without changing units.
+                                                                            // newDrinkUnits == 0.0 --> Only update, nothing new added!
+
+            float unitsMinus = (float) (timeDifferenceMin * 0.5);           // TODO Wrong factor! [unitsDrop/min]
+            Toast.makeText(getApplicationContext(),
+                    "UnitsMinus: " + unitsMinus + " | TimeDiff: " + timeDifferenceMin, Toast.LENGTH_LONG).show();
+
+            float unitsNew = (newDrinkUnits + unitsOld - unitsMinus);       // units --> Current drink | unitsOld --> Prev units from SharedPref | unitsMinus --> timeDiff * decreaseOnMin
+            if (unitsNew < 0) unitsNew = 0;                                 // To avoid neg. units --> You can be max sober
+            editor = getSharedPreferences(MY_PREFS_FILE, MODE_PRIVATE).edit();
+            editor.putFloat("units", unitsNew);                                 // Put new info to the SharedPref
+            String newTimestamp = dateFormat.format(currentTimestamp);          // Update last calculation value for units in
+            editor.putString("unitsTimestamp", newTimestamp);                   // shared pref file!
+            editor.apply();
+
+        } else {
+            Toast.makeText(getApplicationContext(), "Calculated less than 1min ago!", Toast.LENGTH_LONG).show();
+        }
+        unitsTextView.setText("Current units: " + prefs.getFloat("units", (float) 0.0));
     }
 
     // Welcome message and last meal message
@@ -252,6 +324,26 @@ public class FirstActivity extends AppCompatActivity implements Serializable {
         editor.putString("timeofmeal", date);
         editor.apply();
         updateUserMessages();
+    }
+
+    public long calculateTimeDifference(Date date1, Date date2){
+
+        Log.d("time123", "HERE!!!!!");
+        long second = 1000l;
+        long minute = 60l * second;
+        long hour = 60l * minute;
+
+        // calculation
+        long diff = date2.getTime() - date1.getTime();
+
+        // printing output
+        Log.d("time123", String.format("%02d", diff / hour) + " hours, ");
+        Log.d("time123", String.format("%02d", (diff % hour) / minute) + " minutes, ");
+        Log.d("time123", String.format("%02d", (diff % minute) / second) + " seconds");
+        long hoursOut = diff/hour;
+        long minOut = (diff % hour) / minute;
+
+        return Math.abs(hoursOut*60+minOut);
     }
 
     /**

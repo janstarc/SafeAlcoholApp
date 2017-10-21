@@ -43,7 +43,10 @@
     <string name="prev"><![CDATA[< Prev]]></string>
     <string name="next"><![CDATA[Next >]]></string>
     <string name="selected_date">Selected date</string>
-    <string name="test2">TEST</string>
+    <string name="test2">DATE TEST</string>
+    <string name="reset">RESET</string>
+    <string name="units">Units: </string>
+    <string name="update_units">Update Units</string>
     <string-array name="drinks_array">
         <item>Drink 1</item>
         <item>Drink 2</item>

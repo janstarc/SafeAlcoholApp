@@ -50,6 +50,7 @@ public class SecondActivity extends AppCompatActivity implements Serializable {
     private List timestamp = new ArrayList<>();
     private Spinner spinnerTime;
     private Cursor cursor;
+    private Button resetButton;
 
     @SuppressLint("SimpleDateFormat")
     SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -63,7 +64,17 @@ public class SecondActivity extends AppCompatActivity implements Serializable {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.secondactivitydesign);
         defineVariables();
-        updateListView();
+        try {
+            updateUnits((float) 0.0);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            updateListView();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
         createDropdownMenu();
     }
 
@@ -80,6 +91,25 @@ public class SecondActivity extends AppCompatActivity implements Serializable {
         // TODO --> To delete below
         testButton = (Button) findViewById(R.id.testButton);
         testButton.setOnClickListener(testButtonListener);
+        resetButton = (Button) findViewById(R.id.resetButton);
+        resetButton.setOnClickListener(resetButtonListener);
+
+        spinnerTime.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                try {
+                    updateListView();
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parentView) {
+                // your code here
+            }
+
+        });
     }
 
     /**
@@ -93,8 +123,17 @@ public class SecondActivity extends AppCompatActivity implements Serializable {
         public boolean onItemLongClick(AdapterView<?> arg0, View arg1, int pos, long id) {
 
             Log.d("debug","LongClicked: " + pos);
-            String timestampS = timestamp.get(pos).toString();
-            deleteDrinkFromDb(timestampS);
+
+            try {
+                if(items.size() != 1 && !items.get(0).getTitle().equals("No drinks on the list")){
+                    String timestampS = timestamp.get(pos).toString();
+                    deleteDrinkFromDb(timestampS);
+                } else {
+                    Toast.makeText(getApplicationContext(), "No drinks left - impossible to delete", Toast.LENGTH_SHORT).show();
+                }
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
 
             return true;
         }
@@ -122,6 +161,23 @@ public class SecondActivity extends AppCompatActivity implements Serializable {
             }
         }
     };
+
+    View.OnClickListener resetButtonListener = new Button.OnClickListener(){
+
+        @Override
+        public void onClick(View v){
+            editor = getSharedPreferences(MY_PREFS_FILE, MODE_PRIVATE).edit();
+            editor.putFloat("units", (float) 0.0);
+            editor.apply();
+            try {
+                updateListView();
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
+    };
+
+
 
     /**
      *  [END] Event listeners
@@ -168,7 +224,7 @@ public class SecondActivity extends AppCompatActivity implements Serializable {
      * 3.) Updates values - Drinks sum and units sum
      * 4.) Updates ListView
      */
-    public void updateListView(){
+    public void updateListView() throws ParseException {
 
         int unitsSum = 0;
 
@@ -176,14 +232,38 @@ public class SecondActivity extends AppCompatActivity implements Serializable {
         copyToArrayLists();                  // 2.) Copies data to 4 ArrayLists
         items = new ArrayList<>();
 
+        // Get current date
+        Date currentTimestamp = new Date();
+        int spinnerId = (int) spinnerTime.getSelectedItemId();
+        Log.d("spinner", "SpinnerId: " + spinnerId);
 
 
         // 2.) Copies data from other ArrayLists to the items ArrayList --> Passed to adapter
         if(itemIds.size() > 0){
             for(int i = 0; i < itemIds.size(); i++){
-                ListItem item = new ListItem(name.get(i).toString(), R.drawable.ic_opacity_black_48dp, "Amount: " + amount.get(i).toString() + "dl [" + timestamp.get(i).toString() +"]");
-                items.add(item);
-                unitsSum += Integer.parseInt(units.get(i).toString());
+
+                String itemTimestampString = timestamp.get(i).toString();
+                Date itemTimestamp = dateFormat.parse(itemTimestampString);
+                long timeDifference = calculateTimeDifference(currentTimestamp, itemTimestamp);
+                Log.d("spinner", "TimeDiff: " + timeDifference + " --> Name: " + name.get(i).toString());
+
+                // TODO Make it more readable
+                if(spinnerId == 0 && timeDifference < 480){
+                    addListItem(i);
+                    //ListItem item = new ListItem(name.get(i).toString(), R.drawable.ic_opacity_black_48dp, "Amount: " + amount.get(i).toString() + "dl [" + timestamp.get(i).toString() +"]");
+                    //items.add(item);
+                    unitsSum += Integer.parseInt(units.get(i).toString());
+                } else if (spinnerId == 1 && timeDifference < 1440) {
+                    addListItem(i);
+                    //ListItem item = new ListItem(name.get(i).toString(), R.drawable.ic_opacity_black_48dp, "Amount: " + amount.get(i).toString() + "dl [" + timestamp.get(i).toString() +"]");
+                    //items.add(item);
+                    unitsSum += Integer.parseInt(units.get(i).toString());
+                } else if (spinnerId == 2 && timeDifference < 4320) {
+                    addListItem(i);
+                    //ListItem item = new ListItem(name.get(i).toString(), R.drawable.ic_opacity_black_48dp, "Amount: " + amount.get(i).toString() + "dl [" + timestamp.get(i).toString() +"]");
+                    //items.add(item);
+                    unitsSum += Integer.parseInt(units.get(i).toString());
+                }
             }
 
         } else {
@@ -201,6 +281,11 @@ public class SecondActivity extends AppCompatActivity implements Serializable {
         adapter = new ListAdapter(this, items);
         myList.setAdapter(adapter);
         myList.setOnItemLongClickListener(deleteDrinkListener);
+    }
+
+    public void addListItem(int i){
+        ListItem item = new ListItem(name.get(i).toString(), R.drawable.ic_opacity_black_48dp, "Amount: " + amount.get(i).toString() + "dl [" + timestamp.get(i).toString() +"]");
+        items.add(item);
     }
 
     /**
@@ -254,7 +339,7 @@ public class SecondActivity extends AppCompatActivity implements Serializable {
      * 1.) Deletes value with timestamp from the DB
      * 2.) Updates the list view
      */
-    public void deleteDrinkFromDb(String timestamp){
+    public void deleteDrinkFromDb(String timestamp) throws ParseException {
 
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
 
@@ -288,11 +373,11 @@ public class SecondActivity extends AppCompatActivity implements Serializable {
         String date = dateFormat.format(myDate);
 
         editor = getSharedPreferences(MY_PREFS_FILE, MODE_PRIVATE).edit();
-        editor.putString("time", date);
+        editor.putString("unitsTimestamp", date);
         editor.apply();
 
         prefs = getSharedPreferences(MY_PREFS_FILE, MODE_PRIVATE);
-        String dateFromDb = prefs.getString("time", null);
+        String dateFromDb = prefs.getString("unitsTimestamp", null);
         Toast.makeText(getApplicationContext(), "DateFromDB: " + dateFromDb, Toast.LENGTH_LONG).show();
 
         Log.d("time123", "HERE0");
@@ -302,11 +387,48 @@ public class SecondActivity extends AppCompatActivity implements Serializable {
 
         long minutesDiff = calculateTimeDifference(d1, d2);
         Log.d("time123", "MinutesDiff: " + minutesDiff);
+
     }
+
+    public void updateUnits(float newDrinkUnits) throws ParseException {
+
+        // Get current date
+        Date currentTimestamp = new Date();
+
+        // Get the unitsOld and unitsTimestamp from the SharedPref
+        prefs = getSharedPreferences(MY_PREFS_FILE, MODE_PRIVATE);
+        float unitsOld = prefs.getFloat("units", (float) 0.0);                        // Gets info from the SharedPref
+        String unitsTimestampString = prefs.getString("unitsTimestamp", dateFormat.format(currentTimestamp));        // Gets the timestamp from the DB
+
+        // Convert unistTimestamp from SharedPref to Date + Calculate timeDiff
+        Date unitsTimestamp = dateFormat.parse(unitsTimestampString);
+        long timeDifferenceMin = calculateTimeDifference(currentTimestamp, unitsTimestamp);
+
+
+        if(timeDifferenceMin > 0) {                                         // To prevent changing timeStamp, without changing units
+
+            float unitsMinus = (float) (timeDifferenceMin * 0.5);           // TODO Wrong factor! [unitsDrop/min]
+            Toast.makeText(getApplicationContext(),
+                    "UnitsMinus: " + unitsMinus + " | TimeDiff: " + timeDifferenceMin, Toast.LENGTH_LONG).show();
+
+            float unitsNew = (newDrinkUnits + unitsOld - unitsMinus);       // units --> Current drink | unitsOld --> Prev units from SharedPref | unitsMinus --> timeDiff * decreaseOnMin
+            if (unitsNew < 0) unitsNew = 0;                                 // To avoid neg. units --> You can be max sober
+            editor = getSharedPreferences(MY_PREFS_FILE, MODE_PRIVATE).edit();
+            editor.putFloat("units", unitsNew);                                 // Put new info to the SharedPref
+            String newTimestamp = dateFormat.format(currentTimestamp);          // Update last calculation value for units in
+            editor.putString("unitsTimestamp", newTimestamp);                   // shared pref file!
+            editor.apply();
+
+        } else {
+            Toast.makeText(getApplicationContext(), "Calculated less than 1min ago!", Toast.LENGTH_LONG).show();
+        }
+        alcoUnits.setText("Current units: " + prefs.getFloat("units", (float) 0.0));
+    }
+
+
 
     public long calculateTimeDifference(Date date1, Date date2){
 
-        Log.d("time123", "HERE!!!!!");
         long second = 1000l;
         long minute = 60l * second;
         long hour = 60l * minute;
@@ -321,6 +443,16 @@ public class SecondActivity extends AppCompatActivity implements Serializable {
         long hoursOut = diff/hour;
         long minOut = (diff % hour) / minute;
 
-        return hoursOut*60+minOut;
+        return Math.abs(hoursOut*60+minOut);
     }
 }
+
+/*
+Accessing SharedPreference
+
+adb root
+adb shell
+chmod 777 /data/data/com.jan.safealcohol/shared_prefs/MyPrefsFile.xml
+exit # return to default user
+
+*/
