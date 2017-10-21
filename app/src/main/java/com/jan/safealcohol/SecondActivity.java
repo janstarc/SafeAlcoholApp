@@ -11,7 +11,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -22,6 +21,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import static com.jan.safealcohol.FeedReaderContract.FeedEntry.COLUMN_NAME_AMOUNT;
 import static com.jan.safealcohol.FeedReaderContract.FeedEntry.COLUMN_NAME_NAME;
@@ -37,6 +37,9 @@ public class SecondActivity extends AppCompatActivity implements Serializable {
     private TextView alcoUnits;
     private TextView alcoLevel;
     private FeedReaderDbHelper mDbHelper = new FeedReaderDbHelper(this);
+    private Spinner spinnerTime;
+    private Cursor cursor;
+    private Button resetButton;
 
     // Data structures to store the data read from DB
     private List itemIds = new ArrayList<>();
@@ -44,9 +47,9 @@ public class SecondActivity extends AppCompatActivity implements Serializable {
     private List amount = new ArrayList<>();
     private List units = new ArrayList<>();
     private List timestamp = new ArrayList<>();
-    private Spinner spinnerTime;
-    private Cursor cursor;
-    private Button resetButton;
+    private HashMap picturesMap = new HashMap();
+    private HashMap percentMap = new HashMap();
+    private HashMap amountMap = new HashMap();
 
     @SuppressLint("SimpleDateFormat")
     SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -60,11 +63,13 @@ public class SecondActivity extends AppCompatActivity implements Serializable {
         setContentView(R.layout.secondactivitydesign);
         defineVariables();
         createDropdownMenu();
+        createPicturesMap();
+        createPercentageMap();
 
         try {
             updateUnits((float) 0.0);
             updateListView();
-            //optimizeDatabase();
+            optimizeDatabase();
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -95,7 +100,6 @@ public class SecondActivity extends AppCompatActivity implements Serializable {
             public void onNothingSelected(AdapterView<?> parentView) {
                 // your code here
             }
-
         });
     }
 
@@ -121,7 +125,6 @@ public class SecondActivity extends AppCompatActivity implements Serializable {
             } catch (ParseException e) {
                 e.printStackTrace();
             }
-
             return true;
         }
     };
@@ -141,8 +144,6 @@ public class SecondActivity extends AppCompatActivity implements Serializable {
         }
     };
 
-
-
     /**
      *  [END] Event listeners
      */
@@ -152,6 +153,42 @@ public class SecondActivity extends AppCompatActivity implements Serializable {
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.time_array, android.R.layout.simple_spinner_item);    // Create an ArrayAdapter using the string array and a default spinner layout
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);             // Specify the layout to use when the list of choices appears
         spinnerTime.setAdapter(adapter);                // Apply the adapter to the spinner
+    }
+
+    public void createPicturesMap(){
+        picturesMap.put("Radler (2.5%)", "radler");
+        picturesMap.put("Light beer (4.2%)", "lightBeer");
+        picturesMap.put("Regular beer (5.0%)", "regularBeer");
+        picturesMap.put("Cider (5.0%)", "cider");
+        picturesMap.put("Strong beer (7.0%)", "strongBeer");
+        picturesMap.put("Liquor (10%)", "liquor");
+        picturesMap.put("Wine (12%)", "wine");
+        picturesMap.put("Distiled spirit (40%)", "distiledSpirit");
+        picturesMap.put("Absinth (50%)", "absinth");
+    }
+
+    public void createPercentageMap(){
+        percentMap.put("Radler (2.5%)", 2.5f);
+        percentMap.put("Light beer (4.2%)", 4.2f);
+        percentMap.put("Regular beer (5.0%)", 5.0f);
+        percentMap.put("Cider (5.0%)", 5.0f);
+        percentMap.put("Strong beer (7.0%)", 7.0f);
+        percentMap.put("Liquor (10%)", 10.0f);
+        percentMap.put("Wine (12%)", 12.0f);
+        percentMap.put("Distiled spirit (40%)", 40.0f);
+        percentMap.put("Absinth (50%)", 50.0f);
+    }
+
+    public void createAmountMap(){
+        amountMap.put("Radler (2.5%)", 0.5f);
+        amountMap.put("Light beer (4.2%)", 0.5f);
+        amountMap.put("Regular beer (5.0%)", 0.5f);
+        amountMap.put("Cider (5.0%)", 0.5f);
+        amountMap.put("Strong beer (7.0%)", 0.5f);
+        amountMap.put("Liquor (10%)", 0.05f);
+        amountMap.put("Wine (12%)", 0.1f);
+        amountMap.put("Distiled spirit (40%)", 0.05f);
+        amountMap.put("Absinth (50%)", 0.03f);
     }
 
     /**
@@ -185,17 +222,14 @@ public class SecondActivity extends AppCompatActivity implements Serializable {
 
                 // TODO Make it more readable
                 if(spinnerId == 0 && timeDifference < 480){
-
                     addListItem(i);
                     unitsSum += Integer.parseInt(units.get(i).toString());
 
                 } else if (spinnerId == 1 && timeDifference < 1440) {
-
                     addListItem(i);
                     unitsSum += Integer.parseInt(units.get(i).toString());
 
                 } else if (spinnerId == 2 && timeDifference < 4320) {
-
                     addListItem(i);
                     unitsSum += Integer.parseInt(units.get(i).toString());
                 }
@@ -242,7 +276,6 @@ public class SecondActivity extends AppCompatActivity implements Serializable {
 
     /**
      * 1.) Copies values from cursor to the ArrayLists
-     *
      */
 
     public void copyToArrayLists(){
@@ -328,13 +361,9 @@ public class SecondActivity extends AppCompatActivity implements Serializable {
             editor.putString("unitsTimestamp", newTimestamp);                   // shared pref file!
             editor.apply();
 
-        } else {
-            //Toast.makeText(getApplicationContext(), "Calculated less than 1min ago!", Toast.LENGTH_LONG).show();
         }
         alcoUnits.setText("Current units: " + prefs.getFloat("units", (float) 0.0));
     }
-
-
 
     public long calculateTimeDifference(Date date1, Date date2){
 
@@ -346,9 +375,9 @@ public class SecondActivity extends AppCompatActivity implements Serializable {
         long diff = date2.getTime() - date1.getTime();
 
         // printing output
-        Log.d("time123", String.format("%02d", diff / hour) + " hours, ");
-        Log.d("time123", String.format("%02d", (diff % hour) / minute) + " minutes, ");
-        Log.d("time123", String.format("%02d", (diff % minute) / second) + " seconds");
+        Log.d("timeTag", String.format("%02d", diff / hour) + " hours, ");
+        Log.d("timeTag", String.format("%02d", (diff % hour) / minute) + " minutes, ");
+        Log.d("timeTag", String.format("%02d", (diff % minute) / second) + " seconds");
         long hoursOut = diff/hour;
         long minOut = (diff % hour) / minute;
 
@@ -367,13 +396,11 @@ public class SecondActivity extends AppCompatActivity implements Serializable {
             Date itemTimestamp = dateFormat.parse(itemTimestampString);
 
             if(calculateTimeDifference(currentTimestamp, itemTimestamp) > 4320) {                   // If item is older than 3 days, delete!
-                db.execSQL("DELETE FROM " + TABLE_NAME + " WHERE " + COLUMN_NAME_TIMESTAMP + "= '" + itemTimestamp + "'");
+                db.execSQL("DELETE FROM " + TABLE_NAME + " WHERE " + COLUMN_NAME_TIMESTAMP + "= '" + itemTimestampString + "'");
                 deletedItems++;
             }
         }
-
-        Toast.makeText(getApplicationContext(), deletedItems + " outdated items deleted from DB", Toast.LENGTH_SHORT).show();
-
+        Log.d("dboptimize", deletedItems + " outdated items deleted from DB");
     }
 }
 

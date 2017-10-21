@@ -18,13 +18,18 @@ public class FeedReaderDbHelper extends SQLiteOpenHelper {
     private static final String SQL_CREATE_ENTRIES2 =
             "CREATE TABLE " + FeedReaderContract.FeedEntry.TABLE2_NAME + " (" +
                     FeedReaderContract.FeedEntry._ID + " INTEGER PRIMARY KEY," +
-                    FeedReaderContract.FeedEntry.COLUMN_NAME_FIRSTNAME + " TEXT," +
-                    FeedReaderContract.FeedEntry.COLUMN_NAME_LASTNAME + " TEXT," +
-                    FeedReaderContract.FeedEntry.COLUMN_NAME_WEIGHT + " INTEGER," +
-                    FeedReaderContract.FeedEntry.COLUMN_NAME_GENDER + " TEXT," +
-                    FeedReaderContract.FeedEntry.COLUMN_NAME_HEIGHT + " INTEGER," +
-                    FeedReaderContract.FeedEntry.COLUMN_NAME_SIZEOFMEAL + " INTEGER," +
-                    FeedReaderContract.FeedEntry.COLUMN_NAME_MEALTIME + " TEXT )";
+                    FeedReaderContract.FeedEntry.COLUMN_NAME_DRINKNAME + " TEXT," +
+                    FeedReaderContract.FeedEntry.COLUMN_NAME_PERCENTAGE + " REAL," +
+                    FeedReaderContract.FeedEntry.COLUMN_NAME_IMAGE + " TEXT," +
+                    FeedReaderContract.FeedEntry.COLUMN_NAME_DRINKAMOUNT + " REAL )";
+
+    private static final String INSERT_DATA =
+            "INSERT INTO " + FeedReaderContract.FeedEntry.TABLE2_NAME + " (" +
+                    FeedReaderContract.FeedEntry._ID + ", " +
+                    FeedReaderContract.FeedEntry.COLUMN_NAME_DRINKNAME + ", " +
+                    FeedReaderContract.FeedEntry.COLUMN_NAME_PERCENTAGE + ", " +
+                    FeedReaderContract.FeedEntry.COLUMN_NAME_IMAGE + ", " +
+                    FeedReaderContract.FeedEntry.COLUMN_NAME_DRINKAMOUNT + ") "
     */
 
     private static final String SQL_DELETE_ENTRIES =

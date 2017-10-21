@@ -47,15 +47,18 @@
     <string name="reset">RESET</string>
     <string name="units">Units: </string>
     <string name="update_units">Update Units</string>
+    <string name="dl">dl</string>
+    <string name="percent">%</string>
     <string-array name="drinks_array">
-        <item>Drink 1</item>
-        <item>Drink 2</item>
-        <item>Drink 3</item>
-        <item>Drink 4</item>
-        <item>Drink 5</item>
-        <item>Drink 6</item>
-        <item>Drink 7</item>
-        <item>Drink 8</item>
+        <item>Radler (2.5%)</item>
+        <item>Light beer (4.2%)</item>
+        <item>Regular beer (5.0%)</item>
+        <item>Cider (5.0%)</item>
+        <item>Strong beer (7.0%)</item>
+        <item>Liquor (10%)</item>
+        <item>Wine (12%)</item>
+        <item>Distiled spirit (40%)</item>
+        <item>Absinth (50%)</item>
     </string-array>
     <string-array name="time_array">
         <item>Last 8 hours</item>
