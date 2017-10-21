@@ -64,18 +64,14 @@ public class SecondActivity extends AppCompatActivity implements Serializable {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.secondactivitydesign);
         defineVariables();
-        try {
-            updateUnits((float) 0.0);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
 
         try {
+            updateUnits((float) 0.0);
             updateListView();
+            optimizeDatabase();
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        createDropdownMenu();
     }
 
     public void defineVariables(){
@@ -420,7 +416,7 @@ public class SecondActivity extends AppCompatActivity implements Serializable {
             editor.apply();
 
         } else {
-            Toast.makeText(getApplicationContext(), "Calculated less than 1min ago!", Toast.LENGTH_LONG).show();
+            //Toast.makeText(getApplicationContext(), "Calculated less than 1min ago!", Toast.LENGTH_LONG).show();
         }
         alcoUnits.setText("Current units: " + prefs.getFloat("units", (float) 0.0));
     }
@@ -444,6 +440,27 @@ public class SecondActivity extends AppCompatActivity implements Serializable {
         long minOut = (diff % hour) / minute;
 
         return Math.abs(hoursOut*60+minOut);
+    }
+
+    // Delete entries older than 3 days --> Keep the DB small
+    public void optimizeDatabase() throws ParseException {
+
+        Date currentTimestamp = new Date();
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+        int deletedItems = 0;
+
+        for(int i = 0; i < timestamp.size(); i++){
+            String itemTimestampString = timestamp.get(i).toString();
+            Date itemTimestamp = dateFormat.parse(itemTimestampString);
+
+            if(calculateTimeDifference(currentTimestamp, itemTimestamp) > 4320) {                   // If item is older than 3 days, delete!
+                db.execSQL("DELETE FROM " + TABLE_NAME + " WHERE " + COLUMN_NAME_TIMESTAMP + "= '" + itemTimestamp + "'");
+                deletedItems++;
+            }
+        }
+
+        Toast.makeText(getApplicationContext(), deletedItems + " outdated items deleted from DB", Toast.LENGTH_SHORT).show();
+
     }
 }
 

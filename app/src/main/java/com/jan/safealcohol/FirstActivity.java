@@ -245,13 +245,11 @@ public class FirstActivity extends AppCompatActivity implements Serializable {
         // Get the unitsOld and unitsTimestamp from the SharedPref
         prefs = getSharedPreferences(MY_PREFS_FILE, MODE_PRIVATE);
         float unitsOld = prefs.getFloat("units", (float) 0.0);                        // Gets info from the SharedPref
-        Log.d("drinkCalc", "Units old: " + unitsOld);
         String unitsTimestampString = prefs.getString("unitsTimestamp", dateFormat.format(currentTimestamp));        // Gets the timestamp from the DB
 
         // Convert unistTimestamp from SharedPref to Date + Calculate timeDiff
         Date unitsTimestamp = dateFormat.parse(unitsTimestampString);
         long timeDifferenceMin = calculateTimeDifference(currentTimestamp, unitsTimestamp);
-        Log.d("drinkCalc", "Diff in min: " + timeDifferenceMin);
 
         if(timeDifferenceMin > 0 || newDrinkUnits != 0.0) {                 // To prevent changing timeStamp, without changing units.
                                                                             // newDrinkUnits == 0.0 --> Only update, nothing new added!
