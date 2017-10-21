@@ -33,11 +33,11 @@ public class SecondActivity extends AppCompatActivity implements Serializable {
 
     private ListView myList;
     private ListAdapter adapter;
-    private Button searchButton;
-    private EditText searchText;
+    //private Button searchButton;
+    //private EditText searchText;
     ArrayList<ListItem> items = new ArrayList<>();
-    private boolean noResults;
-    ArrayList<ListItem> filteredItems;
+    //private boolean noResults;
+    //ArrayList<ListItem> filteredItems;
     private TextView alcoUnits;
     private TextView alcoLevel;
     private FeedReaderDbHelper mDbHelper = new FeedReaderDbHelper(this);
@@ -56,7 +56,7 @@ public class SecondActivity extends AppCompatActivity implements Serializable {
     SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     SharedPreferences.Editor editor;
     SharedPreferences prefs;
-    private Button testButton;
+    //private Button testButton;
     public static final String MY_PREFS_FILE = "MyPrefsFile";
 
     protected void onCreate(Bundle savedInstanceState){
@@ -64,11 +64,12 @@ public class SecondActivity extends AppCompatActivity implements Serializable {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.secondactivitydesign);
         defineVariables();
+        createDropdownMenu();
 
         try {
             updateUnits((float) 0.0);
             updateListView();
-            optimizeDatabase();
+            //optimizeDatabase();
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -77,16 +78,16 @@ public class SecondActivity extends AppCompatActivity implements Serializable {
     public void defineVariables(){
 
         myList = (ListView) findViewById(R.id.listView);
-        searchButton = (Button) findViewById(R.id.searchButton);
-        searchButton.setOnClickListener(filterListListener);
-        searchText = (EditText) findViewById(R.id.searchText);
+        //searchButton = (Button) findViewById(R.id.searchButton);
+        //searchButton.setOnClickListener(filterListListener);
+        //searchText = (EditText) findViewById(R.id.searchText);
         alcoUnits = (TextView) findViewById(R.id.drinksSumText);
         alcoLevel = (TextView) findViewById(R.id.alcoLevel);
         spinnerTime = (Spinner) findViewById(R.id.spinnerTime);
 
         // TODO --> To delete below
-        testButton = (Button) findViewById(R.id.testButton);
-        testButton.setOnClickListener(testButtonListener);
+        //testButton = (Button) findViewById(R.id.testButton);
+        //testButton.setOnClickListener(testButtonListener);
         resetButton = (Button) findViewById(R.id.resetButton);
         resetButton.setOnClickListener(resetButtonListener);
 
@@ -135,6 +136,7 @@ public class SecondActivity extends AppCompatActivity implements Serializable {
         }
     };
 
+    /*
     // Calls the function filterList --> Search feature
     View.OnClickListener filterListListener = new Button.OnClickListener(){
 
@@ -143,7 +145,9 @@ public class SecondActivity extends AppCompatActivity implements Serializable {
             filterList();
         }
     };
+    */
 
+    /*
     // TODO To delete!!! --> Just for testing data storage!
     View.OnClickListener testButtonListener = new Button.OnClickListener(){
 
@@ -157,6 +161,7 @@ public class SecondActivity extends AppCompatActivity implements Serializable {
             }
         }
     };
+    */
 
     View.OnClickListener resetButtonListener = new Button.OnClickListener(){
 
@@ -186,7 +191,9 @@ public class SecondActivity extends AppCompatActivity implements Serializable {
         spinnerTime.setAdapter(adapter);                // Apply the adapter to the spinner
     }
 
+
     /** Implementation of the search feature */
+    /*
     public void filterList(){
 
         String text = searchText.getText().toString();              // Get query
@@ -213,6 +220,7 @@ public class SecondActivity extends AppCompatActivity implements Serializable {
             showModifiedList(items);                                // Show original list - no query
         }
     }
+    */
 
     /**
      * 1.) Reads from DB --> Updates ArrayLists
@@ -298,7 +306,7 @@ public class SecondActivity extends AppCompatActivity implements Serializable {
         timestamp = new ArrayList<>();
 
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
-        cursor = db.rawQuery("SELECT * FROM " + TABLE_NAME, null);
+        cursor = db.rawQuery("SELECT * FROM " + TABLE_NAME + " ORDER BY _id DESC", null);
     }
 
     /**
@@ -360,6 +368,7 @@ public class SecondActivity extends AppCompatActivity implements Serializable {
         }
     }
 
+    /*
     // TODO Testnig method, to delete later!!!
     public void handleDateDifference() throws ParseException {
 
@@ -385,6 +394,7 @@ public class SecondActivity extends AppCompatActivity implements Serializable {
         Log.d("time123", "MinutesDiff: " + minutesDiff);
 
     }
+    */
 
     public void updateUnits(float newDrinkUnits) throws ParseException {
 

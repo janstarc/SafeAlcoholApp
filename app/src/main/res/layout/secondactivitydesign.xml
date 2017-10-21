@@ -14,9 +14,8 @@
             android:layout_height="520dp"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
-            android:layout_below="@+id/searchButton"
             android:layout_marginTop="68dp" />
-
+        <!--
         <EditText
             android:id="@+id/searchText"
             android:layout_width="wrap_content"
@@ -36,7 +35,7 @@
             android:layout_alignParentRight="true"
             android:layout_alignParentTop="true"
             android:layout_toEndOf="@+id/searchText"
-            android:text="@string/search" />
+            android:text="@string/search" /> -->
 
         <TextView
             android:id="@+id/uiText"
@@ -50,44 +49,45 @@
             android:layout_marginStart="10dp"
             android:text="@string/alcohol_units"
             android:textColor="@android:color/black"
-            android:textSize="20sp" />
+            android:textSize="20sp"
+            android:layout_marginTop="10dp"/>
 
         <TextView
             android:id="@+id/drinksSumText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/searchText"
             android:layout_marginLeft="6dp"
             android:layout_marginStart="6dp"
             android:layout_toEndOf="@+id/uiText"
             android:layout_toRightOf="@+id/uiText"
             android:text="@string/test"
-            android:textSize="20sp" />
+            android:textSize="20sp"
+            android:layout_marginTop="10dp"/>
 
         <TextView
             android:id="@+id/uiText2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/searchText"
             android:layout_marginLeft="15dp"
             android:layout_marginStart="15dp"
             android:layout_toEndOf="@+id/drinksSumText"
             android:layout_toRightOf="@+id/drinksSumText"
             android:text="@string/expected_level"
             android:textColor="@android:color/black"
-            android:textSize="20sp" />
+            android:textSize="20sp"
+            android:layout_marginTop="10dp"/>
 
         <TextView
             android:id="@+id/alcoLevel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/searchText"
             android:layout_marginLeft="5dp"
             android:layout_marginStart="5dp"
             android:layout_toEndOf="@+id/uiText2"
             android:layout_toRightOf="@+id/uiText2"
             android:text="@string/_0"
-            android:textSize="20sp" />
+            android:textSize="20sp"
+            android:layout_marginTop="10dp"/>
 
         <Spinner
             android:id="@+id/spinnerTime"
@@ -102,6 +102,7 @@
             android:layout_marginStart="10dp"
             android:layout_marginTop="13dp" />
 
+        <!--
         <Button
             android:id="@+id/testButton"
             android:layout_width="wrap_content"
@@ -110,16 +111,17 @@
             android:layout_alignBaseline="@+id/alcoLevel"
             android:layout_alignBottom="@+id/alcoLevel"
             android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true" />
+            android:layout_alignParentEnd="true" /> -->
 
         <Button
             android:id="@+id/resetButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignLeft="@+id/testButton"
-            android:layout_alignStart="@+id/testButton"
-            android:layout_alignTop="@+id/spinnerTime"
-            android:text="@string/reset" />
+            android:text="@string/reset"
+            android:layout_alignBaseline="@+id/alcoLevel"
+            android:layout_alignBottom="@+id/alcoLevel"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true" />
 
     </RelativeLayout>
 

@@ -95,6 +95,7 @@ public class FirstActivity extends AppCompatActivity implements Serializable {
         amount = (EditText) findViewById(R.id.amount);
         addButton = (Button) findViewById(R.id.addButton);
         spinner = (Spinner) findViewById(spinnerDesign);
+        //spinner.setSelection(0);
         customDateTime = (EditText) findViewById(R.id.customDateTime);
 
         // OK - new implementation
