@@ -46,11 +46,9 @@ public class FirstActivity extends AppCompatActivity implements Serializable {
     private EditText mealtime;
     private Button saveButton;
     private Button userDataButton;
-    Cursor cursor;
     private TextView welcomeMessage;
     private RadioButton mealSize1Radio;
     private RadioButton mealSize2Radio;
-    private RadioButton mealSize3Radio;
     private TextView lastMeal;
     @SuppressLint("SimpleDateFormat")
     SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -111,7 +109,6 @@ public class FirstActivity extends AppCompatActivity implements Serializable {
         mealSize1Radio = (RadioButton) findViewById(R.id.mealSize1);
         mealSize1Radio.setChecked(true);
         mealSize2Radio = (RadioButton) findViewById(R.id.mealSize2);
-        mealSize3Radio = (RadioButton) findViewById(R.id.mealSize3);
         lastMeal = (TextView) findViewById(R.id.lastMeal);
         unitsTextView = (TextView) findViewById(R.id.unitsDisplay);
         updateUnitsButton = (Button) findViewById(R.id.updateUnitsButton);

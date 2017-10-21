@@ -33,11 +33,7 @@ public class SecondActivity extends AppCompatActivity implements Serializable {
 
     private ListView myList;
     private ListAdapter adapter;
-    //private Button searchButton;
-    //private EditText searchText;
     ArrayList<ListItem> items = new ArrayList<>();
-    //private boolean noResults;
-    //ArrayList<ListItem> filteredItems;
     private TextView alcoUnits;
     private TextView alcoLevel;
     private FeedReaderDbHelper mDbHelper = new FeedReaderDbHelper(this);
@@ -56,7 +52,6 @@ public class SecondActivity extends AppCompatActivity implements Serializable {
     SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     SharedPreferences.Editor editor;
     SharedPreferences prefs;
-    //private Button testButton;
     public static final String MY_PREFS_FILE = "MyPrefsFile";
 
     protected void onCreate(Bundle savedInstanceState){
@@ -78,16 +73,11 @@ public class SecondActivity extends AppCompatActivity implements Serializable {
     public void defineVariables(){
 
         myList = (ListView) findViewById(R.id.listView);
-        //searchButton = (Button) findViewById(R.id.searchButton);
-        //searchButton.setOnClickListener(filterListListener);
-        //searchText = (EditText) findViewById(R.id.searchText);
         alcoUnits = (TextView) findViewById(R.id.drinksSumText);
         alcoLevel = (TextView) findViewById(R.id.alcoLevel);
         spinnerTime = (Spinner) findViewById(R.id.spinnerTime);
 
         // TODO --> To delete below
-        //testButton = (Button) findViewById(R.id.testButton);
-        //testButton.setOnClickListener(testButtonListener);
         resetButton = (Button) findViewById(R.id.resetButton);
         resetButton.setOnClickListener(resetButtonListener);
 
@@ -136,33 +126,6 @@ public class SecondActivity extends AppCompatActivity implements Serializable {
         }
     };
 
-    /*
-    // Calls the function filterList --> Search feature
-    View.OnClickListener filterListListener = new Button.OnClickListener(){
-
-        @Override
-        public void onClick(View v){
-            filterList();
-        }
-    };
-    */
-
-    /*
-    // TODO To delete!!! --> Just for testing data storage!
-    View.OnClickListener testButtonListener = new Button.OnClickListener(){
-
-        @Override
-        public void onClick(View v){
-            // try-catch cause of parse exception
-            try {
-                handleDateDifference();
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-        }
-    };
-    */
-
     View.OnClickListener resetButtonListener = new Button.OnClickListener(){
 
         @Override
@@ -190,37 +153,6 @@ public class SecondActivity extends AppCompatActivity implements Serializable {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);             // Specify the layout to use when the list of choices appears
         spinnerTime.setAdapter(adapter);                // Apply the adapter to the spinner
     }
-
-
-    /** Implementation of the search feature */
-    /*
-    public void filterList(){
-
-        String text = searchText.getText().toString();              // Get query
-        int textLen = text.length();
-        filteredItems = new ArrayList<>();                          // Create new ArrayList to put in the results
-
-        if(textLen != 0) {                                          // If there is search query
-            for (int i = 0; i < items.size(); i++) {                // Search part
-
-                if (textLen <= items.get(i).getTitle().length() &&
-                        (text.toLowerCase()).equals(items.get(i).getTitle().substring(0, textLen).toLowerCase())) {
-                    filteredItems.add(items.get(i));
-                    noResults = false;
-
-                } else if (textLen > items.size()){
-                    Log.d("debug", "Here!");
-                    if(!noResults) filteredItems.add(new ListItem("No results", R.drawable.ic_exit_to_app_black_48dp, ""));
-                    noResults = true;
-                }
-            }
-            showModifiedList(filteredItems);                        // Update list
-
-        } else {
-            showModifiedList(items);                                // Show original list - no query
-        }
-    }
-    */
 
     /**
      * 1.) Reads from DB --> Updates ArrayLists
@@ -253,19 +185,18 @@ public class SecondActivity extends AppCompatActivity implements Serializable {
 
                 // TODO Make it more readable
                 if(spinnerId == 0 && timeDifference < 480){
+
                     addListItem(i);
-                    //ListItem item = new ListItem(name.get(i).toString(), R.drawable.ic_opacity_black_48dp, "Amount: " + amount.get(i).toString() + "dl [" + timestamp.get(i).toString() +"]");
-                    //items.add(item);
                     unitsSum += Integer.parseInt(units.get(i).toString());
+
                 } else if (spinnerId == 1 && timeDifference < 1440) {
+
                     addListItem(i);
-                    //ListItem item = new ListItem(name.get(i).toString(), R.drawable.ic_opacity_black_48dp, "Amount: " + amount.get(i).toString() + "dl [" + timestamp.get(i).toString() +"]");
-                    //items.add(item);
                     unitsSum += Integer.parseInt(units.get(i).toString());
+
                 } else if (spinnerId == 2 && timeDifference < 4320) {
+
                     addListItem(i);
-                    //ListItem item = new ListItem(name.get(i).toString(), R.drawable.ic_opacity_black_48dp, "Amount: " + amount.get(i).toString() + "dl [" + timestamp.get(i).toString() +"]");
-                    //items.add(item);
                     unitsSum += Integer.parseInt(units.get(i).toString());
                 }
             }
@@ -367,34 +298,6 @@ public class SecondActivity extends AppCompatActivity implements Serializable {
             Log.d("debug", "Item: " + itemIds.get(i) + " | " + name.get(i) + " | " + amount.get(i) + " | " + units.get(i) + " | " + timestamp.get(i));
         }
     }
-
-    /*
-    // TODO Testnig method, to delete later!!!
-    public void handleDateDifference() throws ParseException {
-
-        // TODO dateFormat defined in the upper part!
-        // TODO Date handling
-        Date myDate = new Date();
-        String date = dateFormat.format(myDate);
-
-        editor = getSharedPreferences(MY_PREFS_FILE, MODE_PRIVATE).edit();
-        editor.putString("unitsTimestamp", date);
-        editor.apply();
-
-        prefs = getSharedPreferences(MY_PREFS_FILE, MODE_PRIVATE);
-        String dateFromDb = prefs.getString("unitsTimestamp", null);
-        Toast.makeText(getApplicationContext(), "DateFromDB: " + dateFromDb, Toast.LENGTH_LONG).show();
-
-        Log.d("time123", "HERE0");
-        Date d1 = dateFormat.parse(dateFromDb);
-        Date d2 = dateFormat.parse("2017-10-19 06:55:00");
-        Log.d("time123", "HERE0");
-
-        long minutesDiff = calculateTimeDifference(d1, d2);
-        Log.d("time123", "MinutesDiff: " + minutesDiff);
-
-    }
-    */
 
     public void updateUnits(float newDrinkUnits) throws ParseException {
 
