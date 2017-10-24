@@ -242,9 +242,10 @@ public class SecondActivity extends AppCompatActivity implements Serializable {
         // TODO Finish the calculation --> // Updates values
         prefs = getSharedPreferences(MY_PREFS_FILE, MODE_PRIVATE);
         float unitsFloat = prefs.getFloat("units", (float) 0.0);
+        float levelAlco = prefs.getFloat("alcoLevel", (float) 0.0);
         DecimalFormat numberFormat = new DecimalFormat("0.0");
         alcoUnits.setText(String.valueOf(numberFormat.format(unitsFloat)));
-        alcoLevel.setText(String.valueOf(numberFormat.format(unitsFloat/3.6)));
+        alcoLevel.setText(String.valueOf(numberFormat.format(levelAlco)));
 
         // Pass values to adapter
         adapter = new ListAdapter(this, items);
@@ -347,14 +348,13 @@ public class SecondActivity extends AppCompatActivity implements Serializable {
         long timeDifferenceMin = calculateTimeDifference(currentTimestamp, unitsTimestamp);
 
 
-        if(timeDifferenceMin > 0) {                                         // To prevent changing timeStamp, without changing units
+        if(timeDifferenceMin > 0 || newDrinkUnits != 0.0) {                  // To prevent changing timeStamp, without changing units
 
             float unitsMinus = (float) (timeDifferenceMin * 0.5);           // TODO Wrong factor! [unitsDrop/min]
-            Toast.makeText(getApplicationContext(),
-                    "UnitsMinus: " + unitsMinus + " | TimeDiff: " + timeDifferenceMin, Toast.LENGTH_LONG).show();
-
             float unitsNew = (newDrinkUnits + unitsOld - unitsMinus);       // units --> Current drink | unitsOld --> Prev units from SharedPref | unitsMinus --> timeDiff * decreaseOnMin
             if (unitsNew < 0) unitsNew = 0;                                 // To avoid neg. units --> You can be max sober
+            calculateAlcoLevel(unitsNew);
+
             editor = getSharedPreferences(MY_PREFS_FILE, MODE_PRIVATE).edit();
             editor.putFloat("units", unitsNew);                                 // Put new info to the SharedPref
             String newTimestamp = dateFormat.format(currentTimestamp);          // Update last calculation value for units in
@@ -362,7 +362,21 @@ public class SecondActivity extends AppCompatActivity implements Serializable {
             editor.apply();
 
         }
-        alcoUnits.setText("Current units: " + prefs.getFloat("units", (float) 0.0));
+
+    }
+
+    public void calculateAlcoLevel (float units){
+
+        prefs = getSharedPreferences(MY_PREFS_FILE, MODE_PRIVATE);
+        int weight = prefs.getInt("weight", 50);
+        String gender = prefs.getString("gender", "M");
+        float r = 0.7f;
+        if(gender.equals("F")) r = 0.6f;
+        float alcoLevel = (units*10) / (weight * r);
+
+        editor = getSharedPreferences(MY_PREFS_FILE, MODE_PRIVATE).edit();
+        editor.putFloat("alcoLevel", alcoLevel);
+        editor.apply();
     }
 
     public long calculateTimeDifference(Date date1, Date date2){

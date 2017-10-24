@@ -49,6 +49,8 @@
     <string name="update_units">Update Units</string>
     <string name="dl">dl</string>
     <string name="percent">%</string>
+    <string name="male">Male</string>
+    <string name="female">Female</string>
     <string-array name="drinks_array">
         <item>Radler (2.5%)</item>
         <item>Light beer (4.2%)</item>

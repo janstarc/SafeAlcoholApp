@@ -5,11 +5,9 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.FloatProperty;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -21,7 +19,6 @@ import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import java.io.Serializable;
 import java.text.DecimalFormat;
 import java.text.ParseException;
@@ -34,7 +31,6 @@ import static com.jan.safealcohol.FeedReaderContract.FeedEntry.COLUMN_NAME_NAME;
 import static com.jan.safealcohol.FeedReaderContract.FeedEntry.COLUMN_NAME_TIMESTAMP;
 import static com.jan.safealcohol.FeedReaderContract.FeedEntry.COLUMN_NAME_UNITS;
 import static com.jan.safealcohol.FeedReaderContract.FeedEntry.TABLE_NAME;
-import static com.jan.safealcohol.R.id.select_dialog_listview;
 import static com.jan.safealcohol.R.id.spinnerDesign;
 
 public class FirstActivity extends AppCompatActivity implements Serializable {
@@ -64,7 +60,7 @@ public class FirstActivity extends AppCompatActivity implements Serializable {
     private Button updateUnitsButton;
     private HashMap<String, Float> percentMap = new HashMap<>();
     private HashMap<String, Float> amountMap = new HashMap<>();
-    private DecimalFormat myFormat = new DecimalFormat("#.00");
+    private DecimalFormat myFormat = new DecimalFormat("0.0");
 
     protected void onCreate(Bundle savedInstanceState){
 
@@ -146,8 +142,6 @@ public class FirstActivity extends AppCompatActivity implements Serializable {
         });
     }
 
-
-
     // Starts UserDataActivity
     View.OnClickListener startUserDataListener = new Button.OnClickListener(){
 
@@ -225,10 +219,13 @@ public class FirstActivity extends AppCompatActivity implements Serializable {
     public void addDrinkToDB() throws ParseException {
 
         String amountText = amount.getText().toString();
-        if(amountText.equals("")){
-            Toast.makeText(getApplicationContext(), "Please fill the amount field", Toast.LENGTH_LONG).show();
+        String percentText = percent.getText().toString();
+        if(amountText.equals("") || percentText.equals("")){
+            Toast.makeText(getApplicationContext(), "Please fill all the fields", Toast.LENGTH_LONG).show();
         } else if (Float.valueOf(amountText) > 10.1f || Float.valueOf(amountText) < 0.1f) {
             Toast.makeText(getApplicationContext(), "Please check the amount again", Toast.LENGTH_LONG).show();
+        } else if (Float.valueOf(percentText) > 100 || Float.valueOf(percentText) < 0){
+            Toast.makeText(getApplicationContext(), "Please check the percentage again", Toast.LENGTH_LONG).show();
         } else {
 
             float amount = Float.valueOf(amountText);
@@ -236,7 +233,9 @@ public class FirstActivity extends AppCompatActivity implements Serializable {
             // Gets the data repository in write mode
             SQLiteDatabase db = mDbHelper.getWritableDatabase();
             String selectedDrink = spinner.getSelectedItem().toString();
-            Float newDrinkUnits = (amount*(percentMap.get(selectedDrink))/100) / 0.125f;
+            float percent = percentMap.get(selectedDrink);
+            if(Float.valueOf(percentText) != percent) percent = Float.valueOf(percentText);
+            Float newDrinkUnits = (amount*(percent)/100) / 0.125f;
             Log.d("drinkCalc", "newDrinkUnits: " + newDrinkUnits);
 
             // Create a new map of values, where column names are the keys
@@ -275,7 +274,7 @@ public class FirstActivity extends AppCompatActivity implements Serializable {
 
         // Get the unitsOld and unitsTimestamp from the SharedPref
         prefs = getSharedPreferences(MY_PREFS_FILE, MODE_PRIVATE);
-        float unitsOld = prefs.getFloat("units", (float) 0.0);                        // Gets info from the SharedPref
+        float unitsOld = prefs.getFloat("units", (float) 0.0);                                      // Gets info from the SharedPref
         String unitsTimestampString = prefs.getString("unitsTimestamp", dateFormat.format(currentTimestamp));        // Gets the timestamp from the DB
 
         // Convert unistTimestamp from SharedPref to Date + Calculate timeDiff
@@ -285,19 +284,45 @@ public class FirstActivity extends AppCompatActivity implements Serializable {
         // To prevent changing timeStamp, without changing units. | newDrinkUnits == 0.0 --> Only update for onCreate and onUpdate, nothing new added! 
         if(timeDifferenceMin > 0 || newDrinkUnits != 0.0) {                 
 
-            float unitsMinus = (float) (timeDifferenceMin * 0.5);           // TODO Wrong factor! [unitsDrop/min]
-            float unitsNew = (newDrinkUnits + unitsOld - unitsMinus);       // units --> Current drink | unitsOld --> Prev units from SharedPref | unitsMinus --> timeDiff * decreaseOnMin
-            if (unitsNew < 0) unitsNew = 0;                                 // To avoid neg. units --> You can be max sober
+            float unitsMinus = (float) (timeDifferenceMin * 0.5);                   // TODO Wrong factor! [unitsDrop/min]
+            float unitsNew = (newDrinkUnits + unitsOld - unitsMinus);               // units --> Current drink | unitsOld --> Prev units from SharedPref | unitsMinus --> timeDiff * decreaseOnMin
+            if (unitsNew < 0) unitsNew = 0;                                         // To avoid neg. units --> You can be max sober
+            calculateAlcoLevel(unitsNew);
             editor = getSharedPreferences(MY_PREFS_FILE, MODE_PRIVATE).edit();
-            editor.putFloat("units", unitsNew);                                 // Put new info to the SharedPref
-            String newTimestamp = dateFormat.format(currentTimestamp);          // Update last calculation value for units in
-            editor.putString("unitsTimestamp", newTimestamp);                   // shared pref file!
+            editor.putFloat("units", unitsNew);                                     // Put new info to the SharedPref
+            String newTimestamp = dateFormat.format(currentTimestamp);              // Update last calculation value for units in
+            editor.putString("unitsTimestamp", newTimestamp);                       // shared pref file!
             editor.apply();
 
         }
 
         Float currentUnits = prefs.getFloat("units", (float) 0.0);
-        unitsTextView.setText("Current units: " + myFormat.format(currentUnits));
+        Float alcoLevel = prefs.getFloat("alcoLevel", (float) 0.0);
+        unitsTextView.setText("Current units: " + myFormat.format(currentUnits) + " AlcoLevel: " + myFormat.format(alcoLevel));
+    }
+
+    /*
+    c = m / (TT x r)
+
+    Pri tem je:
+        c = koncentracija alkohola v krvi (g etanola na kg krvi ali promili)
+        m = masa popitega čistega alkohola izražena v gramih
+        TT = telesna masa izražena v kilogramih
+        r = porazdelitveni faktor (za moške 0,7 in za ženske 0,6)
+     */
+
+    public void calculateAlcoLevel (float units){
+
+        prefs = getSharedPreferences(MY_PREFS_FILE, MODE_PRIVATE);
+        int weight = prefs.getInt("weight", 50);
+        String gender = prefs.getString("gender", "M");
+        float r = 0.7f;
+        if(gender.equals("F")) r = 0.6f;
+        float alcoLevel = (units*10) / (weight * r);
+
+        editor = getSharedPreferences(MY_PREFS_FILE, MODE_PRIVATE).edit();
+        editor.putFloat("alcoLevel", alcoLevel);
+        editor.apply();
     }
 
     // Welcome message and last meal message
