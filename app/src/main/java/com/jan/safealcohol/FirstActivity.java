@@ -58,8 +58,9 @@ public class FirstActivity extends AppCompatActivity implements Serializable {
     public static final String MY_PREFS_FILE = "MyPrefsFile";
     private TextView unitsTextView;
     private Button updateUnitsButton;
-    private HashMap<String, Float> percentMap = new HashMap<>();
-    private HashMap<String, Float> amountMap = new HashMap<>();
+    private HashMap<String, Float> percentMap;
+    private HashMap<String, Float> amountMap;
+    private HashMap<String, Float> levelMap;
     private DecimalFormat myFormat = new DecimalFormat("0.0");
 
     protected void onCreate(Bundle savedInstanceState){
@@ -70,8 +71,9 @@ public class FirstActivity extends AppCompatActivity implements Serializable {
         // Create DB if not created
         new FeedReaderDbHelper(context);
         defineVariables();
-        createPercentageMap();
-        createAmountMap();
+        percentMap = HashMaps.createPercentageMap();
+        amountMap = HashMaps.createAmountMap();
+        levelMap = HashMaps.createLevelMap();
         callEventListeners();
         createDropdownMenu();
         updateUserMessages();
@@ -298,7 +300,11 @@ public class FirstActivity extends AppCompatActivity implements Serializable {
 
         Float currentUnits = prefs.getFloat("units", (float) 0.0);
         Float alcoLevel = prefs.getFloat("alcoLevel", (float) 0.0);
-        unitsTextView.setText("Current units: " + myFormat.format(currentUnits) + " AlcoLevel: " + myFormat.format(alcoLevel));
+        unitsTextView.setText("Current units: " + myFormat.format(currentUnits) + "  |  AlcoLevel: " + myFormat.format(alcoLevel) + "\n");
+        String limitInCountry = prefs.getString("country", null);
+        if(!limitInCountry.equals(null)){
+            unitsTextView.append("Limit in your country: " + myFormat.format(levelMap.get(prefs.getString("country", null))*10));
+        }
     }
 
     /*
@@ -391,30 +397,6 @@ public class FirstActivity extends AppCompatActivity implements Serializable {
         long minOut = (diff % hour) / minute;
 
         return Math.abs(hoursOut*60+minOut);
-    }
-
-    public void createPercentageMap(){
-        percentMap.put("Radler (2.5%)", 2.5f);
-        percentMap.put("Light beer (4.2%)", 4.2f);
-        percentMap.put("Regular beer (5.0%)", 5.0f);
-        percentMap.put("Cider (5.0%)", 5.0f);
-        percentMap.put("Strong beer (7.0%)", 7.0f);
-        percentMap.put("Liquor (10%)", 10.0f);
-        percentMap.put("Wine (12%)", 12.0f);
-        percentMap.put("Distiled spirit (40%)", 40.0f);
-        percentMap.put("Absinth (50%)", 50.0f);
-    }
-
-    public void createAmountMap(){
-        amountMap.put("Radler (2.5%)", 5f);
-        amountMap.put("Light beer (4.2%)", 5f);
-        amountMap.put("Regular beer (5.0%)", 5f);
-        amountMap.put("Cider (5.0%)", 5f);
-        amountMap.put("Strong beer (7.0%)", 5f);
-        amountMap.put("Liquor (10%)", 0.5f);
-        amountMap.put("Wine (12%)", 1f);
-        amountMap.put("Distiled spirit (40%)", 0.5f);
-        amountMap.put("Absinth (50%)", 0.3f);
     }
 
     /**

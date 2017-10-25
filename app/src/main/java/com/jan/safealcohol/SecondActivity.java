@@ -63,8 +63,8 @@ public class SecondActivity extends AppCompatActivity implements Serializable {
         setContentView(R.layout.secondactivitydesign);
         defineVariables();
         createDropdownMenu();
-        createPicturesMap();
-        createPercentageMap();
+        picturesMap = HashMaps.createPicturesMap();
+        percentMap = HashMaps.createPercentageMap();
 
         try {
             updateUnits((float) 0.0);
@@ -155,42 +155,6 @@ public class SecondActivity extends AppCompatActivity implements Serializable {
         spinnerTime.setAdapter(adapter);                // Apply the adapter to the spinner
     }
 
-    public void createPicturesMap(){
-        picturesMap.put("Radler (2.5%)", "radler");
-        picturesMap.put("Light beer (4.2%)", "lightBeer");
-        picturesMap.put("Regular beer (5.0%)", "regularBeer");
-        picturesMap.put("Cider (5.0%)", "cider");
-        picturesMap.put("Strong beer (7.0%)", "strongBeer");
-        picturesMap.put("Liquor (10%)", "liquor");
-        picturesMap.put("Wine (12%)", "wine");
-        picturesMap.put("Distiled spirit (40%)", "distiledSpirit");
-        picturesMap.put("Absinth (50%)", "absinth");
-    }
-
-    public void createPercentageMap(){
-        percentMap.put("Radler (2.5%)", 2.5f);
-        percentMap.put("Light beer (4.2%)", 4.2f);
-        percentMap.put("Regular beer (5.0%)", 5.0f);
-        percentMap.put("Cider (5.0%)", 5.0f);
-        percentMap.put("Strong beer (7.0%)", 7.0f);
-        percentMap.put("Liquor (10%)", 10.0f);
-        percentMap.put("Wine (12%)", 12.0f);
-        percentMap.put("Distiled spirit (40%)", 40.0f);
-        percentMap.put("Absinth (50%)", 50.0f);
-    }
-
-    public void createAmountMap(){
-        amountMap.put("Radler (2.5%)", 0.5f);
-        amountMap.put("Light beer (4.2%)", 0.5f);
-        amountMap.put("Regular beer (5.0%)", 0.5f);
-        amountMap.put("Cider (5.0%)", 0.5f);
-        amountMap.put("Strong beer (7.0%)", 0.5f);
-        amountMap.put("Liquor (10%)", 0.05f);
-        amountMap.put("Wine (12%)", 0.1f);
-        amountMap.put("Distiled spirit (40%)", 0.05f);
-        amountMap.put("Absinth (50%)", 0.03f);
-    }
-
     /**
      * 1.) Reads from DB --> Updates ArrayLists
      * 2.) Adds items from all ArrayLists to ArrayList<ListItem> items --> The one that is passed to the adapter
@@ -220,7 +184,6 @@ public class SecondActivity extends AppCompatActivity implements Serializable {
                 long timeDifference = calculateTimeDifference(currentTimestamp, itemTimestamp);
                 Log.d("spinner", "TimeDiff: " + timeDifference + " --> Name: " + name.get(i).toString());
 
-                // TODO Make it more readable
                 if(spinnerId == 0 && timeDifference < 480){
                     addListItem(i);
                     unitsSum += Integer.parseInt(units.get(i).toString());

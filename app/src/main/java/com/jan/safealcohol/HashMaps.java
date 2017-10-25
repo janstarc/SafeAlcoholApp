@@ -1,0 +1,198 @@
+package com.jan.safealcohol;
+
+
+import java.util.HashMap;
+
+public class HashMaps {
+
+    private static HashMap<String, Float> levelMap = new HashMap<>();
+    private static HashMap<String, Float> percentMap = new HashMap<>();
+    private static HashMap<String, Float> amountMap = new HashMap<>();
+    private static HashMap<String, String> picturesMap = new HashMap<>();
+
+    // https://en.wikipedia.org/wiki/Drunk_driving_law_by_country
+
+    /**
+     *  Data in the HashMap below - needs to be multiplied by 10 --> To get units [g of alcohol]/[kg of blood]
+     *
+     */
+
+    public static HashMap<String, Float> createLevelMap(){
+        levelMap.put("Kyrgyzstan", 0.05f);
+        levelMap.put("Mongolia", 0.05f);
+        levelMap.put("Turkmenistan", 0f);
+        levelMap.put("China", 0.02f);
+        levelMap.put("Hong Kong", 0.05f);
+        levelMap.put("Japan", 0.03f);
+        levelMap.put("Republic of Korea", 0.05f);
+        levelMap.put("Taiwan", 0.05f);
+        levelMap.put("Afghanistan", 0f);
+        levelMap.put("India", 0.03f);
+        levelMap.put("Nepal", 0f);
+        levelMap.put("Pakistan", 0f);
+        levelMap.put("Sri Lanka", 0.06f);
+        levelMap.put("Brunei", 0f);
+        levelMap.put("Cambodia", 0.01f);
+        levelMap.put("Laos", 0.08f);
+        levelMap.put("Indonesia", 0f);
+        levelMap.put("Malaysia", 0.08f);
+        levelMap.put("Philippines", 0.05f);
+        levelMap.put("Singapore", 0.08f);
+        levelMap.put("Thailand", 0.05f);
+        levelMap.put("Vietnam", 0.05f);
+        levelMap.put("Turkey", 0.05f);
+        levelMap.put("Armenia", 0.04f);
+        levelMap.put("Iran", 0f);
+        levelMap.put("Israel", 0.024f);
+        levelMap.put("Jordan", 0.05f);
+        levelMap.put("Kuwait", 0f);
+        levelMap.put("Lebanon", 0.02f);
+        levelMap.put("Saudi Arabia", 0f);
+        levelMap.put("Syria", 0.08f);
+        levelMap.put("UAE", 0f);
+        levelMap.put("Angola", 0.06f);
+        levelMap.put("Algeria", 0.02f);
+        levelMap.put("Benin", 0.05f);
+        levelMap.put("Cape Verde", 0.08f);
+        levelMap.put("Central African Republic", 0.08f);
+        levelMap.put("Comoros", 0f);
+        levelMap.put("Congo", 0.01f);
+        levelMap.put("Egypt", 0.05f);
+        levelMap.put("Equatorial Guinea", 0.15f);
+        levelMap.put("Eritrea", 0.03f);
+        levelMap.put("Gambia", -1f);
+        levelMap.put("Guinea-Bissau", 0.15f);
+        levelMap.put("Kenya", -1f);
+        levelMap.put("Libya", 0f);
+        levelMap.put("Malawi", 0.08f);
+        levelMap.put("Mauritius", 0.05f);
+        levelMap.put("Morocco", 0f);
+        levelMap.put("Namibia", 0.05f);
+        levelMap.put("Niger", -1f);
+        levelMap.put("Nigeria", 0.05f);
+        levelMap.put("Seychelles", 0.08f);
+        levelMap.put("South Africa", 0.05f);
+        levelMap.put("Togo", -1f);
+        levelMap.put("Uganda", 0.08f);
+        levelMap.put("Tanzania", 0.08f);
+        levelMap.put("Zambia", 0.08f);
+        levelMap.put("Canada", 0.05f);
+        levelMap.put("Mexico", 0.04f);
+        levelMap.put("USA", 0.05f);
+        levelMap.put("Bahamas", 0.06f);
+        levelMap.put("Cuba", 0.05f);
+        levelMap.put("Dominican Republic", 0.03f);
+        levelMap.put("Jamaica", 0.08f);
+        levelMap.put("Trinidad and Tobago", 0.08f);
+        levelMap.put("Belize", 0.08f);
+        levelMap.put("Costa Rica", 0.05f);
+        levelMap.put("El Salvador", 0.05f);
+        levelMap.put("Guatemala", 0.08f);
+        levelMap.put("Honduras", 0.07f);
+        levelMap.put("Nicaragua", 0.05f);
+        levelMap.put("Panama", 0.08f);
+        levelMap.put("Argentina", 0f);
+        levelMap.put("Bolivia", 0.05f);
+        levelMap.put("Brazil", 0f);
+        levelMap.put("Chile", 0.08f);
+        levelMap.put("Colombia", 0f);
+        levelMap.put("Ecuador", 0.03f);
+        levelMap.put("Guyana", 0.08f);
+        levelMap.put("Paraguay", 0f);
+        levelMap.put("Peru", 0.05f);
+        levelMap.put("Suriname", 0.05f);
+        levelMap.put("Uruguay", 0f);
+        levelMap.put("Venezuela", 0.08f);
+        levelMap.put("Albania", 0.01f);
+        levelMap.put("Austria", 0.05f);
+        levelMap.put("Belarus", 0.03f);
+        levelMap.put("Bosnia and Herzegovina", 0.03f);
+        levelMap.put("Bulgaria", 0.05f);
+        levelMap.put("Czech Republic", 0f);
+        levelMap.put("Croatia", 0.05f);
+        levelMap.put("Cyprus", 0.05f);
+        levelMap.put("Denmark", 0.05f);
+        levelMap.put("Finland", 0.05f);
+        levelMap.put("France", 0.05f);
+        levelMap.put("Georgia", 0.02f);
+        levelMap.put("Germany", 0.05f);
+        levelMap.put("Gibraltar", 0.05f);
+        levelMap.put("Greece", 0.05f);
+        levelMap.put("Hungary", 0f);
+        levelMap.put("Iceland", 0.04f);
+        levelMap.put("Ireland", 0.05f);
+        levelMap.put("Italy", 0.05f);
+        levelMap.put("Latvia", 0.05f);
+        levelMap.put("Lithuania", 0.04f);
+        levelMap.put("Luxembourg", 0.02f);
+        levelMap.put("Macedonia", 0.05f);
+        levelMap.put("Moldova", 0.03f);
+        levelMap.put("Malta", 0.08f);
+        levelMap.put("Netherlands", 0.05f);
+        levelMap.put("Norway", 0.02f);
+        levelMap.put("Poland", 0.02f);
+        levelMap.put("Portugal", 0.05f);
+        levelMap.put("Romania", 0.02f);
+        levelMap.put("Russian Federation", 0.03f);
+        levelMap.put("Serbia", 0.03f);
+        levelMap.put("Slovakia", 0f);
+        levelMap.put("Slovenia", 0.05f);
+        levelMap.put("Spain", 0.05f);
+        levelMap.put("Switzerland", 0.05f);
+        levelMap.put("Scotland", 0.05f);
+        levelMap.put("England", 0.08f);
+        levelMap.put("Wales", 0.08f);
+        levelMap.put("Northern Ireland", 0.08f);
+        levelMap.put("Ukraine", 0.02f);
+        levelMap.put("Australia", 0.05f);
+        levelMap.put("New Zealand", 0.05f);
+        levelMap.put("French Polynesia", 0.05f);
+        levelMap.put("Micronesia", 0.05f);
+
+        return levelMap;
+
+    }
+
+    public static HashMap<String, Float> createPercentageMap(){
+        percentMap.put("Radler (2.5%)", 2.5f);
+        percentMap.put("Light beer (4.2%)", 4.2f);
+        percentMap.put("Regular beer (5.0%)", 5.0f);
+        percentMap.put("Cider (5.0%)", 5.0f);
+        percentMap.put("Strong beer (7.0%)", 7.0f);
+        percentMap.put("Liquor (10%)", 10.0f);
+        percentMap.put("Wine (12%)", 12.0f);
+        percentMap.put("Distiled spirit (40%)", 40.0f);
+        percentMap.put("Absinth (50%)", 50.0f);
+
+        return percentMap;
+    }
+
+    public static HashMap<String, Float> createAmountMap(){
+        amountMap.put("Radler (2.5%)", 5f);
+        amountMap.put("Light beer (4.2%)", 5f);
+        amountMap.put("Regular beer (5.0%)", 5f);
+        amountMap.put("Cider (5.0%)", 5f);
+        amountMap.put("Strong beer (7.0%)", 5f);
+        amountMap.put("Liquor (10%)", 0.5f);
+        amountMap.put("Wine (12%)", 1f);
+        amountMap.put("Distiled spirit (40%)", 0.5f);
+        amountMap.put("Absinth (50%)", 0.3f);
+
+        return amountMap;
+    }
+
+    public static HashMap<String, String> createPicturesMap(){
+        picturesMap.put("Radler (2.5%)", "radler");
+        picturesMap.put("Light beer (4.2%)", "lightBeer");
+        picturesMap.put("Regular beer (5.0%)", "regularBeer");
+        picturesMap.put("Cider (5.0%)", "cider");
+        picturesMap.put("Strong beer (7.0%)", "strongBeer");
+        picturesMap.put("Liquor (10%)", "liquor");
+        picturesMap.put("Wine (12%)", "wine");
+        picturesMap.put("Distiled spirit (40%)", "distiledSpirit");
+        picturesMap.put("Absinth (50%)", "absinth");
+
+        return picturesMap;
+    }
+
+}
