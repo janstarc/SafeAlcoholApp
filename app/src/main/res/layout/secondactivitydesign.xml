@@ -14,7 +14,7 @@
             android:layout_height="520dp"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
-            android:layout_marginTop="68dp" />
+            android:layout_below="@+id/spinnerTime" />
 
         <TextView
             android:id="@+id/uiText"
@@ -79,7 +79,8 @@
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
             android:layout_marginStart="10dp"
-            android:layout_marginTop="13dp" />
+            android:layout_marginTop="13dp"
+            android:layout_marginBottom="10dp"/>
 
         <Button
             android:id="@+id/resetButton"

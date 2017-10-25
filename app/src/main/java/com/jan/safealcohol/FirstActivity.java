@@ -267,6 +267,8 @@ public class FirstActivity extends AppCompatActivity implements Serializable {
      * 2.) Vpise se datum zadnjega izracuna --> IZRACUN: Potreben datum zadnjega izracuna + time difference do trenutnega casa
      *      --> Faktor upadanja levela na minuto
      *  // http://www.izberisam.org/alkopedija/alko-osnove/izracun-alkohola-v-krvi/
+     *
+     *  Alcohol level reduces for 1 unit/hour (male) and 0.5 unit/hour (female)
      */
 
     public void updateUnits(float newDrinkUnits) throws ParseException {
@@ -286,7 +288,10 @@ public class FirstActivity extends AppCompatActivity implements Serializable {
         // To prevent changing timeStamp, without changing units. | newDrinkUnits == 0.0 --> Only update for onCreate and onUpdate, nothing new added! 
         if(timeDifferenceMin > 0 || newDrinkUnits != 0.0) {                 
 
-            float unitsMinus = (float) (timeDifferenceMin * 0.5);                   // TODO Wrong factor! [unitsDrop/min]
+            float unitsMinus;
+            if(prefs.getString("gender", null).equals("M")) unitsMinus = (float) (timeDifferenceMin * 0.0167);
+            else unitsMinus = (float) (timeDifferenceMin * (0.0167/2));
+
             float unitsNew = (newDrinkUnits + unitsOld - unitsMinus);               // units --> Current drink | unitsOld --> Prev units from SharedPref | unitsMinus --> timeDiff * decreaseOnMin
             if (unitsNew < 0) unitsNew = 0;                                         // To avoid neg. units --> You can be max sober
             calculateAlcoLevel(unitsNew);

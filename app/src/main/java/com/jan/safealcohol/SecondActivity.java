@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -16,6 +17,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 import java.io.Serializable;
+import java.lang.reflect.Field;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -163,7 +165,6 @@ public class SecondActivity extends AppCompatActivity implements Serializable {
      */
     public void updateListView() throws ParseException {
 
-        int unitsSum = 0;
 
         getDrinksFromDb();                   // 1.) Stores data to name, amount, timestamp... ArrayLists
         copyToArrayLists();                  // 2.) Copies data to 4 ArrayLists
@@ -186,20 +187,15 @@ public class SecondActivity extends AppCompatActivity implements Serializable {
 
                 if(spinnerId == 0 && timeDifference < 480){
                     addListItem(i);
-                    unitsSum += Integer.parseInt(units.get(i).toString());
-
                 } else if (spinnerId == 1 && timeDifference < 1440) {
                     addListItem(i);
-                    unitsSum += Integer.parseInt(units.get(i).toString());
-
                 } else if (spinnerId == 2 && timeDifference < 4320) {
                     addListItem(i);
-                    unitsSum += Integer.parseInt(units.get(i).toString());
                 }
             }
 
         } else {
-            items.add(new ListItem("No drinks on the list", R.drawable.ic_code_black_48dp, ""));
+            items.add(new ListItem("No drinks on the list", 0, ""));
         }
 
         // TODO Finish the calculation --> // Updates values
@@ -217,7 +213,12 @@ public class SecondActivity extends AppCompatActivity implements Serializable {
     }
 
     public void addListItem(int i){
-        ListItem item = new ListItem(name.get(i).toString(), R.drawable.ic_opacity_black_48dp, "Amount: " + amount.get(i).toString() + "dl [" + timestamp.get(i).toString() +"]");
+
+        String itemName = name.get(i).toString();
+        String pictureName = picturesMap.get(itemName).toString();
+        int resourceId = this.getResources().getIdentifier(pictureName, "drawable", this.getPackageName());
+        Log.d("resources", "Resource name: " + pictureName + " | ResourceId: " + resourceId);
+        ListItem item = new ListItem(itemName, resourceId, "Amount: " + amount.get(i).toString() + "dl [" + timestamp.get(i).toString() +"]");
         items.add(item);
     }
 
@@ -326,6 +327,17 @@ public class SecondActivity extends AppCompatActivity implements Serializable {
 
         }
 
+    }
+
+    public static int getResId(String resName, Class<?> c) {
+
+        try {
+            Field idField = c.getDeclaredField(resName);
+            return idField.getInt(idField);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return -1;
+        }
     }
 
     public void calculateAlcoLevel (float units){

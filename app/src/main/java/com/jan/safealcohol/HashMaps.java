@@ -161,8 +161,8 @@ public class HashMaps {
         percentMap.put("Strong beer (7.0%)", 7.0f);
         percentMap.put("Liquor (10%)", 10.0f);
         percentMap.put("Wine (12%)", 12.0f);
-        percentMap.put("Distiled spirit (40%)", 40.0f);
-        percentMap.put("Absinth (50%)", 50.0f);
+        percentMap.put("Distilled spirit (40%)", 40.0f);
+        percentMap.put("Absinthe (50%)", 50.0f);
 
         return percentMap;
     }
@@ -175,22 +175,22 @@ public class HashMaps {
         amountMap.put("Strong beer (7.0%)", 5f);
         amountMap.put("Liquor (10%)", 0.5f);
         amountMap.put("Wine (12%)", 1f);
-        amountMap.put("Distiled spirit (40%)", 0.5f);
-        amountMap.put("Absinth (50%)", 0.3f);
+        amountMap.put("Distilled spirit (40%)", 0.5f);
+        amountMap.put("Absinthe (50%)", 0.3f);
 
         return amountMap;
     }
 
     public static HashMap<String, String> createPicturesMap(){
         picturesMap.put("Radler (2.5%)", "radler");
-        picturesMap.put("Light beer (4.2%)", "lightBeer");
-        picturesMap.put("Regular beer (5.0%)", "regularBeer");
+        picturesMap.put("Light beer (4.2%)", "light_beer");
+        picturesMap.put("Regular beer (5.0%)", "regular_beer");
         picturesMap.put("Cider (5.0%)", "cider");
-        picturesMap.put("Strong beer (7.0%)", "strongBeer");
+        picturesMap.put("Strong beer (7.0%)", "strong_beer");
         picturesMap.put("Liquor (10%)", "liquor");
         picturesMap.put("Wine (12%)", "wine");
-        picturesMap.put("Distiled spirit (40%)", "distiledSpirit");
-        picturesMap.put("Absinth (50%)", "absinth");
+        picturesMap.put("Distilled spirit (40%)", "distiled_spirit");
+        picturesMap.put("Absinthe (50%)", "absinthe");
 
         return picturesMap;
     }
