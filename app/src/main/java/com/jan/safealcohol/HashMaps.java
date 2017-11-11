@@ -1,8 +1,6 @@
 package com.jan.safealcohol;
 
 
-import android.widget.Button;
-
 import java.util.HashMap;
 
 public class HashMaps {
@@ -182,10 +180,10 @@ public class HashMaps {
     public static HashMap<String, String> createPicturesMap(){
         picturesMap.put("Radler (2.5%)", "radler");
         picturesMap.put("Beer (5.0%)", "beer");
-        picturesMap.put("Liquor (10%)", "liquor");
+        picturesMap.put("Liquor (15%)", "liquor");
         picturesMap.put("Wine (12%)", "wine");
         picturesMap.put("Distilled spirit (40%)", "distilled");
-        picturesMap.put("Custom", "custom");
+        picturesMap.put("Custom drink", "custom");
 
         return picturesMap;
     }

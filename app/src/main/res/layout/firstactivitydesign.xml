@@ -32,6 +32,7 @@
 
     <View style="@style/Divider"/>
 
+    <!--
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -90,7 +91,7 @@
 
     </LinearLayout>
 
-    <!--
+
     <EditText
         android:id="@+id/customDateTime"
         android:layout_width="278dp"
@@ -103,7 +104,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/use_custom_datetime" />
--->
+
     <Button
         android:id="@+id/addButton"
         android:layout_width="214dp"
@@ -112,7 +113,7 @@
         android:layout_marginBottom="10dp"/>
 
     <View style="@style/Divider"/>
-
+    -->
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

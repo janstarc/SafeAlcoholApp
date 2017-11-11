@@ -10,11 +10,8 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Spinner;
 import android.widget.Toast;
 
 import java.text.DecimalFormat;
@@ -38,7 +35,6 @@ public class AddDrink extends AppCompatActivity implements View.OnClickListener 
     private EditText amount;
     private EditText percent;
     private Button addButton;
-    private Spinner spinner;
     FeedReaderDbHelper mDbHelper = new FeedReaderDbHelper(context);
     // TO DELETE
     @SuppressLint("SimpleDateFormat")
@@ -50,9 +46,6 @@ public class AddDrink extends AppCompatActivity implements View.OnClickListener 
     private HashMap<String, Float> amountMap;
     private HashMap<String, Float> levelMap;
     private DecimalFormat myFormat = new DecimalFormat("0.0");
-    //private Button[] btn = new Button[4];
-    //private Button btn_unfocus;
-
     private Button radlerButton;
     private Button beerButton;
     private Button liquorButton;
@@ -63,8 +56,6 @@ public class AddDrink extends AppCompatActivity implements View.OnClickListener 
     private HashMap<String, String> buttonDefault;
     private HashMap<String, String> buttonPressed;
     private HashMap<String, String> DBNamesMap;
-
-    //private int[] btn_id = {R.id.btn0, R.id.btn1, R.id.btn2, R.id.btn3};
 
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -81,8 +72,6 @@ public class AddDrink extends AppCompatActivity implements View.OnClickListener 
         buttonPressed = HashMaps.createButtonPressedMap();
         DBNamesMap = HashMaps.createDBNamesMap();
         callEventListeners();
-        //createDropdownMenu();
-        updateUserMessages();
         drawButtons();
 
 
@@ -99,7 +88,6 @@ public class AddDrink extends AppCompatActivity implements View.OnClickListener 
     @Override
     public void onResume() {
         super.onResume();  // Always call the superclass method first
-        updateUserMessages();
         try {
             updateUnits((float) 0.0);
         } catch (ParseException e) {
@@ -140,6 +128,7 @@ public class AddDrink extends AppCompatActivity implements View.OnClickListener 
         fillAmountPercent(selectedButton);
     }
 
+    // Radio button logic on the entire AddDrink screen
     private Button setFocus(Button focus){
 
         drawButtons();
@@ -160,6 +149,7 @@ public class AddDrink extends AppCompatActivity implements View.OnClickListener 
         wineButton.setBackgroundResource(R.drawable.wine_default);
         distilledButton.setBackgroundResource(R.drawable.distilled_default);
         customButton.setBackgroundResource(R.drawable.custom_default);
+        addButton.setBackgroundResource(R.drawable.add_default);
     }
 
     // Define all variables
@@ -167,7 +157,6 @@ public class AddDrink extends AppCompatActivity implements View.OnClickListener 
         amount = (EditText) findViewById(R.id.amountET2);
         percent = (EditText) findViewById(R.id.percentET2);
         addButton = (Button) findViewById(R.id.addButton2);
-        spinner = (Spinner) findViewById(R.id.spinner2);
         radlerButton = (Button) findViewById(R.id.radlerButton);
         beerButton = (Button) findViewById(R.id.beerButton);
         liquorButton = (Button) findViewById(R.id.liquorButton);
@@ -188,6 +177,8 @@ public class AddDrink extends AppCompatActivity implements View.OnClickListener 
         wineButton.setOnClickListener(this);
         distilledButton.setOnClickListener(this);
         customButton.setOnClickListener(this);
+        percent.setOnFocusChangeListener(etFocusListenerPercent);
+        amount.setOnFocusChangeListener(etFocusListenerAmount);
     }
 
     // Adds new drink to DB
@@ -203,6 +194,24 @@ public class AddDrink extends AppCompatActivity implements View.OnClickListener 
         }
     };
 
+    View.OnFocusChangeListener etFocusListenerPercent = new EditText.OnFocusChangeListener(){
+
+        @Override
+        public void onFocusChange(View v, boolean hasFocus){
+            percent.setBackgroundResource(R.drawable.input_active);
+            amount.setBackgroundResource(R.drawable.input);
+        }
+    };
+
+    View.OnFocusChangeListener etFocusListenerAmount = new EditText.OnFocusChangeListener(){
+
+        @Override
+        public void onFocusChange(View v, boolean hasFocus){
+            amount.setBackgroundResource(R.drawable.input_active);
+            percent.setBackgroundResource(R.drawable.input);
+        }
+    };
+
     /**
      *  [END] Event listeners
      */
@@ -211,7 +220,7 @@ public class AddDrink extends AppCompatActivity implements View.OnClickListener 
      * [START] Functions
      */
 
-
+    // Fill textbox
     public void fillAmountPercent(Button selectedButton) {
 
         String key = selectedButton.getResources().getResourceEntryName(selectedButton.getId());
@@ -225,7 +234,7 @@ public class AddDrink extends AppCompatActivity implements View.OnClickListener 
 
     }
 
-    // TODO Edit this function, and thing should work
+    // Adding selected drink to the DB
     public void addDrinkToDB() throws ParseException {
 
         String amountText = amount.getText().toString();
@@ -238,8 +247,6 @@ public class AddDrink extends AppCompatActivity implements View.OnClickListener 
             Toast.makeText(getApplicationContext(), "Please check the percentage again", Toast.LENGTH_LONG).show();
         } else {
 
-
-
             // Gets the data repository in write mode
             SQLiteDatabase db = mDbHelper.getWritableDatabase();
             String drinkKey = getResources().getResourceEntryName(selectedButton.getId());
@@ -249,22 +256,14 @@ public class AddDrink extends AppCompatActivity implements View.OnClickListener 
             float percent = Float.valueOf(percentText);
             Float newDrinkUnits = (amount * (percent) / 100) / 0.125f;
             Log.d("drinkCalc", "newDrinkUnits: " + newDrinkUnits);
-
-            // Create a new map of values, where column names are the keys
-            // TODO HERE!
-
             Log.d("selectedDrink", "Selected: " + selectedDrink);
 
-
-            // UNCOMMENT!
-
+            // Put new info to values --> Values get put in the DB
             ContentValues values = new ContentValues();
             values.put(COLUMN_NAME_NAME, selectedDrink);
             values.put(COLUMN_NAME_AMOUNT, amount);
             values.put(COLUMN_NAME_UNITS, newDrinkUnits);                        // TODO To add the units - new DB for drinks
-
             updateUnits(newDrinkUnits);                                         // Recalculate the units, put on screen, update SharedPref file!
-
 
             // Custom timestamp
             Date myDate = new Date();
@@ -274,6 +273,7 @@ public class AddDrink extends AppCompatActivity implements View.OnClickListener 
             // Insert the new row, returning the primary key value of the new row
             long newRowId = db.insert(TABLE_NAME, null, values);
 
+            runFirstActivity();
         }
     }
 
@@ -309,15 +309,13 @@ public class AddDrink extends AppCompatActivity implements View.OnClickListener 
             else unitsMinus = (float) (timeDifferenceMin * (0.0167 / 2));
 
             float unitsNew = (newDrinkUnits + unitsOld - unitsMinus);               // units --> Current drink | unitsOld --> Prev units from SharedPref | unitsMinus --> timeDiff * decreaseOnMin
-            if (unitsNew < 0)
-                unitsNew = 0;                                         // To avoid neg. units --> You can be max sober
+            if (unitsNew < 0) unitsNew = 0;                                         // To avoid neg. units --> You can be max sober
             calculateAlcoLevel(unitsNew);
             editor = getSharedPreferences(MY_PREFS_FILE, MODE_PRIVATE).edit();
             editor.putFloat("units", unitsNew);                                     // Put new info to the SharedPref
             String newTimestamp = dateFormat.format(currentTimestamp);              // Update last calculation value for units in
             editor.putString("unitsTimestamp", newTimestamp);                       // shared pref file!
             editor.apply();
-
         }
 
         Float currentUnits = prefs.getFloat("units", (float) 0.0);
@@ -356,21 +354,6 @@ public class AddDrink extends AppCompatActivity implements View.OnClickListener 
         editor.apply();
     }
 
-    // Welcome message and last meal message
-    public void updateUserMessages() {
-
-        prefs = getSharedPreferences(MY_PREFS_FILE, MODE_PRIVATE);
-        String fn = prefs.getString("firstname", null);
-        String ln = prefs.getString("lastname", null);
-        //welcomeMessage.setText("Welcome, " + fn + " " + ln);
-        int sizeOfMeal = prefs.getInt("sizeofmeal", 1);
-        String mealType = "";
-
-        String mt = prefs.getString("timeofmeal", null);
-        Date myDate = new Date();
-        String date = dateFormat.format(myDate);
-    }
-
     public long calculateTimeDifference(Date date1, Date date2) {
 
         long second = 1000l;
@@ -389,7 +372,15 @@ public class AddDrink extends AppCompatActivity implements View.OnClickListener 
 
         return Math.abs(hoursOut * 60 + minOut);
     }
+
+    public void runFirstActivity(){
+        Intent intent = new Intent(context, FirstActivity.class);
+        intent.putExtra("toast", "New drink added successfully");
+        context.startActivity(intent);
+    }
 }
+
+
 
     /**
      *  [END] Functions

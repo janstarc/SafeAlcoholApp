@@ -31,7 +31,7 @@ import static com.jan.safealcohol.FeedReaderContract.FeedEntry.COLUMN_NAME_NAME;
 import static com.jan.safealcohol.FeedReaderContract.FeedEntry.COLUMN_NAME_TIMESTAMP;
 import static com.jan.safealcohol.FeedReaderContract.FeedEntry.COLUMN_NAME_UNITS;
 import static com.jan.safealcohol.FeedReaderContract.FeedEntry.TABLE_NAME;
-import static com.jan.safealcohol.R.id.spinnerDesign;
+//import static com.jan.safealcohol.R.id.spinnerDesign;
 
 public class FirstActivity extends AppCompatActivity implements Serializable {
 
@@ -91,6 +91,13 @@ public class FirstActivity extends AppCompatActivity implements Serializable {
     @Override
     public void onResume() {
         super.onResume();  // Always call the superclass method first
+
+        Intent intent = getIntent();
+        String toastMessage = intent.getStringExtra("toast");
+        if(toastMessage != null && !toastMessage.equals("")) {
+            Toast.makeText(getApplicationContext(), toastMessage, Toast.LENGTH_LONG).show();
+        }
+
         updateUserMessages();
         try {
             updateUnits((float) 0.0);
@@ -102,10 +109,10 @@ public class FirstActivity extends AppCompatActivity implements Serializable {
     public void defineVariables(){
 
         secondActivityButton = (Button) findViewById(R.id.secondActivity);
-        amount = (EditText) findViewById(R.id.amountET);
-        percent = (EditText) findViewById(R.id.percentET);
-        addButton = (Button) findViewById(R.id.addButton);
-        spinner = (Spinner) findViewById(spinnerDesign);
+        //amount = (EditText) findViewById(R.id.amountET);
+        //percent = (EditText) findViewById(R.id.percentET);
+        //addButton = (Button) findViewById(R.id.addButton);
+        //spinner = (Spinner) findViewById(spinnerDesign);
         mealtime = (EditText) findViewById(R.id.mealTimeET);
         saveButton = (Button) findViewById(R.id.updateDbButton);
         userDataButton = (Button) findViewById(R.id.userDataButton);

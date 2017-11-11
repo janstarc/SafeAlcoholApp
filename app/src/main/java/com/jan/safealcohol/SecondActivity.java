@@ -215,6 +215,7 @@ public class SecondActivity extends AppCompatActivity implements Serializable {
     public void addListItem(int i){
 
         String itemName = name.get(i).toString();
+        Log.d("crash", "WTF happens here? #" + itemName + "#");
         String pictureName = picturesMap.get(itemName).toString();
         int resourceId = this.getResources().getIdentifier(pictureName, "drawable", this.getPackageName());
         Log.d("resources", "Resource name: " + pictureName + " | ResourceId: " + resourceId);
