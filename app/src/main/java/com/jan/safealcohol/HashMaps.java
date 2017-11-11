@@ -1,6 +1,8 @@
 package com.jan.safealcohol;
 
 
+import android.widget.Button;
+
 import java.util.HashMap;
 
 public class HashMaps {
@@ -9,6 +11,8 @@ public class HashMaps {
     private static HashMap<String, Float> percentMap = new HashMap<>();
     private static HashMap<String, Float> amountMap = new HashMap<>();
     private static HashMap<String, String> picturesMap = new HashMap<>();
+    private static HashMap<String, String> buttonDefault = new HashMap<>();
+    private static HashMap<String, String> buttonPressed = new HashMap<>();
 
     // https://en.wikipedia.org/wiki/Drunk_driving_law_by_country
 
@@ -154,29 +158,23 @@ public class HashMaps {
     }
 
     public static HashMap<String, Float> createPercentageMap(){
-        percentMap.put("Radler (2.5%)", 2.5f);
-        percentMap.put("Light beer (4.2%)", 4.2f);
-        percentMap.put("Regular beer (5.0%)", 5.0f);
-        percentMap.put("Cider (5.0%)", 5.0f);
-        percentMap.put("Strong beer (7.0%)", 7.0f);
-        percentMap.put("Liquor (10%)", 10.0f);
-        percentMap.put("Wine (12%)", 12.0f);
-        percentMap.put("Distilled spirit (40%)", 40.0f);
-        percentMap.put("Absinthe (50%)", 50.0f);
+        percentMap.put("radlerButton", 2.5f);
+        percentMap.put("beerButton", 5.0f);
+        percentMap.put("wineButton", 12.0f);
+        percentMap.put("liquorButton", 15.0f);
+        percentMap.put("distilledButton", 40.0f);
+        percentMap.put("customButton", 0.0f);
 
         return percentMap;
     }
 
     public static HashMap<String, Float> createAmountMap(){
-        amountMap.put("Radler (2.5%)", 5f);
-        amountMap.put("Light beer (4.2%)", 5f);
-        amountMap.put("Regular beer (5.0%)", 5f);
-        amountMap.put("Cider (5.0%)", 5f);
-        amountMap.put("Strong beer (7.0%)", 5f);
-        amountMap.put("Liquor (10%)", 0.5f);
-        amountMap.put("Wine (12%)", 1f);
-        amountMap.put("Distilled spirit (40%)", 0.5f);
-        amountMap.put("Absinthe (50%)", 0.3f);
+        amountMap.put("radlerButton", 5f);
+        amountMap.put("beerButton", 5f);
+        amountMap.put("wineButton", 1f);
+        amountMap.put("liquorButton", 0.5f);
+        amountMap.put("distilledButton", 0.5f);
+        amountMap.put("customButton", 0.0f);
 
         return amountMap;
     }
@@ -195,4 +193,28 @@ public class HashMaps {
         return picturesMap;
     }
 
+
+    // TO UNCOMMENT - THE RIGHT HASH MAP !!!
+    public static HashMap<String, String> createButtonDefaultMap(){
+        buttonDefault.put("radlerButton", "radler_default");
+        buttonDefault.put("beerButton", "beer_default");
+        buttonDefault.put("liquorButton", "liquor_default");
+        buttonDefault.put("wineButton", "wine_default");
+        buttonDefault.put("distilledButton", "distilled_default");
+        buttonDefault.put("customButton", "custom_default");
+
+        return buttonDefault;
+    }
+
+    // TO UNCOMMENT - THE RIGHT HASH MAP !!!
+    public static HashMap<String, String> createButtonPressedMap(){
+        buttonPressed.put("radlerButton", "radler_pressed");
+        buttonPressed.put("beerButton", "beer_pressed");
+        buttonPressed.put("liquorButton", "liquor_pressed");
+        buttonPressed.put("wineButton", "wine_pressed");
+        buttonPressed.put("distilledButton", "distilled_pressed");
+        buttonPressed.put("customButton", "custom_pressed");
+
+        return buttonPressed;
+    }
 }

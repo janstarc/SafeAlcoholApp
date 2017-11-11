@@ -21,8 +21,13 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".SecondActivity"/>
-        <activity android:name=".UserDataActivity"/>
+        <activity android:name=".SecondActivity" />
+        <activity android:name=".UserDataActivity" />
+        <activity android:name=".AddDrink"/>
+
+        <meta-data
+            android:name="preloaded_fonts"
+            android:resource="@array/preloaded_fonts" />
 
     </application>
 

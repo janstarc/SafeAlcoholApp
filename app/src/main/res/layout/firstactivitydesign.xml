@@ -90,6 +90,7 @@
 
     </LinearLayout>
 
+    <!--
     <EditText
         android:id="@+id/customDateTime"
         android:layout_width="278dp"
@@ -102,7 +103,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/use_custom_datetime" />
-
+-->
     <Button
         android:id="@+id/addButton"
         android:layout_width="214dp"
@@ -205,6 +206,15 @@
             android:layout_toEndOf="@+id/userDataButton"
             android:layout_toRightOf="@+id/userDataButton"
             android:text="@string/update_units" />
+
+        <Button
+            android:id="@+id/addDrinkActivity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/userDataButton"
+            android:text="@string/adddrinkactivity" />
     </RelativeLayout>
 
 

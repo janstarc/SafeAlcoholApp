@@ -1,6 +1,7 @@
 package com.jan.safealcohol;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -11,7 +12,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import org.w3c.dom.Text;
 
 
 public class UserDataActivity extends AppCompatActivity {
@@ -25,6 +29,7 @@ public class UserDataActivity extends AppCompatActivity {
     private RadioButton maleRadio;
     private RadioButton femaleRadio;
     private Spinner countriesSpinner;
+    private TextView userMessage;
 
 
     SharedPreferences.Editor editor;
@@ -39,6 +44,7 @@ public class UserDataActivity extends AppCompatActivity {
         defineVariables();
         createDropdownMenu();
         updateDBbutton.setOnClickListener(updateDB);
+
         fillUserDataForm();
 
 
@@ -54,6 +60,7 @@ public class UserDataActivity extends AppCompatActivity {
         maleRadio = (RadioButton) findViewById(R.id.maleRadio);
         femaleRadio = (RadioButton) findViewById(R.id.femaleRadio);
         countriesSpinner = (Spinner) findViewById(R.id.countriesSpinner);
+        userMessage = (TextView) findViewById(R.id.userMessage);
     }
 
     View.OnClickListener updateDB = new View.OnClickListener() {
@@ -66,19 +73,21 @@ public class UserDataActivity extends AppCompatActivity {
 
     public void fillUserDataForm(){
 
+        userMessage.setText(getIntent().getExtras().getString("userMsg"));
+
         prefs = getSharedPreferences(MY_PREFS_FILE, MODE_PRIVATE);
         firstname.setText(prefs.getString("firstname", null));
         lastname.setText(prefs.getString("lastname", null));
+        height.setText(Integer.toString(prefs.getInt("height", 0)));
         weight.setText(Integer.toString(prefs.getInt("weight", 0)));
-        Log.d("spinner", "Id: " + prefs.getInt("countryId", 0));
         countriesSpinner.setSelection(prefs.getInt("countryId", 0));
 
-        if(prefs.getString("gender", null).equals("null") || prefs.getString("gender", null).equals("M")){
+        if(prefs.getString("gender", null) == null || prefs.getString("gender", null).equals("M")){
             maleRadio.setChecked(true);
         } else {
             femaleRadio.setChecked(true);
         }
-        height.setText(Integer.toString(prefs.getInt("height", 0)));
+
 
     }
 
