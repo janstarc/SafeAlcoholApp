@@ -181,20 +181,28 @@ public class HashMaps {
 
     public static HashMap<String, String> createPicturesMap(){
         picturesMap.put("Radler (2.5%)", "radler");
-        picturesMap.put("Light beer (4.2%)", "light_beer");
-        picturesMap.put("Regular beer (5.0%)", "regular_beer");
-        picturesMap.put("Cider (5.0%)", "cider");
-        picturesMap.put("Strong beer (7.0%)", "strong_beer");
+        picturesMap.put("Beer (5.0%)", "beer");
         picturesMap.put("Liquor (10%)", "liquor");
         picturesMap.put("Wine (12%)", "wine");
-        picturesMap.put("Distilled spirit (40%)", "distiled_spirit");
-        picturesMap.put("Absinthe (50%)", "absinthe");
+        picturesMap.put("Distilled spirit (40%)", "distilled");
+        picturesMap.put("Custom", "custom");
 
         return picturesMap;
     }
 
 
     // TO UNCOMMENT - THE RIGHT HASH MAP !!!
+    public static HashMap<String, String> createDBNamesMap(){
+        buttonDefault.put("radlerButton", "Radler (2.5%)");
+        buttonDefault.put("beerButton", "Beer (5.0%)");
+        buttonDefault.put("liquorButton", "Liquor (15%)");
+        buttonDefault.put("wineButton", "Wine (12%)");
+        buttonDefault.put("distilledButton", "Distilled spirit (40%)");
+        buttonDefault.put("customButton", "Custom drink");
+
+        return buttonDefault;
+    }
+
     public static HashMap<String, String> createButtonDefaultMap(){
         buttonDefault.put("radlerButton", "radler_default");
         buttonDefault.put("beerButton", "beer_default");

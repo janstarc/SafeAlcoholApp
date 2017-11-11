@@ -62,6 +62,7 @@ public class AddDrink extends AppCompatActivity implements View.OnClickListener 
     private Button selectedButton;
     private HashMap<String, String> buttonDefault;
     private HashMap<String, String> buttonPressed;
+    private HashMap<String, String> DBNamesMap;
 
     //private int[] btn_id = {R.id.btn0, R.id.btn1, R.id.btn2, R.id.btn3};
 
@@ -78,6 +79,7 @@ public class AddDrink extends AppCompatActivity implements View.OnClickListener 
         levelMap = HashMaps.createLevelMap();
         buttonDefault = HashMaps.createButtonDefaultMap();
         buttonPressed = HashMaps.createButtonPressedMap();
+        DBNamesMap = HashMaps.createDBNamesMap();
         callEventListeners();
         //createDropdownMenu();
         updateUserMessages();
@@ -111,53 +113,41 @@ public class AddDrink extends AppCompatActivity implements View.OnClickListener 
 
         switch (v.getId()){
             case R.id.radlerButton:
-                selectedButton = setFocus(radlerButton, selectedButton);
+                selectedButton = setFocus(radlerButton);
                 break;
 
             case R.id.beerButton :
-                selectedButton = setFocus(beerButton, selectedButton);
+                selectedButton = setFocus(beerButton);
                 break;
 
             case R.id.liquorButton :
-                selectedButton = setFocus(liquorButton, selectedButton);
+                selectedButton = setFocus(liquorButton);
                 break;
 
             case R.id.wineButton :
-                selectedButton = setFocus(wineButton, selectedButton);
+                selectedButton = setFocus(wineButton);
                 break;
 
             case R.id.distilledButton :
-                selectedButton = setFocus(distilledButton, selectedButton);
+                selectedButton = setFocus(distilledButton);
                 break;
 
             case R.id.customButton :
-                selectedButton = setFocus(customButton, selectedButton);
+                selectedButton = setFocus(customButton);
                 break;
         }
 
         fillAmountPercent(selectedButton);
     }
 
-    // btn_unfocus --> Which button to unfocus - Change to default
-    // btn_focus --> Which button to focus - Change to pressed
-    private Button setFocus(Button focus, Button unfocus){
+    private Button setFocus(Button focus){
 
+        drawButtons();
         String pressedKey = getResources().getResourceEntryName(focus.getId());
-        String defaultKey = getResources().getResourceEntryName(unfocus.getId());
-        //Log.d("focusButtons", "pressedKey: " + pressedKey);
-        //Log.d("focusButtons", "defaultKey: " + defaultKey);
-
         String pressedFile = buttonPressed.get(pressedKey);
-        String defaultFile = buttonDefault.get(defaultKey);
-        //Log.d("focusButtons", "Pressed file name: " + pressedFile);
-        //Log.d("focusButtons", "Defualt file name: " + defaultFile);
-
+        Log.d("focusButtons", "Pressed file name: " + pressedFile);
         int idFocus = context.getResources().getIdentifier(pressedFile, "drawable", context.getPackageName());
-        int idUnfocus = context.getResources().getIdentifier(defaultFile, "drawable", context.getPackageName());
-
         focus.setBackgroundResource(idFocus);
-        unfocus.setBackgroundResource(idUnfocus);
-
 
         return focus;
     }
@@ -224,12 +214,6 @@ public class AddDrink extends AppCompatActivity implements View.OnClickListener 
 
     public void fillAmountPercent(Button selectedButton) {
 
-        /*
-        String item = spinner.getSelectedItem().toString();
-        Log.d("spinnerOut", "Spinner item: " + item);
-        percent.setText(percentMap.get(item).toString());
-        amount.setText(amountMap.get(item).toString());
-        */
         String key = selectedButton.getResources().getResourceEntryName(selectedButton.getId());
         String percentText = percentMap.get(key).toString();
         String amountText = amountMap.get(key).toString();
@@ -240,15 +224,6 @@ public class AddDrink extends AppCompatActivity implements View.OnClickListener 
         Log.d("selectedButton", "Selected button: " + key);
 
     }
-
-    /*
-    public void createDropdownMenu() {
-
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.drinks_array, android.R.layout.simple_spinner_item);    // Create an ArrayAdapter using the string array and a default spinner layout
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);             // Specify the layout to use when the list of choices appears
-        spinner.setAdapter(adapter);                // Apply the adapter to the spinner
-    }
-    */
 
     // TODO Edit this function, and thing should work
     public void addDrinkToDB() throws ParseException {
@@ -263,19 +238,26 @@ public class AddDrink extends AppCompatActivity implements View.OnClickListener 
             Toast.makeText(getApplicationContext(), "Please check the percentage again", Toast.LENGTH_LONG).show();
         } else {
 
-            float amount = Float.valueOf(amountText);
+
 
             // Gets the data repository in write mode
             SQLiteDatabase db = mDbHelper.getWritableDatabase();
-            String selectedDrink = spinner.getSelectedItem().toString();
+            String drinkKey = getResources().getResourceEntryName(selectedButton.getId());
+            String selectedDrink = DBNamesMap.get(drinkKey);
 
-            // TODO Why is it mapped?
-            float percent = percentMap.get(selectedDrink);
-            if (Float.valueOf(percentText) != percent) percent = Float.valueOf(percentText);
+            float amount  = Float.valueOf(amountText);
+            float percent = Float.valueOf(percentText);
             Float newDrinkUnits = (amount * (percent) / 100) / 0.125f;
             Log.d("drinkCalc", "newDrinkUnits: " + newDrinkUnits);
 
             // Create a new map of values, where column names are the keys
+            // TODO HERE!
+
+            Log.d("selectedDrink", "Selected: " + selectedDrink);
+
+
+            // UNCOMMENT!
+
             ContentValues values = new ContentValues();
             values.put(COLUMN_NAME_NAME, selectedDrink);
             values.put(COLUMN_NAME_AMOUNT, amount);
@@ -291,6 +273,7 @@ public class AddDrink extends AppCompatActivity implements View.OnClickListener 
 
             // Insert the new row, returning the primary key value of the new row
             long newRowId = db.insert(TABLE_NAME, null, values);
+
         }
     }
 
