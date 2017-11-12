@@ -99,6 +99,8 @@ public class AddDrink extends AppCompatActivity implements View.OnClickListener 
     @Override
     public void onClick(View v) {
 
+        Log.d("focusButtons", "HERE123");
+
         switch (v.getId()){
             case R.id.radlerButton:
                 selectedButton = setFocus(radlerButton);

@@ -221,6 +221,12 @@ public class HashMaps {
         buttonPressed.put("distilledButton", "distilled_pressed");
         buttonPressed.put("customButton", "custom_pressed");
 
+        // Food
+        buttonPressed.put("snackButton", "snack_pressed");
+        buttonPressed.put("midSizeButton", "mid_pressed");
+        buttonPressed.put("fullMealButton", "full_pressed");
+        buttonPressed.put("addMealButton", "addmeal_pressed");
+
         return buttonPressed;
     }
 }

@@ -103,6 +103,7 @@ public class FirstActivity extends AppCompatActivity implements Serializable {
         String toastMessage = intent.getStringExtra("toast");
         if(toastMessage != null && !toastMessage.equals("")) {
             Toast.makeText(getApplicationContext(), toastMessage, Toast.LENGTH_LONG).show();
+            intent.putExtra("toast", "");
         }
 
         updateUserMessages();
