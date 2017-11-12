@@ -39,19 +39,25 @@ public class FirstActivity extends AppCompatActivity implements Serializable {
     private Context context = this;
 
     // TO DELETE
+    /*
     private EditText amount;
     private EditText percent;
     private Button addButton;
     private Spinner spinner;
+    */
     FeedReaderDbHelper mDbHelper = new FeedReaderDbHelper(context);
     // TO DELETE
-    private EditText mealtime;
-    private Button saveButton;
+
+    // TO DELETE
+    //private EditText mealtime;
+    //private Button saveButton;
     private Button userDataButton;
     private TextView welcomeMessage;
-    private RadioButton mealSize1Radio;
-    private RadioButton mealSize2Radio;
-    private TextView lastMeal;
+    private Button addMealActivity;
+
+    // TO DELETE
+
+    // TO DELETE
     @SuppressLint("SimpleDateFormat")
     SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     SharedPreferences.Editor editor;
@@ -64,6 +70,7 @@ public class FirstActivity extends AppCompatActivity implements Serializable {
     private HashMap<String, Float> levelMap;
     private DecimalFormat myFormat = new DecimalFormat("0.0");
     private Button addDrinkActivity;
+    private TextView lastMeal;
 
     protected void onCreate(Bundle savedInstanceState){
 
@@ -77,7 +84,7 @@ public class FirstActivity extends AppCompatActivity implements Serializable {
         amountMap = HashMaps.createAmountMap();
         levelMap = HashMaps.createLevelMap();
         callEventListeners();
-        createDropdownMenu();
+        //createDropdownMenu();
         checkIfUserIsRegistered();
         updateUserMessages();
 
@@ -113,17 +120,18 @@ public class FirstActivity extends AppCompatActivity implements Serializable {
         //percent = (EditText) findViewById(R.id.percentET);
         //addButton = (Button) findViewById(R.id.addButton);
         //spinner = (Spinner) findViewById(spinnerDesign);
-        mealtime = (EditText) findViewById(R.id.mealTimeET);
-        saveButton = (Button) findViewById(R.id.updateDbButton);
+
+
+
         userDataButton = (Button) findViewById(R.id.userDataButton);
         welcomeMessage = (TextView) findViewById(R.id.welcomeMessage);
-        mealSize1Radio = (RadioButton) findViewById(R.id.mealSize1);
-        mealSize1Radio.setChecked(true);
-        mealSize2Radio = (RadioButton) findViewById(R.id.mealSize2);
-        lastMeal = (TextView) findViewById(R.id.lastMeal);
         unitsTextView = (TextView) findViewById(R.id.unitsDisplay);
         updateUnitsButton = (Button) findViewById(R.id.updateUnitsButton);
         addDrinkActivity = (Button) findViewById(R.id.addDrinkActivity);
+        addMealActivity = (Button) findViewById(R.id.addMealActivity);
+        //mealTime = (TextView) findViewById(R.id.timeOfMeal);
+        lastMeal = (TextView) findViewById(R.id.lastMeal);
+
     }
 
     /**
@@ -132,12 +140,14 @@ public class FirstActivity extends AppCompatActivity implements Serializable {
 
     public void callEventListeners(){
         secondActivityButton.setOnClickListener(startSecondActivityListener);
-        addButton.setOnClickListener(addDrinkListener);
-        saveButton.setOnClickListener(addMealToDBListener);
+        //addButton.setOnClickListener(addDrinkListener);
+
         userDataButton.setOnClickListener(startUserDataListener);
         updateUnitsButton.setOnClickListener(updateUnitsListener);
         addDrinkActivity.setOnClickListener(addDrinkActivityListener);
+        addMealActivity.setOnClickListener(addMealActivityListener);
 
+        /*
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
@@ -149,6 +159,7 @@ public class FirstActivity extends AppCompatActivity implements Serializable {
                 // your code here
             }
         });
+        */
     }
 
     // Starts UserDataActivity
@@ -160,15 +171,9 @@ public class FirstActivity extends AppCompatActivity implements Serializable {
         }
     };
 
-    // Adds new meal to DB
-    View.OnClickListener addMealToDBListener = new Button.OnClickListener(){
 
-        @Override
-        public void onClick(View v){
-            addMealToDB();
-        }
-    };
 
+    /*
     // Adds new drink to DB
     View.OnClickListener addDrinkListener = new Button.OnClickListener() {
 
@@ -181,6 +186,7 @@ public class FirstActivity extends AppCompatActivity implements Serializable {
             }
         }
     };
+    */
 
     // Starts Drink History activity
     View.OnClickListener startSecondActivityListener = new Button.OnClickListener() {
@@ -208,6 +214,14 @@ public class FirstActivity extends AppCompatActivity implements Serializable {
         @Override
         public void onClick(View v){
             runAddDrinkActivity();
+        }
+    };
+
+    View.OnClickListener addMealActivityListener = new Button.OnClickListener(){
+
+        @Override
+        public void onClick(View v){
+            runAddMealActivity();
         }
     };
     /**
@@ -245,13 +259,16 @@ public class FirstActivity extends AppCompatActivity implements Serializable {
         */
     }
 
+    /*
     public void createDropdownMenu(){
 
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.drinks_array, android.R.layout.simple_spinner_item);    // Create an ArrayAdapter using the string array and a default spinner layout
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);             // Specify the layout to use when the list of choices appears
         spinner.setAdapter(adapter);                // Apply the adapter to the spinner
     }
+    */
 
+    /*
     public void addDrinkToDB() throws ParseException {
 
         String amountText = amount.getText().toString();
@@ -292,6 +309,7 @@ public class FirstActivity extends AppCompatActivity implements Serializable {
             long newRowId = db.insert(TABLE_NAME, null, values);
         }
     }
+    */
 
     /**
      * 1.) Ko se drink doda, se level alkohola itak dvigne za vrednost dodatka
@@ -395,27 +413,7 @@ public class FirstActivity extends AppCompatActivity implements Serializable {
         String mt = prefs.getString("timeofmeal", null);
         Date myDate = new Date();
         String date = dateFormat.format(myDate);
-        mealtime.setText(date);
         lastMeal.setText("Your last meal was a " + mealType + " on " + mt);
-    }
-
-    // Adds last meal to the db
-    public void addMealToDB(){
-
-        // Gets the data repository in write mode
-        editor = getSharedPreferences(MY_PREFS_FILE, MODE_PRIVATE).edit();
-        
-        int radioButton = 0;
-        if(mealSize1Radio.isChecked()) radioButton = 1;
-        else if(mealSize2Radio.isChecked()) radioButton = 2;
-        else radioButton = 3;
-
-        editor.putInt("sizeofmeal", radioButton);
-        Date myDate = new Date();
-        String date = dateFormat.format(myDate);
-        editor.putString("timeofmeal", date);
-        editor.apply();
-        updateUserMessages();
     }
 
     public long calculateTimeDifference(Date date1, Date date2){
@@ -460,6 +458,11 @@ public class FirstActivity extends AppCompatActivity implements Serializable {
 
     public void runAddDrinkActivity(){
         Intent intent = new Intent(context, AddDrink.class);
+        context.startActivity(intent);
+    }
+
+    public void runAddMealActivity(){
+        Intent intent = new Intent(context, AddMeal.class);
         context.startActivity(intent);
     }
 

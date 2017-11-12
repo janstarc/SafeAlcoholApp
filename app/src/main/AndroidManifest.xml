@@ -24,6 +24,7 @@
         <activity android:name=".SecondActivity" />
         <activity android:name=".UserDataActivity" />
         <activity android:name=".AddDrink"/>
+        <activity android:name=".AddMeal"/>
 
         <meta-data
             android:name="preloaded_fonts"

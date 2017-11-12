@@ -56,6 +56,7 @@
     <string name="adddrinkactivity">AddDrinkActivity</string>
     <string name="a">A</string>
     <string name="beer">Beer</string>
+    <string name="addmealactivity">AddMealActivity</string>
     <string-array name="drinks_array">
         <item>Radler (2.5%)</item>
         <item>Light beer (4.2%)</item>
