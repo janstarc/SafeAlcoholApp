@@ -260,7 +260,7 @@ public class FirstActivity extends AppCompatActivity  {
                 } else if (aboveLimit == 0) {
                     textOut = "<font color=#273F4C><big>You are </font>" +
                             "<font color=#C54747> on limit </font>" +
-                            "<font color=#273F4C>! Wait before you drive </big></font> ";
+                            "<font color=#273F4C>! Wait before you drive </big> </font> ";
                 } else {
                     textOut = "<font color=#273F4C><big>You are </font>" +
                             "<font color=#C54747> " + myFormat.format(aboveLimit) + "</font>" +
