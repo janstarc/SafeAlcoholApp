@@ -8,6 +8,7 @@
     android:focusable="true"
     android:focusableInTouchMode="true">
 
+    <!--
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -15,7 +16,7 @@
         android:orientation="vertical"
         android:weightSum="1">
 
-        <!--
+
         <Button
             android:id="@+id/addButton2"
             android:layout_width="214dp"
@@ -27,7 +28,8 @@
 
         <TableLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:weightSum="100">
 
 
 
@@ -136,11 +138,12 @@
                     android:layout_weight="1.4"
                     android:background="@drawable/input"
                     android:gravity="center_horizontal"
-                    android:inputType="textPersonName"
+                    android:inputType="none|numberDecimal"
                     android:textAlignment="center"
                     android:textColor="@android:color/white"
                     android:textSize="40sp"
-                    android:cursorVisible="false"/>
+                    android:cursorVisible="false"
+                    android:maxLength="3"/>
 
                 <TextView
                     android:id="@+id/textView2"
@@ -161,11 +164,12 @@
                     android:layout_weight="1.4"
                     android:background="@drawable/input"
                     android:gravity="center_horizontal"
-                    android:inputType="textPersonName"
+                    android:inputType="number"
                     android:textAlignment="center"
                     android:textColor="@android:color/white"
                     android:textSize="40sp"
-                    android:cursorVisible="false"/>
+                    android:cursorVisible="false"
+                    android:maxLength="2"/>
 
                 <TextView
                     android:id="@+id/textView3"
@@ -199,6 +203,6 @@
             </TableRow>
         </TableLayout>
 
-    </LinearLayout>
+    <!--</LinearLayout>-->
 </LinearLayout>
 

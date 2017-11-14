@@ -20,6 +20,16 @@
         android:textSize="20sp" />
 
     <Button
+        android:id="@+id/userDataButton"
+        android:layout_width="160px"
+        android:layout_height="140px"
+        android:layout_alignEnd="@+id/addDrinkActivity"
+        android:layout_alignRight="@+id/addDrinkActivity"
+        android:layout_alignTop="@+id/textView5"
+        android:background="@drawable/profile_edit"
+        android:text="" />
+
+    <Button
         android:id="@+id/secondActivity"
         android:layout_width="1350px"
         android:layout_height="200px"
@@ -27,19 +37,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="10dp"
          />
-    <!--
-    <Button
-        android:id="@+id/userDataButton"
-        android:layout_width="216dp"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_below="@+id/secondActivity"
-        android:layout_marginEnd="7dp"
-        android:layout_marginRight="7dp"
-        android:layout_marginTop="44dp"
-        android:text="@string/set_user_data" />
-        -->
+
 
     <Button
         android:id="@+id/addDrinkActivity"
@@ -69,7 +67,7 @@
         android:layout_marginTop="23dp"
         android:text="@string/home"
         android:textColor="@android:color/background_light"
-        android:textSize="22sp"
+        android:textSize="30sp"
         android:id="@+id/textView5" />
 
     <ImageView
@@ -78,7 +76,7 @@
         android:layout_height="400px"
         android:layout_below="@+id/textView5"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="34dp"
+        android:layout_marginTop="19dp"
         app:srcCompat="@drawable/face1" />
 
     <TextView
@@ -87,8 +85,10 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/welcomeMessage"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="15dp"
-        android:text="textLevel" />
+        android:layout_marginTop="8dp"
+        android:text="textLevel"
+        android:textAlignment="center"
+        android:textSize="18sp" />
 
     <TextView
         android:id="@+id/textDrive"
@@ -97,7 +97,9 @@
         android:layout_alignLeft="@+id/textLevel"
         android:layout_alignStart="@+id/textLevel"
         android:layout_below="@+id/textLevel"
-        android:layout_marginTop="38dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginLeft="105dp"
+        android:layout_marginStart="105dp"
         android:text="textDrive"
         android:textAlignment="center" />
 

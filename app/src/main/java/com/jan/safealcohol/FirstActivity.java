@@ -4,22 +4,22 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Html;
 import android.util.Log;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
-import java.io.Serializable;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 
+// Screen - 600dp*400dp
 
 public class FirstActivity extends AppCompatActivity  {
 
@@ -28,8 +28,6 @@ public class FirstActivity extends AppCompatActivity  {
     private Button userDataButton;
     private TextView welcomeMessage;
     private Button addMealActivity;
-
-
     @SuppressLint("SimpleDateFormat")
     SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     SharedPreferences.Editor editor;
@@ -37,17 +35,14 @@ public class FirstActivity extends AppCompatActivity  {
     public static final String MY_PREFS_FILE = "MyPrefsFile";
     private TextView textLevel;
     private TextView textDrive;
-    private Button updateUnitsButton;
     private HashMap<String, Float> levelMap;
     private DecimalFormat myFormat = new DecimalFormat("0.0");
     private Button addDrinkActivity;
-    private TextView lastMeal;
 
     protected void onCreate(Bundle savedInstanceState){
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.firstactivitydesign);
-
 
         // Create DB if not created
         new FeedReaderDbHelper(context);
@@ -57,8 +52,6 @@ public class FirstActivity extends AppCompatActivity  {
         drawButtons();
         checkIfUserIsRegistered();
         updateUserMessages();
-        //getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-
 
         try {
             updateUnits((float) 0.0);
@@ -90,15 +83,12 @@ public class FirstActivity extends AppCompatActivity  {
     public void defineVariables(){
 
         secondActivityButton = (Button) findViewById(R.id.secondActivity);
-        //userDataButton = (Button) findViewById(R.id.userDataButton);
+        userDataButton = (Button) findViewById(R.id.userDataButton);
         welcomeMessage = (TextView) findViewById(R.id.welcomeMessage);
         textLevel = (TextView) findViewById(R.id.textLevel);
         textDrive = (TextView) findViewById(R.id.textDrive);
-        //updateUnitsButton = (Button) findViewById(R.id.updateUnitsButton);
         addDrinkActivity = (Button) findViewById(R.id.addDrinkActivity);
         addMealActivity = (Button) findViewById(R.id.addMealActivity);
-        //lastMeal = (TextView) findViewById(R.id.lastMeal);
-
     }
 
     // Initialization of GUI at when the activity is started
@@ -106,6 +96,7 @@ public class FirstActivity extends AppCompatActivity  {
         secondActivityButton.setBackgroundResource(R.drawable.drinking_history_default);
         addDrinkActivity.setBackgroundResource(R.drawable.add_drink_home_default);
         addMealActivity.setBackgroundResource(R.drawable.add_meal_home_default);
+        userDataButton.setBackgroundResource(R.drawable.profile_edit);
     }
 
     /**
@@ -114,8 +105,7 @@ public class FirstActivity extends AppCompatActivity  {
 
     public void callEventListeners(){
         secondActivityButton.setOnClickListener(startSecondActivityListener);
-        //userDataButton.setOnClickListener(startUserDataListener);
-        //updateUnitsButton.setOnClickListener(updateUnitsListener);
+        userDataButton.setOnClickListener(startUserDataListener);
         addDrinkActivity.setOnClickListener(addDrinkActivityListener);
         addMealActivity.setOnClickListener(addMealActivityListener);
     }
@@ -125,6 +115,8 @@ public class FirstActivity extends AppCompatActivity  {
 
         @Override
         public void onClick(View v){
+
+            userDataButton.setBackgroundResource(R.drawable.profile_edit_pressed);
             runUserDataActivity();
         }
     };
@@ -170,7 +162,6 @@ public class FirstActivity extends AppCompatActivity  {
     public void checkIfUserIsRegistered(){
         prefs = getSharedPreferences(MY_PREFS_FILE, MODE_PRIVATE);
 
-
         String fn = prefs.getString("firstname", null);
         String ln = prefs.getString("lastname", null);
         int hg = prefs.getInt("height", 0);
@@ -182,7 +173,6 @@ public class FirstActivity extends AppCompatActivity  {
             Intent intent = new Intent(context, UserDataActivity.class);
             intent.putExtra("userMsg", "Please, enter your personal data");
             context.startActivity(intent);
-
         }
     }
 
@@ -208,54 +198,134 @@ public class FirstActivity extends AppCompatActivity  {
         // Convert unistTimestamp from SharedPref to Date + Calculate timeDiff
         Date unitsTimestamp = dateFormat.parse(unitsTimestampString);
         long timeDifferenceMin = calculateTimeDifference(currentTimestamp, unitsTimestamp);
+        String gender = prefs.getString("gender", null);
 
         // To prevent changing timeStamp, without changing units. | newDrinkUnits == 0.0 --> Only update for onCreate and onUpdate, nothing new added! 
         if(timeDifferenceMin > 0 || newDrinkUnits != 0.0) {                 
 
             float unitsMinus;
-            if(prefs.getString("gender", null).equals("M")) unitsMinus = (float) (timeDifferenceMin * 0.0167);
-            else unitsMinus = (float) (timeDifferenceMin * (0.0167/2));
+            if(gender.equals("M")){                                                 // Alcohol level reduces for 1 unit/hour (male) and 0.5 unit/hour (female)
+                unitsMinus = (float) (timeDifferenceMin * 0.0167);
+            } else {
+                unitsMinus = (float) (timeDifferenceMin * (0.0167/2));
+            }
 
             float unitsNew = (newDrinkUnits + unitsOld - unitsMinus);               // units --> Current drink | unitsOld --> Prev units from SharedPref | unitsMinus --> timeDiff * decreaseOnMin
             if (unitsNew < 0) unitsNew = 0;                                         // To avoid neg. units --> You can be max sober
-            calculateAlcoLevel(unitsNew);
+            calculateAlcoLevel(unitsNew);                                           // AlcoLevel depends on MORE FACTORS! It is not directly dividable from units!
             editor = getSharedPreferences(MY_PREFS_FILE, MODE_PRIVATE).edit();
             editor.putFloat("units", unitsNew);                                     // Put new info to the SharedPref
             String newTimestamp = dateFormat.format(currentTimestamp);              // Update last calculation value for units in
             editor.putString("unitsTimestamp", newTimestamp);                       // shared pref file!
             editor.apply();
-
         }
 
         Float currentUnits = prefs.getFloat("units", (float) 0.0);
         Float alcoLevel = prefs.getFloat("alcoLevel", (float) 0.0);
-
-        Float aboveLimit = 0f;
-        textLevel.setText("Current units: " + myFormat.format(currentUnits) + "  |  AlcoLevel: " + myFormat.format(alcoLevel) + "\n");
         String country = prefs.getString("country", null);
-        Float limitInCountry = levelMap.get(country)*10;
-        Log.d("calc", "Limit in country: " + limitInCountry + "AlcoLevel: " + alcoLevel);
-        Log.d("calc", "Calc: " + (alcoLevel-limitInCountry));
 
-        if(limitInCountry != -1){
-            //Log.d("limitString", "Alco level: " + alcoLevel);
-            //Log.d("limitString", "Level: " + myFormat.format(levelMap.get(prefs.getFloat("country", -1)) * 10));
+        // Fill all three textboxes
+        fillTextLevel(currentUnits, alcoLevel, gender);
+        fillTextDrive(alcoLevel, country);
+        fillTextJoke(alcoLevel);
+    }
+
+    public void fillTextJoke(Float alcolevel){
 
 
-            aboveLimit = alcoLevel - limitInCountry;
-            if(aboveLimit < 0){
-                float out = Math.abs(aboveLimit);
-                textDrive.setText("You are " + myFormat.format(out) + " below the limit. Be careful!\n");
-            } else if (aboveLimit == 0){
-                textDrive.setText("You are on limit. Remember, app just calculates an assumption. Wait before you drive");
+
+
+    }
+
+    public void fillTextDrive(Float alcoLevel, String country){
+
+        Float aboveLimit;
+        String textOut = "";
+
+        if(country != null) {
+            Float limitInCountry = levelMap.get(country) * 10;
+
+            if (limitInCountry != -1) {
+
+                aboveLimit = alcoLevel - limitInCountry;
+                if(alcoLevel == 0){
+                    textOut = "<font color=#273F4C><big>You are </font>" +
+                                "<font color=#4684C4>sober </font>" +
+                                "<font color=#273F4C>. Enjoy your ride! </big></font> ";
+                } else if (aboveLimit < 0) {
+                    float out = Math.abs(aboveLimit);
+                    textOut = "<font color=#273F4C><big>You are </font>" +
+                            "<font color=#4684C4> " + myFormat.format(out) + "</font>" +
+                            "<font color=#273F4C> below the legal limit.<br> Enjoy your ride! </big></font> ";
+                } else if (aboveLimit == 0) {
+                    textOut = "<font color=#273F4C><big>You are </font>" +
+                            "<font color=#C54747> on limit </font>" +
+                            "<font color=#273F4C>! Wait before you drive </big></font> ";
+                } else {
+                    textOut = "<font color=#273F4C><big>You are </font>" +
+                            "<font color=#C54747> " + myFormat.format(aboveLimit) + "</font>" +
+                            "<font color=#273F4C> above limit.<br></font> " +
+                            "<font color=#C54747> <b>Don't even think about driving!</b></big></font> ";
+                }
+
+                //textDrive.append("Limit in your country: " + myFormat.format(levelMap.get(prefs.getString("country", null)) * 10));
             } else {
-                textDrive.setText("You are " + myFormat.format(aboveLimit) + " above the limit. Don't even think about driving!");
+                textDrive.setText("Limit for your country is unknown!");
+            }
+        }
+
+        textDrive.setText(Html.fromHtml(textOut));
+    }
+
+    public void fillTextLevel(Float currentUnits, Float alcoLevel, String gender){
+
+        String textOut = "<font color=#273F4C>Current units: </font> " +
+                         "<font color=#4684C4><big>" + myFormat.format(currentUnits) + "</big></font>" +
+                         "<font color=#273F4C> &ensp;&ensp;&ensp;Alcohol level: </font> " +
+                         "<font color=#4684C4><big>" + myFormat.format(alcoLevel) + "</big></font><br>";
+
+        int hours = 0;
+        int minutes = 0;
+
+        if(alcoLevel == 0){
+            textOut = "You are sober";
+        } else if(gender.equals("M")){
+
+            minutes = Math.round(currentUnits / 0.0167f);
+            hours = minutes / 60;
+            minutes = minutes - (hours*60);
+
+            if(hours == 0){
+                textOut += "<font color=#273F4C>You are expected to be sober in </font>" +
+                            "<font color=#4684C4><big>" + minutes + "</big></font>" +
+                            "<font color=#273F4C> minutes </font>";
+            } else {
+                textOut += "<font color=#273F4C>You are expected to be sober in </font>" +
+                            "<font color=#4684C4><big>" + hours + "</big></font>" +
+                            "<font color=#273F4C> hours and </font>" +
+                            "<font color=#4684C4><big>" + minutes + "</big></font>" +
+                            "<font color=#273F4C> minutes </font>";
             }
 
-            textDrive.append("Limit in your country: " + myFormat.format(levelMap.get(prefs.getString("country", null)) * 10));
         } else {
-            textDrive.setText("Limit for your country is unknown!");
+            minutes = Math.round(alcoLevel / (0.0167f/2));
+            Log.d("calcualtion", "AlcoLevel: " + alcoLevel + " | Minutes: " + minutes);
+            hours = minutes / 60;
+            minutes = minutes - (hours*60);
+            if(hours == 0){
+                textOut += "<font color=#273F4C>You are expected to be sober in </font>" +
+                        "<font color=#4684C4><big>" + minutes + "</big></font>" +
+                        "<font color=#273F4C> minutes </font>";
+            } else {
+                textOut += "<font color=#273F4C>You are expected to be sober in </font>" +
+                        "<font color=#4684C4><big>" + hours + "</big></font>" +
+                        "<font color=#273F4C> hours and </font>" +
+                        "<font color=#4684C4><big>" + minutes + "</big></font>" +
+                        "<font color=#273F4C> minutes </font>";
+            }
         }
+
+        textLevel.setText(Html.fromHtml(textOut));
     }
 
     /*

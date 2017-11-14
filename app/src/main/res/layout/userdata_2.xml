@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@mipmap/userdata_background">
+
+    <EditText
+        android:id="@+id/firstnameET"
+        android:layout_width="850px"
+        android:layout_height="170px"
+        android:layout_alignLeft="@+id/radioGroup"
+        android:layout_alignParentTop="true"
+        android:layout_alignStart="@+id/radioGroup"
+        android:layout_marginTop="76dp"
+        android:background="@drawable/userdata_edittext_large"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:textAlignment="center"
+        android:textColor="@android:color/white"
+        android:textSize="22sp" />
+
+    <EditText
+        android:id="@+id/lastnameET"
+        android:layout_width="850px"
+        android:layout_height="170px"
+        android:layout_alignLeft="@+id/firstnameET"
+        android:layout_alignStart="@+id/firstnameET"
+        android:layout_below="@+id/firstnameET"
+        android:layout_marginTop="18dp"
+        android:background="@drawable/userdata_edittext_large"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:textAlignment="center"
+        android:textColor="@android:color/white"
+        android:textSize="22sp"
+        />
+
+    <EditText
+        android:id="@+id/heightET"
+        android:layout_width="425px"
+        android:layout_height="170px"
+        android:layout_alignLeft="@+id/lastnameET"
+        android:layout_alignStart="@+id/lastnameET"
+        android:layout_below="@+id/lastnameET"
+        android:layout_marginTop="18dp"
+        android:background="@drawable/userdata_edittext_small"
+        android:ems="10"
+        android:inputType="number"
+        android:textAlignment="center"
+        android:textColor="@android:color/white"
+        android:textSize="22sp" />
+
+    <EditText
+        android:id="@+id/weightET"
+        android:layout_width="425px"
+        android:layout_height="170px"
+        android:layout_alignLeft="@+id/heightET"
+        android:layout_alignStart="@+id/heightET"
+        android:layout_below="@+id/heightET"
+        android:layout_marginTop="18dp"
+        android:background="@drawable/userdata_edittext_small"
+        android:ems="10"
+        android:inputType="number"
+        android:textAlignment="center"
+        android:textColor="@android:color/white"
+        android:textSize="22sp" />
+
+    <Spinner
+        android:id="@+id/countriesSpinner"
+        android:layout_width="850px"
+        android:layout_height="170px"
+        android:layout_alignLeft="@+id/weightET"
+        android:layout_alignStart="@+id/weightET"
+        android:layout_below="@+id/weightET"
+        android:layout_marginTop="29dp"
+        android:spinnerMode="dialog"
+        android:textColor="@android:color/white"
+        />
+
+    <RadioGroup xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/radioGroup"
+        android:layout_width="800px"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/countriesSpinner"
+        android:layout_marginLeft="20dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="28dp"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/maleRadio"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="10dp"
+            android:layout_marginRight="10dp"
+            android:buttonTint="@android:color/white"
+            android:text="@string/male"
+            android:textColor="@android:color/white"
+            android:textSize="25sp" />
+
+        <RadioButton
+            android:id="@+id/femaleRadio"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="10dp"
+            android:layout_marginRight="10dp"
+            android:buttonTint="@android:color/white"
+            android:text="@string/female"
+            android:textColor="@android:color/white"
+            android:textSize="25sp" />
+
+    </RadioGroup>
+
+    <Button
+        android:id="@+id/updateDbButton"
+        android:layout_width="1050px"
+        android:layout_height="240px"
+        android:layout_below="@+id/radioGroup"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="48dp" />
+
+
+
+</RelativeLayout>

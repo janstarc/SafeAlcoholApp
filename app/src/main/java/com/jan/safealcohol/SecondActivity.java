@@ -25,6 +25,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import static com.jan.safealcohol.FeedReaderContract.FeedEntry.COLUMN_NAME_AMOUNT;
 import static com.jan.safealcohol.FeedReaderContract.FeedEntry.COLUMN_NAME_NAME;
 import static com.jan.safealcohol.FeedReaderContract.FeedEntry.COLUMN_NAME_TIMESTAMP;
@@ -69,7 +72,7 @@ public class SecondActivity extends AppCompatActivity implements Serializable {
         percentMap = HashMaps.createPercentageMap();
 
         try {
-            updateUnits((float) 0.0);
+            //updateUnits((float) 0.0);
             updateListView();
             optimizeDatabase();
         } catch (ParseException e) {
@@ -85,8 +88,8 @@ public class SecondActivity extends AppCompatActivity implements Serializable {
         spinnerTime = (Spinner) findViewById(R.id.spinnerTime);
 
         // TODO --> To delete below
-        resetButton = (Button) findViewById(R.id.resetButton);
-        resetButton.setOnClickListener(resetButtonListener);
+        //resetButton = (Button) findViewById(R.id.resetButton);
+        //resetButton.setOnClickListener(resetButtonListener);
 
         spinnerTime.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -219,7 +222,14 @@ public class SecondActivity extends AppCompatActivity implements Serializable {
         String pictureName = picturesMap.get(itemName).toString();
         int resourceId = this.getResources().getIdentifier(pictureName, "drawable", this.getPackageName());
         Log.d("resources", "Resource name: " + pictureName + " | ResourceId: " + resourceId);
-        ListItem item = new ListItem(itemName, resourceId, "Amount: " + amount.get(i).toString() + "dl [" + timestamp.get(i).toString() +"]");
+        String timeStamp = timestamp.get(i).toString();
+        /*
+        String pattern = "\\d{2}[:]\\d{2}";
+        Pattern r = Pattern.compile(pattern);
+        Matcher m = r.matcher(timeStamp);
+        String regexString = m.group(0);
+        */
+        ListItem item = new ListItem(itemName, resourceId, "    Amount: " + amount.get(i).toString() + "dl  (" + timeStamp +")");
         items.add(item);
     }
 
@@ -254,11 +264,11 @@ public class SecondActivity extends AppCompatActivity implements Serializable {
                     cursor.getColumnIndexOrThrow(COLUMN_NAME_NAME));
             name.add(nameField);
 
-            int amountField = cursor.getInt(
+            float amountField = cursor.getFloat(
                     cursor.getColumnIndexOrThrow(COLUMN_NAME_AMOUNT));
             amount.add(amountField);
 
-            int unitField = cursor.getInt(
+            float unitField = cursor.getFloat(
                     cursor.getColumnIndexOrThrow(COLUMN_NAME_UNITS));
             units.add(unitField);
 
@@ -297,7 +307,7 @@ public class SecondActivity extends AppCompatActivity implements Serializable {
             Log.d("debug", "Item: " + itemIds.get(i) + " | " + name.get(i) + " | " + amount.get(i) + " | " + units.get(i) + " | " + timestamp.get(i));
         }
     }
-
+    /*
     public void updateUnits(float newDrinkUnits) throws ParseException {
 
         // Get current date
@@ -329,6 +339,7 @@ public class SecondActivity extends AppCompatActivity implements Serializable {
         }
 
     }
+    */
 
     public static int getResId(String resName, Class<?> c) {
 

@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -13,9 +12,6 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import org.w3c.dom.Text;
 
 
 public class UserDataActivity extends AppCompatActivity {
@@ -40,16 +36,15 @@ public class UserDataActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.userdataactivity);
+        setContentView(R.layout.userdata_2);
         defineVariables();
         createDropdownMenu();
         updateDBbutton.setOnClickListener(updateDB);
-
+        drawButtons();
         fillUserDataForm();
-
-
-
     }
+
+
 
     public void defineVariables(){
         firstname = (EditText) findViewById(R.id.firstnameET);
@@ -60,20 +55,24 @@ public class UserDataActivity extends AppCompatActivity {
         maleRadio = (RadioButton) findViewById(R.id.maleRadio);
         femaleRadio = (RadioButton) findViewById(R.id.femaleRadio);
         countriesSpinner = (Spinner) findViewById(R.id.countriesSpinner);
-        userMessage = (TextView) findViewById(R.id.userMessage);
+    }
+
+    public void drawButtons(){
+        updateDBbutton.setBackgroundResource(R.drawable.confirm_default);
+
     }
 
     View.OnClickListener updateDB = new View.OnClickListener() {
 
         @Override
         public void onClick(View v) {
+
+            updateDBbutton.setBackgroundResource(R.drawable.confirm_pressed);
             updateUserData();
         }
     };
 
     public void fillUserDataForm(){
-
-        userMessage.setText(getIntent().getExtras().getString("userMsg"));
 
         prefs = getSharedPreferences(MY_PREFS_FILE, MODE_PRIVATE);
         firstname.setText(prefs.getString("firstname", null));
@@ -87,8 +86,6 @@ public class UserDataActivity extends AppCompatActivity {
         } else {
             femaleRadio.setChecked(true);
         }
-
-
     }
 
     public void updateUserData(){
@@ -103,16 +100,20 @@ public class UserDataActivity extends AppCompatActivity {
         editor.putString("country", countriesSpinner.getSelectedItem().toString());
         editor.putInt("countryId", (int) countriesSpinner.getSelectedItemId());
         editor.apply();
-
-        Toast.makeText(getApplicationContext(), "User data updated successfully", Toast.LENGTH_SHORT).show();
         fillUserDataForm();
-
+        runFirstActivity();
     }
 
     public void createDropdownMenu(){
 
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.countries, android.R.layout.simple_spinner_item);    // Create an ArrayAdapter using the string array and a default spinner layout
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(context, R.array.countries, R.layout.spinner_item);    // Create an ArrayAdapter using the string array and a default spinner layout
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);             // Specify the layout to use when the list of choices appears
         countriesSpinner.setAdapter(adapter);                // Apply the adapter to the spinner
+    }
+
+    public void runFirstActivity(){
+        Intent intent = new Intent(context, FirstActivity.class);
+        intent.putExtra("toast", "User data edited successfully!");
+        context.startActivity(intent);
     }
 }

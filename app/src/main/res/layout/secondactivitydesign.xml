@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF">
 
 
     <RelativeLayout
@@ -8,13 +10,23 @@
         android:layout_height="match_parent"
         android:layout_gravity="center_vertical">
 
+        <View
+            style="@style/Divider"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/uiText"
+            android:layout_marginTop="10dp"/>
+
         <ListView
             android:id="@+id/listView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
-            android:layout_below="@+id/spinnerTime" />
+            android:layout_below="@+id/spinnerTime"
+            android:background="#495663"/>
+
+
 
         <TextView
             android:id="@+id/uiText"
@@ -22,14 +34,13 @@
             android:layout_height="wrap_content"
             android:layout_alignBaseline="@+id/drinksSumText"
             android:layout_alignBottom="@+id/drinksSumText"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_marginLeft="10dp"
-            android:layout_marginStart="10dp"
+            android:layout_alignLeft="@+id/spinnerTime"
+            android:layout_alignStart="@+id/spinnerTime"
+            android:layout_marginLeft="56dp"
+            android:layout_marginStart="56dp"
             android:text="@string/alcohol_units"
             android:textColor="@android:color/black"
-            android:textSize="20sp"
-            android:layout_marginTop="10dp"/>
+            android:textSize="20sp" />
 
         <TextView
             android:id="@+id/drinksSumText"
@@ -41,7 +52,8 @@
             android:layout_toRightOf="@+id/uiText"
             android:text="@string/test"
             android:textSize="20sp"
-            android:layout_marginTop="10dp"/>
+            android:layout_marginTop="10dp"
+            android:textColor="#4684C4"/>
 
         <TextView
             android:id="@+id/uiText2"
@@ -66,7 +78,8 @@
             android:layout_toRightOf="@+id/uiText2"
             android:text="@string/_0"
             android:textSize="20sp"
-            android:layout_marginTop="10dp"/>
+            android:layout_marginTop="10dp"
+            android:textColor="#4684C4"/>
 
         <Spinner
             android:id="@+id/spinnerTime"
@@ -80,17 +93,8 @@
             android:layout_marginRight="10dp"
             android:layout_marginStart="10dp"
             android:layout_marginTop="13dp"
-            android:layout_marginBottom="10dp"/>
-
-        <Button
-            android:id="@+id/resetButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/reset"
-            android:layout_alignBaseline="@+id/alcoLevel"
-            android:layout_alignBottom="@+id/alcoLevel"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true" />
+            android:layout_marginBottom="10dp"
+            android:background="#FFFFFF"/>
 
     </RelativeLayout>
 
