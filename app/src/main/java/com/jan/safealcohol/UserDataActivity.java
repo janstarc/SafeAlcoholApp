@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -12,6 +13,7 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 public class UserDataActivity extends AppCompatActivity {
@@ -42,6 +44,12 @@ public class UserDataActivity extends AppCompatActivity {
         updateDBbutton.setOnClickListener(updateDB);
         drawButtons();
         fillUserDataForm();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();  // Always call the superclass method first
+        drawButtons();
     }
 
 
@@ -90,18 +98,41 @@ public class UserDataActivity extends AppCompatActivity {
 
     public void updateUserData(){
 
-        editor = getSharedPreferences(MY_PREFS_FILE, MODE_PRIVATE).edit();
-        editor.putString("firstname", firstname.getText().toString());
-        editor.putString("lastname", lastname.getText().toString());
-        if(maleRadio.isChecked()) editor.putString("gender", "M");
-        else editor.putString("gender", "F");
-        editor.putInt("weight", Integer.parseInt(weight.getText().toString()));
-        editor.putInt("height", Integer.parseInt(height.getText().toString()));
-        editor.putString("country", countriesSpinner.getSelectedItem().toString());
-        editor.putInt("countryId", (int) countriesSpinner.getSelectedItemId());
-        editor.apply();
-        fillUserDataForm();
-        runFirstActivity();
+        String fn = firstname.getText().toString();
+        String ln = lastname.getText().toString();
+        String wgS = weight.getText().toString();
+        String hgS = height.getText().toString();
+
+        if(!fn.equals("") && !ln.equals("") && !wgS.equals("") && !hgS.equals("")){         // No empty fields
+
+            int wg = Integer.valueOf(wgS);
+            int hg = Integer.valueOf(hgS);
+
+            if(wg < 200 && hg < 220){                   // Input that makes sense
+                editor = getSharedPreferences(MY_PREFS_FILE, MODE_PRIVATE).edit();
+                editor.putString("firstname", fn);
+                editor.putString("lastname", ln);
+                if(maleRadio.isChecked()) editor.putString("gender", "M");
+                else editor.putString("gender", "F");
+                editor.putInt("weight", wg);
+                editor.putInt("height", hg);
+                editor.putString("country", countriesSpinner.getSelectedItem().toString());
+                editor.putInt("countryId", (int) countriesSpinner.getSelectedItemId());
+                editor.apply();
+                fillUserDataForm();
+                runFirstActivity();
+            } else {
+                updateDBbutton.setBackgroundResource(R.drawable.confirm_default);
+                Toast.makeText(getApplicationContext(), "Please check weight and height", Toast.LENGTH_LONG).show();
+            }
+        } else {
+            updateDBbutton.setBackgroundResource(R.drawable.confirm_default);
+            Toast.makeText(getApplicationContext(), "Please fill all fields", Toast.LENGTH_LONG).show();
+        }
+
+
+        Log.d("inputCheck", "Fn: '" + fn + "' Ln: '" + ln + "' Wg: '" + wgS + "' Hg: '" + hgS + "'");
+
     }
 
     public void createDropdownMenu(){

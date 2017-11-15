@@ -11,6 +11,7 @@ import android.text.Html;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import java.text.DecimalFormat;
@@ -18,6 +19,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Timer;
+import java.util.TimerTask;
 
 // Screen - 600dp*400dp
 
@@ -35,9 +38,13 @@ public class FirstActivity extends AppCompatActivity  {
     public static final String MY_PREFS_FILE = "MyPrefsFile";
     private TextView textLevel;
     private TextView textDrive;
+    private TextView textJoke;
     private HashMap<String, Float> levelMap;
-    private DecimalFormat myFormat = new DecimalFormat("0.0");
+    private DecimalFormat myFormat = new DecimalFormat("0.00");
     private Button addDrinkActivity;
+    private Timer timer;
+    private TimerTask timerTask;
+    private ImageView drunkImage;
 
     protected void onCreate(Bundle savedInstanceState){
 
@@ -52,6 +59,7 @@ public class FirstActivity extends AppCompatActivity  {
         drawButtons();
         checkIfUserIsRegistered();
         updateUserMessages();
+        startTimer();
 
         try {
             updateUnits((float) 0.0);
@@ -87,8 +95,10 @@ public class FirstActivity extends AppCompatActivity  {
         welcomeMessage = (TextView) findViewById(R.id.welcomeMessage);
         textLevel = (TextView) findViewById(R.id.textLevel);
         textDrive = (TextView) findViewById(R.id.textDrive);
+        textJoke = (TextView) findViewById(R.id.textJoke);
         addDrinkActivity = (Button) findViewById(R.id.addDrinkActivity);
         addMealActivity = (Button) findViewById(R.id.addMealActivity);
+        drunkImage = (ImageView) findViewById(R.id.drunkImage);
     }
 
     // Initialization of GUI at when the activity is started
@@ -97,6 +107,33 @@ public class FirstActivity extends AppCompatActivity  {
         addDrinkActivity.setBackgroundResource(R.drawable.add_drink_home_default);
         addMealActivity.setBackgroundResource(R.drawable.add_meal_home_default);
         userDataButton.setBackgroundResource(R.drawable.profile_edit);
+    }
+
+    // Function, that updates units every minute
+    public void startTimer(){
+
+            timer = new Timer();
+
+            // Timer task to be executed
+            timerTask = new TimerTask() {
+                @Override
+                public void run() {
+                    runOnUiThread(new Runnable() {                  // To avoid changing view by other thread --> Crash!
+                        @Override
+                        public void run() {
+                            Log.d("timer", "TimerTask executed");
+                            try {                                   // Recalculate & display things
+                                updateUnits(0.0f);
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+                }
+            };
+
+            // Schedule timer to execute TimerTask every minute
+            timer.schedule(timerTask, 60000, 60000);
     }
 
     /**
@@ -227,14 +264,69 @@ public class FirstActivity extends AppCompatActivity  {
         // Fill all three textboxes
         fillTextLevel(currentUnits, alcoLevel, gender);
         fillTextDrive(alcoLevel, country);
-        fillTextJoke(alcoLevel);
+        fillTextJokeSetPicture(alcoLevel);
     }
 
-    public void fillTextJoke(Float alcolevel){
 
+    public void fillTextJokeSetPicture(Float alcoLevel){
 
+        String textOut = "";
+        Log.d("Level: ", "Level: " + alcoLevel);
 
+        if(alcoLevel == 0){
+            textOut = "<font color=#273F4C><big>Phase: </font>" +
+                    "<font color=#4684C4><b>Sober </b></big></font><br>" +
+                    "<font color=#273F4C>You are expected to do (mostly) rational things,<br>" +
+                    " wake up without hangover and save a lot of money." +
+                    " Keep on the good work!</font>";
+            drunkImage.setImageResource(R.drawable.face1);
 
+        } else if (alcoLevel < 0.35) {          // 0.35
+            textOut = "<font color=#273F4C><big>Phase: </font>" +
+                    "<font color=#4684C4><b>The pre-tipsy phase </b></big></font><br>" +
+                    "<font color=#273F4C>Depends on how much you ate and how you feel, you " +
+                    " might notice a very mild effect of alcohol. " +
+                    " Your reaction time isn't noticeably affected.</font>";
+            drunkImage.setImageResource(R.drawable.face2);
+
+        } else if (alcoLevel < 0.55) {       // 0.55
+            textOut = "<font color=#273F4C><big>Phase: </font>" +
+                    "<font color=#4684C4><b>The tipsy phase </b></big></font><br>" +
+                    "<font color=#273F4C>Your self-confidence is boosted, you are more talkative " +
+                    "and daring. A little bit more, and <br>stupid decisions, here we come!</font>";
+            drunkImage.setImageResource(R.drawable.face3);
+
+        } else if (alcoLevel < 1) {         // 1
+            textOut = "<font color=#273F4C><big>Phase: </font>" +
+                    "<font color=#C49549><b>The slurring phase </b></big></font><br>" +
+                    "<font color=#273F4C>Your are experiencing a wave of alcohol. " +
+                    "Everything sounds and feels a little bit funny, because your speech is slurry and your motor skills are impaired.</font>";
+            drunkImage.setImageResource(R.drawable.face4);
+
+        } else if (alcoLevel < 1.5) {       // 1.5
+            textOut = "<font color=#273F4C><big>Phase: </font>" +
+                    "<font color=#C47549><b>The blurring phase </b></big></font><br>" +
+                    "<font color=#273F4C>Everything is suspiciously blurry. " +
+                    "Everyone in the entire freaking bar is suddenly beautiful. Good " +
+                    "luck with your wonderful drunken pick up lines!</font>";
+            drunkImage.setImageResource(R.drawable.face5);
+
+        } else if (alcoLevel < 2){          // 2
+            textOut = "<font color=#273F4C><big>Phase: </font>" +
+                    "<font color=#C46949><b>The toppling over phase </b></big></font><br>" +
+                    "<font color=#273F4C>Now you’re starting to lean on tables, walls, chairs, even unsuspecting people. " +
+                    "Just. Stop. Drinking. Nothing good is going to happen from this point on.</font>";
+            drunkImage.setImageResource(R.drawable.face6);
+
+        } else {
+            textOut = "<font color=#273F4C><big>Phase: </font>" +
+                    "<font color=#C64747><b>The dead phase </b></big></font><br>" +
+                    "<font color=#273F4C>Things just got real. By now you’re probably lying down somewhere in a drunken stupor (hopefully your bed).  " +
+                    "Sorry, party is over for tonight.</font>";
+            drunkImage.setImageResource(R.drawable.face7);
+        }
+
+        textJoke.setText(Html.fromHtml(textOut));
     }
 
     public void fillTextDrive(Float alcoLevel, String country){
@@ -248,24 +340,26 @@ public class FirstActivity extends AppCompatActivity  {
             if (limitInCountry != -1) {
 
                 aboveLimit = alcoLevel - limitInCountry;
+
                 if(alcoLevel == 0){
                     textOut = "<font color=#273F4C><big>You are </font>" +
-                                "<font color=#4684C4>sober </font>" +
-                                "<font color=#273F4C>. Enjoy your ride! </big></font> ";
-                } else if (aboveLimit < 0) {
+                                "<font color=#4684C4>sober</font>" +
+                                "<font color=#273F4C>. Enjoy your ride! </big>" +
+                                "<br><font color=#273F4C> Limit in your country: </font><font color=#4684C4>" + myFormat.format(limitInCountry) + "</font></font> ";
+                } else if (aboveLimit < 0){
                     float out = Math.abs(aboveLimit);
                     textOut = "<font color=#273F4C><big>You are </font>" +
-                            "<font color=#4684C4> " + myFormat.format(out) + "</font>" +
-                            "<font color=#273F4C> below the legal limit.<br> Enjoy your ride! </big></font> ";
-                } else if (aboveLimit == 0) {
+                            "<font color=#4684C4><b> " + myFormat.format(out) + "</b></font>" +
+                            "<font color=#273F4C> below the legal limit.<br> Be careful and enjoy your ride</big></font> ";
+                } else if (aboveLimit == 0){
                     textOut = "<font color=#273F4C><big>You are </font>" +
-                            "<font color=#C54747> on limit </font>" +
-                            "<font color=#273F4C>! Wait before you drive </big> </font> ";
+                            "<font color=#C54747><b> on the legal limit</b></font>" +
+                            "<font color=#273F4C><br> Wait before you drive! </big> </font> ";
                 } else {
                     textOut = "<font color=#273F4C><big>You are </font>" +
-                            "<font color=#C54747> " + myFormat.format(aboveLimit) + "</font>" +
+                            "<font color=#C54747><b> " + myFormat.format(aboveLimit) + "</b></font>" +
                             "<font color=#273F4C> above limit.<br></font> " +
-                            "<font color=#C54747> <b>Don't even think about driving!</b></big></font> ";
+                            "<font color=#C54747><b>Don't even think about driving!</b></big></font> ";
                 }
 
                 //textDrive.append("Limit in your country: " + myFormat.format(levelMap.get(prefs.getString("country", null)) * 10));
@@ -288,7 +382,7 @@ public class FirstActivity extends AppCompatActivity  {
         int minutes = 0;
 
         if(alcoLevel == 0){
-            textOut = "You are sober";
+            // textOut = "You are sober";
         } else if(gender.equals("M")){
 
             minutes = Math.round(currentUnits / 0.0167f);
@@ -302,9 +396,9 @@ public class FirstActivity extends AppCompatActivity  {
             } else {
                 textOut += "<font color=#273F4C>You are expected to be sober in </font>" +
                             "<font color=#4684C4><big>" + hours + "</big></font>" +
-                            "<font color=#273F4C> hours and </font>" +
+                            "<font color=#273F4C> h and </font>" +
                             "<font color=#4684C4><big>" + minutes + "</big></font>" +
-                            "<font color=#273F4C> minutes </font>";
+                            "<font color=#273F4C> min </font>";
             }
 
         } else {

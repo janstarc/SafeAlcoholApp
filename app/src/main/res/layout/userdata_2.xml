@@ -15,9 +15,11 @@
         android:background="@drawable/userdata_edittext_large"
         android:ems="10"
         android:inputType="textPersonName"
-        android:textAlignment="center"
         android:textColor="@android:color/white"
-        android:textSize="22sp" />
+        android:textSize="22sp"
+        android:paddingStart="20dp"
+        android:paddingLeft="20dp"
+        android:maxLength="15"/>
 
     <EditText
         android:id="@+id/lastnameET"
@@ -30,10 +32,11 @@
         android:background="@drawable/userdata_edittext_large"
         android:ems="10"
         android:inputType="textPersonName"
-        android:textAlignment="center"
         android:textColor="@android:color/white"
         android:textSize="22sp"
-        />
+        android:paddingStart="20dp"
+        android:paddingLeft="20dp"
+        android:maxLength="15"/>
 
     <EditText
         android:id="@+id/heightET"
@@ -46,9 +49,11 @@
         android:background="@drawable/userdata_edittext_small"
         android:ems="10"
         android:inputType="number"
-        android:textAlignment="center"
         android:textColor="@android:color/white"
-        android:textSize="22sp" />
+        android:textSize="22sp"
+        android:paddingStart="20dp"
+        android:paddingLeft="20dp"
+        android:maxLength="3"/>
 
     <EditText
         android:id="@+id/weightET"
@@ -61,9 +66,11 @@
         android:background="@drawable/userdata_edittext_small"
         android:ems="10"
         android:inputType="number"
-        android:textAlignment="center"
         android:textColor="@android:color/white"
-        android:textSize="22sp" />
+        android:textSize="22sp"
+        android:paddingStart="20dp"
+        android:paddingLeft="20dp"
+        android:maxLength="3"/>
 
     <Spinner
         android:id="@+id/countriesSpinner"
@@ -95,7 +102,7 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="10dp"
             android:layout_marginRight="10dp"
-            android:buttonTint="@android:color/white"
+            android:buttonTint="#273F4C"
             android:text="@string/male"
             android:textColor="@android:color/white"
             android:textSize="25sp" />
@@ -106,7 +113,7 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="10dp"
             android:layout_marginRight="10dp"
-            android:buttonTint="@android:color/white"
+            android:buttonTint="#273F4C"
             android:text="@string/female"
             android:textColor="@android:color/white"
             android:textSize="25sp" />

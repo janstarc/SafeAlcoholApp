@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical" android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:weightSum="1"
     android:background="@mipmap/background"
@@ -21,10 +22,10 @@
 
     <Button
         android:id="@+id/userDataButton"
-        android:layout_width="160px"
-        android:layout_height="140px"
-        android:layout_alignEnd="@+id/addDrinkActivity"
-        android:layout_alignRight="@+id/addDrinkActivity"
+        android:layout_width="120px"
+        android:layout_height="100px"
+        android:layout_alignEnd="@+id/textJoke"
+        android:layout_alignRight="@+id/textJoke"
         android:layout_alignTop="@+id/textView5"
         android:background="@drawable/profile_edit"
         android:text="" />
@@ -71,7 +72,7 @@
         android:id="@+id/textView5" />
 
     <ImageView
-        android:id="@+id/imageView"
+        android:id="@+id/drunkImage"
         android:layout_width="400px"
         android:layout_height="400px"
         android:layout_below="@+id/textView5"
@@ -92,25 +93,24 @@
 
     <TextView
         android:id="@+id/textDrive"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/textLevel"
-        android:layout_alignStart="@+id/textLevel"
+        android:layout_width="1100px"
+        android:layout_height="250px"
+        android:layout_alignEnd="@+id/addDrinkActivity"
+        android:layout_alignRight="@+id/addDrinkActivity"
         android:layout_below="@+id/textLevel"
-        android:layout_marginTop="15dp"
-        android:layout_marginLeft="105dp"
-        android:layout_marginStart="105dp"
+        android:layout_marginTop="13dp"
         android:text="textDrive"
         android:textAlignment="center" />
 
     <TextView
         android:id="@+id/textJoke"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/textDrive"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="50dp"
-        android:layout_marginBottom="24dp"
-        android:text="textJoke" />
+        android:layout_width="1100px"
+        android:layout_height="250px"
+        android:layout_above="@+id/addDrinkActivity"
+        android:layout_alignEnd="@+id/addDrinkActivity"
+        android:layout_alignRight="@+id/addDrinkActivity"
+        android:layout_marginBottom="14dp"
+        android:text="textJoke"
+        android:textAlignment="center" />
 
 </RelativeLayout>
