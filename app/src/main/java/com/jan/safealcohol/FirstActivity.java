@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
@@ -237,6 +236,22 @@ public class FirstActivity extends AppCompatActivity  {
         long timeDifferenceMin = calculateTimeDifference(currentTimestamp, unitsTimestamp);
         String gender = prefs.getString("gender", null);
 
+
+        // TODO Insert here!
+        float mealReductionUnits = calcMealReductionUnits();
+        Log.d("foodUnits", "Food units minus = " + mealReductionUnits);
+
+        if(mealReductionUnits != 0){
+            editor = getSharedPreferences(MY_PREFS_FILE, MODE_PRIVATE).edit();
+            float unitsNew = unitsOld - mealReductionUnits;
+            if(unitsNew > 0){
+                editor.putFloat("units", unitsNew);
+            } else {
+                editor.putFloat("units", 0f);
+            }
+            editor.apply();
+        }
+
         // To prevent changing timeStamp, without changing units. | newDrinkUnits == 0.0 --> Only update for onCreate and onUpdate, nothing new added! 
         if(timeDifferenceMin > 0 || newDrinkUnits != 0.0) {                 
 
@@ -247,10 +262,9 @@ public class FirstActivity extends AppCompatActivity  {
                 unitsMinus = (float) (timeDifferenceMin * (0.0167/2));
             }
 
-            float unitsNew = (newDrinkUnits + unitsOld - unitsMinus);               // units --> Current drink | unitsOld --> Prev units from SharedPref | unitsMinus --> timeDiff * decreaseOnMin
+            float unitsNew = (newDrinkUnits + unitsOld - unitsMinus - mealReductionUnits);               // units --> Current drink | unitsOld --> Prev units from SharedPref | unitsMinus --> timeDiff * decreaseOnMin
             if (unitsNew < 0) unitsNew = 0;                                         // To avoid neg. units --> You can be max sober
             calculateAlcoLevel(unitsNew);                                           // AlcoLevel depends on MORE FACTORS! It is not directly dividable from units!
-            editor = getSharedPreferences(MY_PREFS_FILE, MODE_PRIVATE).edit();
             editor.putFloat("units", unitsNew);                                     // Put new info to the SharedPref
             String newTimestamp = dateFormat.format(currentTimestamp);              // Update last calculation value for units in
             editor.putString("unitsTimestamp", newTimestamp);                       // shared pref file!
@@ -265,6 +279,50 @@ public class FirstActivity extends AppCompatActivity  {
         fillTextLevel(currentUnits, alcoLevel, gender);
         fillTextDrive(alcoLevel, country);
         fillTextJokeSetPicture(alcoLevel);
+    }
+
+    public float calcMealReductionUnits(){
+
+
+        prefs = getSharedPreferences(MY_PREFS_FILE, MODE_PRIVATE);
+        editor = getSharedPreferences(MY_PREFS_FILE, MODE_PRIVATE).edit();
+        Date currentTimestamp = new Date();
+        String timestampString;
+        timestampString = dateFormat.format(currentTimestamp);
+
+        // Get relevant info from the SharedPref
+        boolean snackCalculated = prefs.getBoolean("snackCalculated", false);
+        boolean midsizeCalculated = prefs.getBoolean("midsizeMealCalculated", false);
+        boolean fullmealCalculated = prefs.getBoolean("fullMealCalculated", false);
+        String snackTime = prefs.getString("snackTimestamp", null);
+        String midsizeTime = prefs.getString("midsizeMealTimestamp", null);
+        String fullTime = prefs.getString("fullMealTimestamp", null);
+
+        // If it wasn't yet calculated AND it was added to the SharedPref
+        if(snackCalculated == false && snackTime != null){
+
+            editor.putBoolean("snackCalculated", true);
+            //editor.putString("snackTimestamp", timestampString);
+            editor.apply();
+            return 0.1f;
+
+        } else if (midsizeCalculated == false && midsizeTime != null){
+
+            editor.putBoolean("midsizeMealCalculated", true);
+            //editor.putString("midsizeMealTimestamp", timestampString);
+            editor.apply();
+            return 0.3f;
+
+        } else if (fullmealCalculated == false && fullTime != null){
+
+            editor.putBoolean("fullMealCalculated", true);
+            //editor.putString("fullMealTimestamp", timestampString);
+            editor.apply();
+            return 0.7f;
+
+        }
+
+        return 0f;
     }
 
 
@@ -486,7 +544,7 @@ public class FirstActivity extends AppCompatActivity  {
      */
 
     public void runSecondActivity () {
-        Intent intent = new Intent(context, SecondActivity.class);
+        Intent intent = new Intent(context, DrinkingHistory.class);
         context.startActivity(intent);
     }
 

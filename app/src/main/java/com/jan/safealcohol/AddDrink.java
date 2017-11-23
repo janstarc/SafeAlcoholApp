@@ -18,7 +18,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
-
 import static com.jan.safealcohol.FeedReaderContract.FeedEntry.COLUMN_NAME_AMOUNT;
 import static com.jan.safealcohol.FeedReaderContract.FeedEntry.COLUMN_NAME_NAME;
 import static com.jan.safealcohol.FeedReaderContract.FeedEntry.COLUMN_NAME_TIMESTAMP;
@@ -29,13 +28,10 @@ public class AddDrink extends AppCompatActivity implements View.OnClickListener 
 
 
     private Context context = this;
-
-    // TO DELETE
     private EditText amount;
     private EditText percent;
     private Button addButton;
     FeedReaderDbHelper mDbHelper = new FeedReaderDbHelper(context);
-    // TO DELETE
     @SuppressLint("SimpleDateFormat")
     SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     SharedPreferences.Editor editor;
@@ -72,7 +68,7 @@ public class AddDrink extends AppCompatActivity implements View.OnClickListener 
         DBNamesMap = HashMaps.createDBNamesMap();
         callEventListeners();
         drawButtons();
-
+        //showCustomDrinkName();
 
         try {
             updateUnits((float) 0.0);
@@ -81,7 +77,6 @@ public class AddDrink extends AppCompatActivity implements View.OnClickListener 
         }
 
         selectedButton = beerButton;                // selectedButton has global reach --> Accessible from functions
-
     }
 
     @Override
@@ -122,6 +117,7 @@ public class AddDrink extends AppCompatActivity implements View.OnClickListener 
                 break;
 
             case R.id.customButton :
+                prefs = getSharedPreferences(MY_PREFS_FILE, MODE_PRIVATE);
                 selectedButton = setFocus(customButton);
                 break;
         }
@@ -233,6 +229,17 @@ public class AddDrink extends AppCompatActivity implements View.OnClickListener 
         amount.setText(amountText);
         Log.d("selectedButton", "Selected button: " + key);
 
+        if(key.equals("customButton")) {
+            int customDrinkPercent = prefs.getInt("customDrinkPercent", 0);
+            float customDrinkAmount = prefs.getFloat("customDrinkAmount", 0f);
+            Log.d("textFields", "Custom drink amount: " + customDrinkAmount + " Cpp: " + customDrinkPercent);
+            if (customDrinkAmount != 0) {
+                Log.d("textFields", "Here?");
+                amount.setText(Float.toString(customDrinkAmount));
+                percent.setText(Integer.toString(customDrinkPercent));
+
+            }
+        }
     }
 
     // Adding selected drink to the DB
@@ -251,6 +258,17 @@ public class AddDrink extends AppCompatActivity implements View.OnClickListener 
             // Gets the data repository in write mode
             SQLiteDatabase db = mDbHelper.getWritableDatabase();
             String drinkKey = getResources().getResourceEntryName(selectedButton.getId());
+
+            Log.d("custom", "Drink Key: " + drinkKey);
+            if(drinkKey.equals("customButton")){
+                    Log.d("custom", "Custom button here?");
+                    editor = getSharedPreferences(MY_PREFS_FILE, MODE_PRIVATE).edit();
+                    editor.putInt("customDrinkPercent", Integer.parseInt(percentText));
+                    editor.putFloat("customDrinkAmount", Float.valueOf(amountText));
+                    editor.apply();
+            }
+
+
             String selectedDrink = DBNamesMap.get(drinkKey);
 
             float amount  = Float.valueOf(amountText);

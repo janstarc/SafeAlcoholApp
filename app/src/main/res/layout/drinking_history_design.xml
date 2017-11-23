@@ -83,18 +83,23 @@
 
         <Spinner
             android:id="@+id/spinnerTime"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_width="1600px"
+            android:layout_height="100px"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:layout_below="@+id/uiText"
+            android:layout_marginTop="10dp"
+            android:background="#273F4C"
+            />
+            <!--
             android:layout_marginEnd="10dp"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
             android:layout_marginStart="10dp"
             android:layout_marginTop="13dp"
             android:layout_marginBottom="10dp"
-            android:background="#FFFFFF"/>
+            -->
+
 
     </RelativeLayout>
 

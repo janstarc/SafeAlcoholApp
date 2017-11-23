@@ -8,201 +8,191 @@
     android:focusable="true"
     android:focusableInTouchMode="true">
 
-    <!--
-    <LinearLayout
+
+    <View style="@style/Divider" />
+
+    <TableLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/appBackground"
-        android:orientation="vertical"
-        android:weightSum="1">
+        android:weightSum="100">
 
 
-        <Button
-            android:id="@+id/addButton2"
-            android:layout_width="214dp"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:text="@string/addButton" />
-        -->
-        <View style="@style/Divider" />
 
-        <TableLayout
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" >
+
+            <Button
+                android:id="@+id/radlerButton"
+                android:layout_width="1350px"
+                android:layout_height="240px"
+                android:layout_marginLeft="13dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:layout_gravity="center_vertical"
+                />
+
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" >
+
+            <Button
+                android:id="@+id/beerButton"
+                android:layout_width="1350px"
+                android:layout_height="240px"
+                android:layout_marginLeft="13dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:layout_gravity="center_vertical"
+                 />
+
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" >
+
+            <Button
+                android:id="@+id/wineButton"
+                android:layout_width="1350px"
+                android:layout_height="240px"
+                android:layout_marginLeft="13dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:layout_gravity="center_vertical"
+                />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" >
+
+            <Button
+                android:id="@+id/liquorButton"
+                android:layout_width="1350px"
+                android:layout_height="240px"
+                android:layout_marginLeft="13dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:layout_gravity="center_vertical"
+                 />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" >
+
+            <Button
+                android:id="@+id/distilledButton"
+                android:layout_width="1350px"
+                android:layout_height="240px"
+                android:layout_marginLeft="13dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:layout_gravity="center_vertical"
+                 />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" >
+
+
+            <Button
+                android:id="@+id/customButton"
+                android:layout_width="1350px"
+                android:layout_height="240px"
+                android:layout_marginLeft="13dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:layout_gravity="center_vertical"
+                android:text="Drink name"
+                android:textColor="@android:color/white"
+                android:paddingLeft="50dp"
+                android:paddingTop="30dp"
+                />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" >
+
+            <EditText
+                android:id="@+id/amountET2"
+                android:layout_width="0dp"
+                android:layout_height="200px"
+                android:layout_marginBottom="10dp"
+                android:layout_marginLeft="40dp"
+                android:layout_weight="1.4"
+                android:background="@drawable/input"
+                android:gravity="center_horizontal"
+                android:inputType="none|numberDecimal"
+                android:textAlignment="center"
+                android:textColor="@android:color/white"
+                android:textSize="40sp"
+                android:cursorVisible="true"
+                android:maxLength="3"
+                android:textCursorDrawable="@drawable/cursor_custom"/>
+
+            <TextView
+                android:id="@+id/textView2"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginTop="25dp"
+                android:layout_marginLeft="5dp"
+                android:layout_weight="1"
+                android:text="@string/dl"
+                android:textColor="@android:color/white"
+                android:textSize="25sp" />
+
+            <EditText
+                android:id="@+id/percentET2"
+                android:layout_width="0dp"
+                android:layout_height="200px"
+                android:layout_marginLeft="45dp"
+                android:layout_weight="1.4"
+                android:background="@drawable/input"
+                android:gravity="center_horizontal"
+                android:inputType="none|numberDecimal"
+                android:textAlignment="center"
+                android:textColor="@android:color/white"
+                android:textSize="40sp"
+                android:cursorVisible="true"
+                android:maxLength="4"
+                android:textCursorDrawable="@drawable/cursor_custom"/>
+
+            <TextView
+                android:id="@+id/textView3"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginTop="25dp"
+                android:layout_weight="1"
+                android:layout_marginLeft="5dp"
+                android:text="@string/percent"
+                android:textColor="@android:color/white"
+                android:textSize="25sp" />
+
+        </TableRow>
+
+        <TableRow
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:weightSum="100">
+            >
 
+            <Button
+                android:id="@+id/addButton2"
+                android:layout_width="1050px"
+                android:layout_height="240px"
+                android:layout_marginLeft="35dp"
+                android:layout_marginRight="35dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:layout_gravity="center_vertical"
+                />
 
-
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" >
-
-                <Button
-                    android:id="@+id/radlerButton"
-                    android:layout_width="1350px"
-                    android:layout_height="240px"
-                    android:layout_marginLeft="13dp"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginBottom="5dp"
-                    android:layout_gravity="center_vertical"
-                    />
-
-            </TableRow>
-
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" >
-
-                <Button
-                    android:id="@+id/beerButton"
-                    android:layout_width="1350px"
-                    android:layout_height="240px"
-                    android:layout_marginLeft="13dp"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginBottom="5dp"
-                    android:layout_gravity="center_vertical"
-                     />
-
-            </TableRow>
-
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" >
-
-                <Button
-                    android:id="@+id/wineButton"
-                    android:layout_width="1350px"
-                    android:layout_height="240px"
-                    android:layout_marginLeft="13dp"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginBottom="5dp"
-                    android:layout_gravity="center_vertical"
-                    />
-            </TableRow>
-
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" >
-
-                <Button
-                    android:id="@+id/liquorButton"
-                    android:layout_width="1350px"
-                    android:layout_height="240px"
-                    android:layout_marginLeft="13dp"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginBottom="5dp"
-                    android:layout_gravity="center_vertical"
-                     />
-            </TableRow>
-
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" >
-
-                <Button
-                    android:id="@+id/distilledButton"
-                    android:layout_width="1350px"
-                    android:layout_height="240px"
-                    android:layout_marginLeft="13dp"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginBottom="5dp"
-                    android:layout_gravity="center_vertical"
-                     />
-            </TableRow>
-
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" >
-
-                <Button
-                    android:id="@+id/customButton"
-                    android:layout_width="1350px"
-                    android:layout_height="240px"
-                    android:layout_marginLeft="13dp"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginBottom="5dp"
-                    android:layout_gravity="center_vertical"
-                    />
-            </TableRow>
-
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" >
-
-                <EditText
-                    android:id="@+id/amountET2"
-                    android:layout_width="0dp"
-                    android:layout_height="200px"
-                    android:layout_marginBottom="10dp"
-                    android:layout_marginLeft="40dp"
-                    android:layout_weight="1.4"
-                    android:background="@drawable/input"
-                    android:gravity="center_horizontal"
-                    android:inputType="none|numberDecimal"
-                    android:textAlignment="center"
-                    android:textColor="@android:color/white"
-                    android:textSize="40sp"
-                    android:cursorVisible="false"
-                    android:maxLength="3"/>
-
-                <TextView
-                    android:id="@+id/textView2"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_marginTop="25dp"
-                    android:layout_marginLeft="5dp"
-                    android:layout_weight="1"
-                    android:text="@string/dl"
-                    android:textColor="@android:color/white"
-                    android:textSize="25sp" />
-
-                <EditText
-                    android:id="@+id/percentET2"
-                    android:layout_width="0dp"
-                    android:layout_height="200px"
-                    android:layout_marginLeft="45dp"
-                    android:layout_weight="1.4"
-                    android:background="@drawable/input"
-                    android:gravity="center_horizontal"
-                    android:inputType="number"
-                    android:textAlignment="center"
-                    android:textColor="@android:color/white"
-                    android:textSize="40sp"
-                    android:cursorVisible="false"
-                    android:maxLength="2"/>
-
-                <TextView
-                    android:id="@+id/textView3"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_marginTop="25dp"
-                    android:layout_weight="1"
-                    android:layout_marginLeft="5dp"
-                    android:text="@string/percent"
-                    android:textColor="@android:color/white"
-                    android:textSize="25sp" />
-
-            </TableRow>
-
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                >
-
-                <Button
-                    android:id="@+id/addButton2"
-                    android:layout_width="1050px"
-                    android:layout_height="240px"
-                    android:layout_marginLeft="35dp"
-                    android:layout_marginRight="35dp"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginBottom="5dp"
-                    android:layout_gravity="center_vertical"
-                    />
-
-            </TableRow>
-        </TableLayout>
-
-    <!--</LinearLayout>-->
+        </TableRow>
+    </TableLayout>
 </LinearLayout>
 

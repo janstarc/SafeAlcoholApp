@@ -1,17 +1,16 @@
 package com.jan.safealcohol;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -25,8 +24,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import static com.jan.safealcohol.FeedReaderContract.FeedEntry.COLUMN_NAME_AMOUNT;
 import static com.jan.safealcohol.FeedReaderContract.FeedEntry.COLUMN_NAME_NAME;
@@ -34,8 +31,9 @@ import static com.jan.safealcohol.FeedReaderContract.FeedEntry.COLUMN_NAME_TIMES
 import static com.jan.safealcohol.FeedReaderContract.FeedEntry.COLUMN_NAME_UNITS;
 import static com.jan.safealcohol.FeedReaderContract.FeedEntry.TABLE_NAME;
 
-public class SecondActivity extends AppCompatActivity implements Serializable {
+public class DrinkingHistory extends AppCompatActivity implements Serializable {
 
+    private Context context = this;
     private ListView myList;
     private ListAdapter adapter;
     ArrayList<ListItem> items = new ArrayList<>();
@@ -44,7 +42,7 @@ public class SecondActivity extends AppCompatActivity implements Serializable {
     private FeedReaderDbHelper mDbHelper = new FeedReaderDbHelper(this);
     private Spinner spinnerTime;
     private Cursor cursor;
-    private Button resetButton;
+    DecimalFormat numberFormat = new DecimalFormat("0.00");
 
     // Data structures to store the data read from DB
     private List itemIds = new ArrayList<>();
@@ -55,7 +53,6 @@ public class SecondActivity extends AppCompatActivity implements Serializable {
     private HashMap picturesMap = new HashMap();
     private HashMap percentMap = new HashMap();
     private HashMap amountMap = new HashMap();
-
     @SuppressLint("SimpleDateFormat")
     SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     SharedPreferences.Editor editor;
@@ -65,14 +62,13 @@ public class SecondActivity extends AppCompatActivity implements Serializable {
     protected void onCreate(Bundle savedInstanceState){
 
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.secondactivitydesign);
+        setContentView(R.layout.drinking_history_design);
         defineVariables();
         createDropdownMenu();
         picturesMap = HashMaps.createPicturesMap();
         percentMap = HashMaps.createPercentageMap();
 
         try {
-            //updateUnits((float) 0.0);
             updateListView();
             optimizeDatabase();
         } catch (ParseException e) {
@@ -87,9 +83,6 @@ public class SecondActivity extends AppCompatActivity implements Serializable {
         alcoLevel = (TextView) findViewById(R.id.alcoLevel);
         spinnerTime = (Spinner) findViewById(R.id.spinnerTime);
 
-        // TODO --> To delete below
-        //resetButton = (Button) findViewById(R.id.resetButton);
-        //resetButton.setOnClickListener(resetButtonListener);
 
         spinnerTime.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -108,6 +101,14 @@ public class SecondActivity extends AppCompatActivity implements Serializable {
         });
     }
 
+    /*
+    public void createDropdownMenu(){
+
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(context, R.array.time_array, R.layout.spinner_item);    // Create an ArrayAdapter using the string array and a default spinner layout
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);             // Specify the layout to use when the list of choices appears
+        spinnerTime.setAdapter(adapter);                // Apply the adapter to the spinner
+    }
+    */
     /**
      *  [START] Event listeners
      */
@@ -134,28 +135,13 @@ public class SecondActivity extends AppCompatActivity implements Serializable {
         }
     };
 
-    View.OnClickListener resetButtonListener = new Button.OnClickListener(){
-
-        @Override
-        public void onClick(View v){
-            editor = getSharedPreferences(MY_PREFS_FILE, MODE_PRIVATE).edit();
-            editor.putFloat("units", (float) 0.0);
-            editor.apply();
-            try {
-                updateListView();
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-        }
-    };
-
     /**
      *  [END] Event listeners
      */
 
     public void createDropdownMenu(){
 
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.time_array, android.R.layout.simple_spinner_item);    // Create an ArrayAdapter using the string array and a default spinner layout
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.time_array, R.layout.spinner_item);    // Create an ArrayAdapter using the string array and a default spinner layout
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);             // Specify the layout to use when the list of choices appears
         spinnerTime.setAdapter(adapter);                // Apply the adapter to the spinner
     }
@@ -205,7 +191,6 @@ public class SecondActivity extends AppCompatActivity implements Serializable {
         prefs = getSharedPreferences(MY_PREFS_FILE, MODE_PRIVATE);
         float unitsFloat = prefs.getFloat("units", (float) 0.0);
         float levelAlco = prefs.getFloat("alcoLevel", (float) 0.0);
-        DecimalFormat numberFormat = new DecimalFormat("0.0");
         alcoUnits.setText(String.valueOf(numberFormat.format(unitsFloat)));
         alcoLevel.setText(String.valueOf(numberFormat.format(levelAlco)));
 

@@ -157,10 +157,10 @@ public class HashMaps {
 
     public static HashMap<String, Float> createPercentageMap(){
         percentMap.put("radlerButton", 2.5f);
-        percentMap.put("beerButton", 5.0f);
-        percentMap.put("wineButton", 12.0f);
-        percentMap.put("liquorButton", 15.0f);
-        percentMap.put("distilledButton", 40.0f);
+        percentMap.put("beerButton", 5f);
+        percentMap.put("wineButton", 12f);
+        percentMap.put("liquorButton", 15f);
+        percentMap.put("distilledButton", 40f);
         percentMap.put("customButton", 0.0f);
 
         return percentMap;

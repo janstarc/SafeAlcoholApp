@@ -21,7 +21,7 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".SecondActivity" />
+        <activity android:name=".DrinkingHistory" />
         <activity android:name=".UserDataActivity" />
         <activity android:name=".AddDrink"/>
         <activity android:name=".AddMeal"/>

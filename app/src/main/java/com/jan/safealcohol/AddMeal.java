@@ -10,6 +10,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -62,7 +64,11 @@ public class AddMeal extends AppCompatActivity implements View.OnClickListener {
 
             case R.id.addMealButton :
                 setFocus(addMealButton);
-                addMealToDB();
+                try {
+                    addMealToDB();
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
                 break;
         }
     }
@@ -129,29 +135,134 @@ public class AddMeal extends AppCompatActivity implements View.OnClickListener {
                 mealType = "full meal";
                 break;
         }
-        lastMeal.setText("Your last meal was a " + mealType + " at " + mt);
+        if(mt != null){
+            lastMeal.setText("Your last meal was a " + mealType + " at " + mt);
+        } else {
+            lastMeal.setText("You didn't add any meals yet");
+        }
+
     }
 
     // Adds last meal to the db
-    public void addMealToDB(){
+    public void addMealToDB() throws ParseException {
 
-        // Gets the data repository in write mode
+        Log.d("foodTest", "Entered addMeal() with foodId" + mealId);
+
+        // Check, if meal can be added --> Check time limit
+        prefs = getSharedPreferences(MY_PREFS_FILE, MODE_PRIVATE);
         editor = getSharedPreferences(MY_PREFS_FILE, MODE_PRIVATE).edit();
-        editor.putInt("sizeofmeal", mealId);
-        Date myDate = new Date();
-        String date = dateFormat.format(myDate);
-        editor.putString("timeofmeal", date);
-        editor.apply();
+        Date currentDate = new Date();
+        Date lastMealDate;
+        String currentDateString = dateFormat.format(currentDate);
+        long timeDifference = -1;
 
-        runFirstActivity();
+        String snackTime = prefs.getString("snackTimestamp", null);
+        String msTime = prefs.getString("midsizeMealTimestamp", null);
+        String fullTime = prefs.getString("fullMealTimestamp", null);
+
+
+        // Check, if meal can be added --> If not, display Toast and return from addToDb() function
+        switch (mealId){
+
+            case 1:
+
+                // If snackTime exists - some meal was already added in the past. Then, calculate time difference between meals
+                if(snackTime != null){
+                    lastMealDate = dateFormat.parse(snackTime);
+                    timeDifference = calculateTimeDifference(currentDate, lastMealDate);
+                }
+
+                // If there is LESS than 15 min between snacks AND this is not the first meal added
+                if(timeDifference < 15 && timeDifference != -1){
+                    //Toast.makeText(getApplicationContext(), "You can add a snack every 15 minutes!", Toast.LENGTH_LONG).show();
+                    runFirstActivity("ERROR: You can add a snack every 15 minutes!");
+                    return;
+                }
+
+                  break;
+
+            case 2:
+
+                if(msTime != null){
+                    lastMealDate = dateFormat.parse(msTime);
+                    timeDifference = calculateTimeDifference(currentDate, lastMealDate);
+                }
+
+                if(timeDifference < 60 && timeDifference != -1){
+                    Log.d("foodTest", "If evaluated to TRUE  --> RETURN");
+                    //Toast.makeText(getApplicationContext(), "You can add mid-size meal every hour!", Toast.LENGTH_LONG).show();
+                    runFirstActivity("ERROR: You can add mid-size meal every hour!");
+                    return;
+                }
+
+                break;
+
+            case 3:
+
+                if(fullTime != null){
+                    lastMealDate = dateFormat.parse(fullTime);
+                    timeDifference = calculateTimeDifference(currentDate, lastMealDate);
+                }
+
+                if(timeDifference < 180 && timeDifference != -1){
+                    //Toast.makeText(getApplicationContext(), "You can add full meal every 3 hours!", Toast.LENGTH_LONG).show();
+                    runFirstActivity("ERROR: You can add full meal every 3 hours!");
+                    return;
+                }
+
+                break;
+        }
+
+        // Looks like meal can be added --> Time difference seems ok
+            // Otherwise, there was a return from function --> We're no longer here
+
+        switch (mealId){
+            case 1:
+                editor.putString("snackTimestamp", currentDateString);
+                editor.putBoolean("snackCalculated", false);
+
+                break;
+
+            case 2:
+
+                editor.putString("midsizeMealTimestamp", currentDateString);
+                editor.putBoolean("midsizeMealCalculated", false);
+
+                break;
+
+            case 3:
+                editor.putString("fullMealTimestamp", currentDateString);
+                editor.putBoolean("fullMealCalculated", false);
+
+                break;
+        }
+
+        editor.apply();
+        runFirstActivity("Your meal was added successfully!");
     }
 
+    public long calculateTimeDifference(Date date1, Date date2) {
 
+        long second = 1000l;
+        long minute = 60l * second;
+        long hour = 60l * minute;
 
+        // calculation
+        long diff = date2.getTime() - date1.getTime();
 
-    public void runFirstActivity () {
+        // printing output
+        Log.d("timeTag", String.format("%02d", diff / hour) + " hours, ");
+        Log.d("timeTag", String.format("%02d", (diff % hour) / minute) + " minutes, ");
+        Log.d("timeTag", String.format("%02d", (diff % minute) / second) + " seconds");
+        long hoursOut = diff / hour;
+        long minOut = (diff % hour) / minute;
+
+        return Math.abs(hoursOut * 60 + minOut);
+    }
+
+    public void runFirstActivity (String message) {
         Intent intent = new Intent(context, FirstActivity.class);
-        intent.putExtra("toast", "Meal was added successfully!");
+        intent.putExtra("toast", message);
         context.startActivity(intent);
     }
 }
