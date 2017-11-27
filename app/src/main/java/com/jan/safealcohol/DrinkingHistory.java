@@ -25,6 +25,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import static com.jan.safealcohol.FeedReaderContract.FeedEntry.COLUMN_NAME_PERCENTAGE;
+import static com.jan.safealcohol.FeedReaderContract.FeedEntry._ID;
 import static com.jan.safealcohol.FeedReaderContract.FeedEntry.COLUMN_NAME_AMOUNT;
 import static com.jan.safealcohol.FeedReaderContract.FeedEntry.COLUMN_NAME_NAME;
 import static com.jan.safealcohol.FeedReaderContract.FeedEntry.COLUMN_NAME_TIMESTAMP;
@@ -50,6 +52,7 @@ public class DrinkingHistory extends AppCompatActivity implements Serializable {
     private List amount = new ArrayList<>();
     private List units = new ArrayList<>();
     private List timestamp = new ArrayList<>();
+    private List percent = new ArrayList<>();
     private HashMap picturesMap = new HashMap();
     private HashMap percentMap = new HashMap();
     private HashMap amountMap = new HashMap();
@@ -200,21 +203,32 @@ public class DrinkingHistory extends AppCompatActivity implements Serializable {
         myList.setOnItemLongClickListener(deleteDrinkListener);
     }
 
-    public void addListItem(int i){
+    public void addListItem(int i) throws ParseException {
 
         String itemName = name.get(i).toString();
+        float itemPercent = Float.valueOf(percent.get(i).toString());
         Log.d("crash", "WTF happens here? #" + itemName + "#");
         String pictureName = picturesMap.get(itemName).toString();
         int resourceId = this.getResources().getIdentifier(pictureName, "drawable", this.getPackageName());
         Log.d("resources", "Resource name: " + pictureName + " | ResourceId: " + resourceId);
         String timeStamp = timestamp.get(i).toString();
-        /*
-        String pattern = "\\d{2}[:]\\d{2}";
-        Pattern r = Pattern.compile(pattern);
-        Matcher m = r.matcher(timeStamp);
-        String regexString = m.group(0);
-        */
-        ListItem item = new ListItem(itemName, resourceId, "    Amount: " + amount.get(i).toString() + "dl  (" + timeStamp +")");
+
+        Date itemDateTime = dateFormat.parse(timeStamp);
+        Date currentDateTime = new Date();
+        long timeDiff = calculateTimeDifference(itemDateTime, currentDateTime);
+        int hours = (int) timeDiff / 60;
+        int min = (int) timeDiff % 60;
+        if(hours == 0){
+            timeStamp = "" + min + " minutes ago";
+        } else if (hours < 24) {
+            timeStamp = hours + "h and " + min + "min ago";
+        } else if (hours < 48){
+            timeStamp = "More than 1 day ago";
+        } else {
+            timeStamp = "More than 2 days ago";
+        }
+
+        ListItem item = new ListItem(itemName + " (" + itemPercent + "%)", resourceId, "    Amount: " + amount.get(i).toString() + " dl  (" + timeStamp +")");
         items.add(item);
     }
 
@@ -230,6 +244,7 @@ public class DrinkingHistory extends AppCompatActivity implements Serializable {
         amount = new ArrayList<>();
         units = new ArrayList<>();
         timestamp = new ArrayList<>();
+        percent = new ArrayList<>();
 
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
         cursor = db.rawQuery("SELECT * FROM " + TABLE_NAME + " ORDER BY _id DESC", null);
@@ -256,6 +271,10 @@ public class DrinkingHistory extends AppCompatActivity implements Serializable {
             float unitField = cursor.getFloat(
                     cursor.getColumnIndexOrThrow(COLUMN_NAME_UNITS));
             units.add(unitField);
+
+            float percentField = cursor.getFloat(
+                    cursor.getColumnIndexOrThrow(COLUMN_NAME_PERCENTAGE));
+            percent.add(percentField);
 
             String timestampField = cursor.getString(
                     cursor.getColumnIndexOrThrow(COLUMN_NAME_TIMESTAMP));

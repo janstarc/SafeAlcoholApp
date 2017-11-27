@@ -12,6 +12,7 @@ public class FeedReaderDbHelper extends SQLiteOpenHelper {
                     FeedReaderContract.FeedEntry.COLUMN_NAME_NAME + " TEXT," +
                     FeedReaderContract.FeedEntry.COLUMN_NAME_AMOUNT + " REAL," +
                     FeedReaderContract.FeedEntry.COLUMN_NAME_UNITS + " REAL," +
+                    FeedReaderContract.FeedEntry.COLUMN_NAME_PERCENTAGE + " REAL, " +
                     FeedReaderContract.FeedEntry.COLUMN_NAME_TIMESTAMP + " TEXT )";
 
     /*
@@ -37,7 +38,7 @@ public class FeedReaderDbHelper extends SQLiteOpenHelper {
 
 
     // If you change the database schema, you must increment the database version.
-    public static final int DATABASE_VERSION = 4;
+    public static final int DATABASE_VERSION = 6;
     public static final String DATABASE_NAME = "FeedReader.db";
 
     public FeedReaderDbHelper(Context context) {

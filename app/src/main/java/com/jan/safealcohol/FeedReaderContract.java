@@ -13,14 +13,15 @@ public final class FeedReaderContract {
         public static final String COLUMN_NAME_AMOUNT = "amount";
         public static final String COLUMN_NAME_UNITS = "units";
         public static final String COLUMN_NAME_TIMESTAMP = "timestamp";
+        public static final String COLUMN_NAME_PERCENTAGE = "percentage";
 
-
+        /*
         public static final String TABLE2_NAME = "drinks";
         public static final String COLUMN_NAME_DRINKNAME = "drinkname";
         public static final String COLUMN_NAME_PERCENTAGE = "percentage";
         public static final String COLUMN_NAME_IMAGE = "image";
         public static final String COLUMN_NAME_DRINKAMOUNT = "drinkamount";
-
+        */
 
     }
 }

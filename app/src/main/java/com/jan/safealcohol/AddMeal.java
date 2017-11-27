@@ -160,7 +160,6 @@ public class AddMeal extends AppCompatActivity implements View.OnClickListener {
         String msTime = prefs.getString("midsizeMealTimestamp", null);
         String fullTime = prefs.getString("fullMealTimestamp", null);
 
-
         // Check, if meal can be added --> If not, display Toast and return from addToDb() function
         switch (mealId){
 
@@ -174,7 +173,6 @@ public class AddMeal extends AppCompatActivity implements View.OnClickListener {
 
                 // If there is LESS than 15 min between snacks AND this is not the first meal added
                 if(timeDifference < 15 && timeDifference != -1){
-                    //Toast.makeText(getApplicationContext(), "You can add a snack every 15 minutes!", Toast.LENGTH_LONG).show();
                     runFirstActivity("ERROR: You can add a snack every 15 minutes!");
                     return;
                 }
@@ -190,10 +188,15 @@ public class AddMeal extends AppCompatActivity implements View.OnClickListener {
 
                 if(timeDifference < 60 && timeDifference != -1){
                     Log.d("foodTest", "If evaluated to TRUE  --> RETURN");
-                    //Toast.makeText(getApplicationContext(), "You can add mid-size meal every hour!", Toast.LENGTH_LONG).show();
                     runFirstActivity("ERROR: You can add mid-size meal every hour!");
                     return;
                 }
+
+                /*
+                if(snackTime != null && (calculateTimeDifference(dateFormat.parse(snackTime), currentDate) < 15 || calculateTimeDifference(dateFormat.parse()))){
+                    runFirstActivity();
+                }
+                */
 
                 break;
 
@@ -205,7 +208,6 @@ public class AddMeal extends AppCompatActivity implements View.OnClickListener {
                 }
 
                 if(timeDifference < 180 && timeDifference != -1){
-                    //Toast.makeText(getApplicationContext(), "You can add full meal every 3 hours!", Toast.LENGTH_LONG).show();
                     runFirstActivity("ERROR: You can add full meal every 3 hours!");
                     return;
                 }

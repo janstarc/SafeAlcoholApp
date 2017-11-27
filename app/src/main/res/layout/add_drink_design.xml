@@ -96,7 +96,7 @@
         </TableRow>
 
         <TableRow
-            android:layout_width="match_parent"
+            android:layout_width="100px"
             android:layout_height="match_parent" >
 
 
@@ -104,15 +104,22 @@
                 android:id="@+id/customButton"
                 android:layout_width="1350px"
                 android:layout_height="240px"
+                android:layout_gravity="center_vertical"
+                android:layout_marginBottom="5dp"
                 android:layout_marginLeft="13dp"
                 android:layout_marginTop="5dp"
-                android:layout_marginBottom="5dp"
-                android:layout_gravity="center_vertical"
-                android:text="Drink name"
+                android:elevation="0dp"
+                android:paddingLeft="123dp"
+                android:paddingTop="15dp"
+                android:text="TEST"
+                android:textAlignment="viewStart"
+                android:gravity="start"
+                android:textAllCaps="false"
                 android:textColor="@android:color/white"
-                android:paddingLeft="50dp"
-                android:paddingTop="30dp"
-                />
+                android:textSize="31sp" />
+
+
+
         </TableRow>
 
         <TableRow

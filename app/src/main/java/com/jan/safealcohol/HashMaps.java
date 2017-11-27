@@ -178,11 +178,11 @@ public class HashMaps {
     }
 
     public static HashMap<String, String> createPicturesMap(){
-        picturesMap.put("Radler (2.5%)", "radler");
-        picturesMap.put("Beer (5.0%)", "beer");
-        picturesMap.put("Liquor (15%)", "liquor");
-        picturesMap.put("Wine (12%)", "wine");
-        picturesMap.put("Distilled spirit (40%)", "distilled");
+        picturesMap.put("Radler", "radler");
+        picturesMap.put("Beer", "beer");
+        picturesMap.put("Liquor", "liquor");
+        picturesMap.put("Wine", "wine");
+        picturesMap.put("Distilled spirit", "distilled");
         picturesMap.put("Custom drink", "custom");
 
         return picturesMap;
@@ -191,11 +191,11 @@ public class HashMaps {
 
     // TO UNCOMMENT - THE RIGHT HASH MAP !!!
     public static HashMap<String, String> createDBNamesMap(){
-        buttonDefault.put("radlerButton", "Radler (2.5%)");
-        buttonDefault.put("beerButton", "Beer (5.0%)");
-        buttonDefault.put("liquorButton", "Liquor (15%)");
-        buttonDefault.put("wineButton", "Wine (12%)");
-        buttonDefault.put("distilledButton", "Distilled spirit (40%)");
+        buttonDefault.put("radlerButton", "Radler");
+        buttonDefault.put("beerButton", "Beer");
+        buttonDefault.put("liquorButton", "Liquor");
+        buttonDefault.put("wineButton", "Wine");
+        buttonDefault.put("distilledButton", "Distilled spirit");
         buttonDefault.put("customButton", "Custom drink");
 
         return buttonDefault;
