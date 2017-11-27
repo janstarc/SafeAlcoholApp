@@ -14,17 +14,17 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <activity android:name=".FirstActivity">
+        <activity android:name=".FirstActivity" android:screenOrientation="portrait">
             <intent-filter>
                 <category android:name="android.intent.category.LAUNCHER"/>
                 <action android:name="android.intent.action.MAIN"/>
             </intent-filter>
         </activity>
 
-        <activity android:name=".DrinkingHistory" />
-        <activity android:name=".UserDataActivity" />
-        <activity android:name=".AddDrink"/>
-        <activity android:name=".AddMeal"/>
+        <activity android:name=".DrinkingHistory" android:screenOrientation="portrait"/>
+        <activity android:name=".UserDataActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".AddDrink" android:screenOrientation="portrait"/>
+        <activity android:name=".AddMeal" android:screenOrientation="portrait"/>
 
         <meta-data
             android:name="preloaded_fonts"

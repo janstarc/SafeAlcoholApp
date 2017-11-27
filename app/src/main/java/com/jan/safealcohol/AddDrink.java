@@ -291,7 +291,6 @@ public class AddDrink extends AppCompatActivity implements View.OnClickListener 
                 Log.d("textFields", "Here?");
                 amount.setText(Float.toString(customDrinkAmount));
                 percent.setText(Integer.toString(customDrinkPercent));
-
             }
         }
     }
@@ -299,6 +298,7 @@ public class AddDrink extends AppCompatActivity implements View.OnClickListener 
     // Adding selected drink to the DB
     public void addDrinkToDB() throws ParseException {
 
+        editor = getSharedPreferences(MY_PREFS_FILE, MODE_PRIVATE).edit();
         String amountText = amount.getText().toString();
         String percentText = percent.getText().toString();
         if (amountText.equals("") || percentText.equals("")) {
@@ -316,18 +316,22 @@ public class AddDrink extends AppCompatActivity implements View.OnClickListener 
             Log.d("custom", "Drink Key: " + drinkKey);
             if(drinkKey.equals("customButton")){
                     Log.d("custom", "Custom button here?");
-                    editor = getSharedPreferences(MY_PREFS_FILE, MODE_PRIVATE).edit();
                     editor.putInt("customDrinkPercent", Integer.parseInt(percentText));
                     editor.putFloat("customDrinkAmount", Float.valueOf(amountText));
                     editor.apply();
             }
 
+            String selectedDrink;
             Log.d("DrinkKey", "DrinkKey: " + drinkKey);
-            String selectedDrink = DBNamesMap.get(drinkKey);
+            if(!drinkKey.equals("customButton")){
+                selectedDrink = DBNamesMap.get(drinkKey);
+            } else {
+                selectedDrink = customButton.getText().toString();
+            }
 
             float amount  = Float.valueOf(amountText);
             float percent = Float.valueOf(percentText);
-            Float newDrinkUnits = (amount * (percent) / 100) / 0.125f;
+            float newDrinkUnits = (amount * (percent) / 100) / 0.125f;
             Log.d("drinkCalc", "newDrinkUnits: " + newDrinkUnits);
             Log.d("selectedDrink", "Selected: " + selectedDrink);
 
@@ -342,6 +346,9 @@ public class AddDrink extends AppCompatActivity implements View.OnClickListener 
             Date myDate = new Date();
             String date = dateFormat.format(myDate);
             values.put(COLUMN_NAME_TIMESTAMP, date);
+            editor.putFloat("newDrinkUnits", newDrinkUnits);
+            editor.putString("newDrinkTimestamp", date);
+            editor.apply();
 
             // Insert the new row, returning the primary key value of the new row
             long newRowId = db.insert(TABLE_NAME, null, values);

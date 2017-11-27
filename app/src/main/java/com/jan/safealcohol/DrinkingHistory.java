@@ -190,7 +190,6 @@ public class DrinkingHistory extends AppCompatActivity implements Serializable {
             items.add(new ListItem("No drinks on the list", 0, ""));
         }
 
-        // TODO Finish the calculation --> // Updates values
         prefs = getSharedPreferences(MY_PREFS_FILE, MODE_PRIVATE);
         float unitsFloat = prefs.getFloat("units", (float) 0.0);
         float levelAlco = prefs.getFloat("alcoLevel", (float) 0.0);
@@ -208,11 +207,21 @@ public class DrinkingHistory extends AppCompatActivity implements Serializable {
         String itemName = name.get(i).toString();
         float itemPercent = Float.valueOf(percent.get(i).toString());
         Log.d("crash", "WTF happens here? #" + itemName + "#");
-        String pictureName = picturesMap.get(itemName).toString();
+        String pictureName;
+        //if (knownDrinkName(itemName)){
+        if(itemName.matches("Radler|Beer|Liquor|Wine|Distilled spirit")){
+            Log.d("picName", "Here? --> Item name: " + itemName);
+            pictureName = picturesMap.get(itemName).toString();
+        } else {
+            Log.d("picName", "Here2");
+            pictureName = "custom";
+        }
+
         int resourceId = this.getResources().getIdentifier(pictureName, "drawable", this.getPackageName());
         Log.d("resources", "Resource name: " + pictureName + " | ResourceId: " + resourceId);
         String timeStamp = timestamp.get(i).toString();
 
+        // Date handling
         Date itemDateTime = dateFormat.parse(timeStamp);
         Date currentDateTime = new Date();
         long timeDiff = calculateTimeDifference(itemDateTime, currentDateTime);
@@ -221,13 +230,14 @@ public class DrinkingHistory extends AppCompatActivity implements Serializable {
         if(hours == 0){
             timeStamp = "" + min + " minutes ago";
         } else if (hours < 24) {
-            timeStamp = hours + "h and " + min + "min ago";
+            timeStamp = hours + " h and " + min + " min ago";
         } else if (hours < 48){
             timeStamp = "More than 1 day ago";
         } else {
             timeStamp = "More than 2 days ago";
         }
 
+        // New ListItem creation and putting it to items list
         ListItem item = new ListItem(itemName + " (" + itemPercent + "%)", resourceId, "    Amount: " + amount.get(i).toString() + " dl  (" + timeStamp +")");
         items.add(item);
     }
@@ -237,6 +247,7 @@ public class DrinkingHistory extends AppCompatActivity implements Serializable {
      * 2.) Executes SELECT statement on the DB
      * 3.) Copies values from cursor to ArrayLists
      */
+
     public void getDrinksFromDb(){
 
         itemIds = new ArrayList<>();
@@ -293,6 +304,10 @@ public class DrinkingHistory extends AppCompatActivity implements Serializable {
 
         db.execSQL("DELETE FROM " + FeedReaderContract.FeedEntry.TABLE_NAME + " WHERE " + FeedReaderContract.FeedEntry.COLUMN_NAME_TIMESTAMP + " = '" + timestamp + "'");
         Log.d("debug", "SUCCESS DELETING ITEM WITH TIMESTAMP: " + timestamp);
+        editor = getSharedPreferences(MY_PREFS_FILE, MODE_PRIVATE).edit();
+        editor.putString("newDrinkTimestamp", "NewDate");
+        // TODO FIND UNITS OF DELETED DRINK!!!!!!!!!!!!
+        editor.putFloat("newDrinkUnits", 0f);
         Toast.makeText(getApplicationContext(), "Drink successfully deleted", Toast.LENGTH_SHORT).show();
 
         updateListView();

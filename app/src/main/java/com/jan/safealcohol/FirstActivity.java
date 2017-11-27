@@ -81,7 +81,27 @@ public class FirstActivity extends AppCompatActivity  {
 
         updateUserMessages();
         try {
-            updateUnits((float) 0.0);
+            editor = getSharedPreferences(MY_PREFS_FILE, MODE_PRIVATE).edit();
+            prefs = getSharedPreferences(MY_PREFS_FILE, MODE_PRIVATE);
+
+            if(prefs.getString("newDrinkTimestamp", null) != null){     // If new drink was added
+                float newUnits = prefs.getFloat("newDrinkUnits", 0f);
+                if(newUnits > 0){
+                    updateUnits(newUnits);
+                    editor.putString("newDrinkTimestamp", null);
+                    editor.putFloat("newDrinkUnits", 0f);
+                    editor.apply();
+                } else {            // Obviously, drink was deleted
+                    reduceUnits(newUnits);
+                    editor.putString("newDrinkTimestamp", null);
+                    editor.putFloat("newDrinkUnits", 0f);
+                    editor.apply();
+                }
+
+            } else {
+                updateUnits(0f);
+            }
+
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -228,7 +248,7 @@ public class FirstActivity extends AppCompatActivity  {
 
         // Get the unitsOld and unitsTimestamp from the SharedPref
         prefs = getSharedPreferences(MY_PREFS_FILE, MODE_PRIVATE);
-        float unitsOld = prefs.getFloat("units", (float) 0.0);                                      // Gets info from the SharedPref
+        float unitsOld = prefs.getFloat("units", (float) 0.0);                    // Gets info from the SharedPref
         String unitsTimestampString = prefs.getString("unitsTimestamp", dateFormat.format(currentTimestamp));        // Gets the timestamp from the DB
 
         // Convert unistTimestamp from SharedPref to Date + Calculate timeDiff
@@ -325,6 +345,28 @@ public class FirstActivity extends AppCompatActivity  {
         return 0f;
     }
 
+    public void reduceUnits(float unitsReduction){
+
+        prefs = getSharedPreferences(MY_PREFS_FILE, MODE_PRIVATE);
+        editor = getSharedPreferences(MY_PREFS_FILE, MODE_PRIVATE).edit();
+        String gender = prefs.getString("gender", null);
+
+        float currentUnits = prefs.getFloat("units", (float) 0.0);
+        float newUnits = currentUnits - unitsReduction;
+        if(newUnits < 0) newUnits = 0f;
+        editor.putFloat("units", newUnits);
+        calculateAlcoLevel(newUnits);
+
+        currentUnits = prefs.getFloat("units", (float) 0.0);
+        Float alcoLevel = prefs.getFloat("alcoLevel", (float) 0.0);
+        String country = prefs.getString("country", null);
+        // Fill all three textboxes
+        fillTextLevel(currentUnits, alcoLevel, gender);
+        fillTextDrive(alcoLevel, country);
+        fillTextJokeSetPicture(alcoLevel);
+
+    }
+
 
     public void fillTextJokeSetPicture(Float alcoLevel){
 
@@ -413,6 +455,11 @@ public class FirstActivity extends AppCompatActivity  {
                     textOut = "<font color=#273F4C><big>You are </font>" +
                             "<font color=#C54747><b> on the legal limit</b></font>" +
                             "<font color=#273F4C><br> Wait before you drive! </big> </font> ";
+                }else if (aboveLimit < 0.2){
+                    textOut = "<font color=#273F4C><big>You are </font>" +
+                            "<font color=#C54747><b> " + myFormat.format(aboveLimit) + "</b></font>" +
+                            "<font color=#273F4C> above limit.<br></font> " +
+                            "<font color=#C54747><b>Wait before you drive!</b></big></font> ";
                 } else {
                     textOut = "<font color=#273F4C><big>You are </font>" +
                             "<font color=#C54747><b> " + myFormat.format(aboveLimit) + "</b></font>" +
