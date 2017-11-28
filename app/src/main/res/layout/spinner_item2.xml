@@ -1,0 +1,10 @@
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@android:id/text1"
+    android:layout_width="705px"
+    android:layout_height="170px"
+    android:textSize="22sp"
+    android:textColor="#FFFFFF"
+    android:background="@drawable/dropdown2"
+    android:paddingLeft="20dp"
+    android:paddingStart="20dp"
+    android:paddingTop="10dp"/>

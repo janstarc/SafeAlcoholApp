@@ -249,26 +249,21 @@ public class FirstActivity extends AppCompatActivity  {
 
     public void updateUnits(float newDrinkUnits) throws ParseException {
 
-        // Get current date
+        // Get current date and data needed from SharedPref
         Date currentTimestamp = new Date();
-
-        // Get the unitsOld and unitsTimestamp from the SharedPref
-
-        float unitsOld = prefs.getFloat("units", 0f);                    // Gets info from the SharedPref
-        String unitsTimestampString = prefs.getString("unitsTimestamp", dateFormat.format(currentTimestamp));        // Gets the timestamp from the DB
-
-        // Convert unistTimestamp from SharedPref to Date + Calculate timeDiff
-        Date unitsTimestamp = dateFormat.parse(unitsTimestampString);
-        long timeDifferenceMin = calculateTimeDifference(currentTimestamp, unitsTimestamp);
         String gender = prefs.getString("gender", null);
+        float unitsOld = prefs.getFloat("units", 0f);
+        String unitsTimestampString = prefs.getString("unitsTimestamp", dateFormat.format(currentTimestamp));
 
-        // Include meal reduction units into the calculation
-        float mealReductionUnits = calcMealReductionUnits();
+        // Get TimeDiff
+        Date unitsTimestamp = dateFormat.parse(unitsTimestampString);                           // Timestamp of the last units calculation
+        long timeDifferenceMin = calculateTimeDifference(currentTimestamp, unitsTimestamp);
 
         // If there are was meal added and alco level needs to be reduced
+        float mealReductionUnits = calcMealReductionUnits();
         if(mealReductionUnits != 0){
 
-            float unitsNew = unitsOld - mealReductionUnits;
+            float unitsNew = unitsOld - mealReductionUnits;       // Avoid units < 0
             if(unitsNew > 0){
                 editor.putFloat("units", unitsNew);
             } else {
@@ -304,11 +299,6 @@ public class FirstActivity extends AppCompatActivity  {
 
     public float calcMealReductionUnits(){
 
-
-
-
-
-
         // Get relevant info from the SharedPref
         boolean snackCalculated = prefs.getBoolean("snackCalculated", false);
         boolean midsizeCalculated = prefs.getBoolean("midsizeMealCalculated", false);
@@ -342,13 +332,10 @@ public class FirstActivity extends AppCompatActivity  {
 
     public void reduceUnits(float unitsReduction){
 
-
-
-        String gender = prefs.getString("gender", null);
-
+        prefs = getSharedPreferences(MY_PREFS_FILE, MODE_PRIVATE);
+        editor = getSharedPreferences(MY_PREFS_FILE, MODE_PRIVATE).edit();
         float currentUnits = prefs.getFloat("units", 0f);
         float newUnits = currentUnits + unitsReduction;                 // MUST be +, cause argument is always negative!
-        Log.d("unitsToDelete", "currentUnits: " + currentUnits + " | unitsReduction: " + unitsReduction + " | newUnits: " + newUnits);
         if(newUnits < 0) newUnits = 0f;
         editor.putFloat("units", newUnits);
         editor.apply();
@@ -358,15 +345,13 @@ public class FirstActivity extends AppCompatActivity  {
         fillTextLevel();
         fillTextDrive();
         fillTextJokeSetPicture();
-
     }
 
 
     public void fillTextJokeSetPicture(){
 
-
         Float alcoLevel = prefs.getFloat("alcoLevel", 0f);
-        String textOut = "";
+        String textOut;
         Log.d("Level: ", "Level: " + alcoLevel);
 
         if(alcoLevel == 0){
@@ -421,12 +406,10 @@ public class FirstActivity extends AppCompatActivity  {
                     "Sorry, party is over for tonight.</font>";
             drunkImage.setImageResource(R.drawable.face7);
         }
-
         textJoke.setText(Html.fromHtml(textOut));
     }
 
     public void fillTextDrive(){
-
 
         Float alcoLevel = prefs.getFloat("alcoLevel", 0f);
         String country = prefs.getString("country", null);
@@ -437,7 +420,6 @@ public class FirstActivity extends AppCompatActivity  {
             Float limitInCountry = levelMap.get(country) * 10;
 
             if (limitInCountry != -1) {
-
                 aboveLimit = alcoLevel - limitInCountry;
 
                 if(alcoLevel == 0){
@@ -465,13 +447,10 @@ public class FirstActivity extends AppCompatActivity  {
                             "<font color=#273F4C> above limit.<br></font> " +
                             "<font color=#C54747><b>Don't even think about driving!</b></big></font> ";
                 }
-
-                //textDrive.append("Limit in your country: " + myFormat.format(levelMap.get(prefs.getString("country", null)) * 10));
             } else {
                 textDrive.setText("Limit for your country is unknown!");
             }
         }
-
         textDrive.setText(Html.fromHtml(textOut));
     }
 
@@ -487,8 +466,8 @@ public class FirstActivity extends AppCompatActivity  {
                          "<font color=#273F4C> &ensp;&ensp;&ensp;Alcohol level: </font> " +
                          "<font color=#4684C4><big>" + myFormat.format(alcoLevel) + "</big></font><br>";
 
-        int hours = 0;
-        int minutes = 0;
+        int hours;
+        int minutes;
 
         if(alcoLevel == 0){
             // textOut = "You are sober";
@@ -527,7 +506,6 @@ public class FirstActivity extends AppCompatActivity  {
                         "<font color=#273F4C> minutes </font>";
             }
         }
-
         textLevel.setText(Html.fromHtml(textOut));
     }
 
@@ -558,11 +536,9 @@ public class FirstActivity extends AppCompatActivity  {
     // Welcome message and last meal message
     public void updateUserMessages(){
 
-
         String fn = prefs.getString("firstname", null);
         String ln = prefs.getString("lastname", null);
         welcomeMessage.setText(fn + " " + ln);
-        
         
     }
 

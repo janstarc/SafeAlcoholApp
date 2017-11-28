@@ -61,6 +61,8 @@ public class DrinkingHistory extends AppCompatActivity implements Serializable {
     SharedPreferences.Editor editor;
     SharedPreferences prefs;
     public static final String MY_PREFS_FILE = "MyPrefsFile";
+    private boolean emptyList = false;
+    private float unitsLocal;
 
     protected void onCreate(Bundle savedInstanceState){
 
@@ -85,7 +87,9 @@ public class DrinkingHistory extends AppCompatActivity implements Serializable {
         alcoUnits = (TextView) findViewById(R.id.drinksSumText);
         alcoLevel = (TextView) findViewById(R.id.alcoLevel);
         spinnerTime = (Spinner) findViewById(R.id.spinnerTime);
-
+        prefs = getSharedPreferences(MY_PREFS_FILE, MODE_PRIVATE);
+        editor = getSharedPreferences(MY_PREFS_FILE, MODE_PRIVATE).edit();
+        unitsLocal = prefs.getFloat("units", 0f);
 
         spinnerTime.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -104,14 +108,7 @@ public class DrinkingHistory extends AppCompatActivity implements Serializable {
         });
     }
 
-    /*
-    public void createDropdownMenu(){
 
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(context, R.array.time_array, R.layout.spinner_item);    // Create an ArrayAdapter using the string array and a default spinner layout
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);             // Specify the layout to use when the list of choices appears
-        spinnerTime.setAdapter(adapter);                // Apply the adapter to the spinner
-    }
-    */
     /**
      *  [START] Event listeners
      */
@@ -125,7 +122,8 @@ public class DrinkingHistory extends AppCompatActivity implements Serializable {
             Log.d("debug","LongClicked: " + pos);
 
             try {
-                if(items.size() == 1 && !items.get(0).getTitle().equals("No drinks on the list")){
+                if(items.size() > 0){
+                    emptyList = false;
                     String timestampS = timestamp.get(pos).toString();
                     float unitsToDelete = units.get(pos);
                     deleteDrinkFromDb(timestampS, unitsToDelete);
@@ -133,8 +131,7 @@ public class DrinkingHistory extends AppCompatActivity implements Serializable {
 
                 if(items.size() == 0){
                     Log.d("AlcoLevelCalc", "AlcoLevelCalc --> items.size == 0");
-                    prefs = getSharedPreferences(MY_PREFS_FILE, MODE_PRIVATE);
-                    editor = getSharedPreferences(MY_PREFS_FILE, MODE_PRIVATE).edit();
+                    emptyList = true;
 
                     float currentUnits = prefs.getFloat("units", -1f);
                     if(currentUnits != -1f){
@@ -203,7 +200,7 @@ public class DrinkingHistory extends AppCompatActivity implements Serializable {
             items.add(new ListItem("No drinks on the list", 0, ""));
         }
 
-        prefs = getSharedPreferences(MY_PREFS_FILE, MODE_PRIVATE);
+
         float unitsFloat = prefs.getFloat("units", (float) 0.0);
         float levelAlco = prefs.getFloat("alcoLevel", (float) 0.0);
         alcoUnits.setText(String.valueOf(numberFormat.format(unitsFloat)));
@@ -314,10 +311,11 @@ public class DrinkingHistory extends AppCompatActivity implements Serializable {
     public void deleteDrinkFromDb(String timestamp, Float unitsToDelete) throws ParseException {
 
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
+        boolean lastItem = false;
 
         db.execSQL("DELETE FROM " + FeedReaderContract.FeedEntry.TABLE_NAME + " WHERE " + FeedReaderContract.FeedEntry.COLUMN_NAME_TIMESTAMP + " = '" + timestamp + "'");
         Log.d("debug", "SUCCESS DELETING ITEM WITH TIMESTAMP: " + timestamp);
-        editor = getSharedPreferences(MY_PREFS_FILE, MODE_PRIVATE).edit();
+
         editor.putString("newDrinkTimestamp", "NewDate");
 
         Log.d("unitsToDelete", "Units to delete --> " + unitsToDelete);
@@ -326,12 +324,9 @@ public class DrinkingHistory extends AppCompatActivity implements Serializable {
 
         editor.apply();
         updateListView();
+        unitsChangeLocal(unitsToDelete);
         dbToLog();
-    }
 
-    public void showModifiedList(ArrayList<ListItem> items){
-        adapter = new ListAdapter(this, items);
-        myList.setAdapter(adapter);
     }
 
     public void dbToLog(){
@@ -341,63 +336,27 @@ public class DrinkingHistory extends AppCompatActivity implements Serializable {
             Log.d("debug", "Item: " + itemIds.get(i) + " | " + name.get(i) + " | " + amount.get(i) + " | " + units.get(i) + " | " + timestamp.get(i));
         }
     }
-    /*
-    public void updateUnits(float newDrinkUnits) throws ParseException {
 
-        // Get current date
-        Date currentTimestamp = new Date();
+    public void unitsChangeLocal (float reduction){
 
-        // Get the unitsOld and unitsTimestamp from the SharedPref
-        prefs = getSharedPreferences(MY_PREFS_FILE, MODE_PRIVATE);
-        float unitsOld = prefs.getFloat("units", (float) 0.0);                        // Gets info from the SharedPref
-        String unitsTimestampString = prefs.getString("unitsTimestamp", dateFormat.format(currentTimestamp));        // Gets the timestamp from the DB
+        unitsLocal -= reduction;
+        if(unitsLocal < 0 || emptyList) unitsLocal = 0;
+        float alcoLevelLocal = calculateAlcoLevelLocal(unitsLocal);
 
-        // Convert unistTimestamp from SharedPref to Date + Calculate timeDiff
-        Date unitsTimestamp = dateFormat.parse(unitsTimestampString);
-        long timeDifferenceMin = calculateTimeDifference(currentTimestamp, unitsTimestamp);
-
-
-        if(timeDifferenceMin > 0 || newDrinkUnits != 0.0) {                  // To prevent changing timeStamp, without changing units
-
-            float unitsMinus = (float) (timeDifferenceMin * 0.5);           // TODO Wrong factor! [unitsDrop/min]
-            float unitsNew = (newDrinkUnits + unitsOld - unitsMinus);       // units --> Current drink | unitsOld --> Prev units from SharedPref | unitsMinus --> timeDiff * decreaseOnMin
-            if (unitsNew < 0) unitsNew = 0;                                 // To avoid neg. units --> You can be max sober
-            calculateAlcoLevel(unitsNew);
-
-            editor = getSharedPreferences(MY_PREFS_FILE, MODE_PRIVATE).edit();
-            editor.putFloat("units", unitsNew);                                 // Put new info to the SharedPref
-            String newTimestamp = dateFormat.format(currentTimestamp);          // Update last calculation value for units in
-            editor.putString("unitsTimestamp", newTimestamp);                   // shared pref file!
-            editor.apply();
-
-        }
-
-    }
-    */
-
-    public static int getResId(String resName, Class<?> c) {
-
-        try {
-            Field idField = c.getDeclaredField(resName);
-            return idField.getInt(idField);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return -1;
-        }
+        alcoUnits.setText(String.valueOf(numberFormat.format(unitsLocal)));
+        alcoLevel.setText(String.valueOf(numberFormat.format(alcoLevelLocal)));
     }
 
-    public void calculateAlcoLevel (float units){
+    public float calculateAlcoLevelLocal (float units){
 
-        prefs = getSharedPreferences(MY_PREFS_FILE, MODE_PRIVATE);
+
         int weight = prefs.getInt("weight", 50);
         String gender = prefs.getString("gender", "M");
         float r = 0.7f;
         if(gender.equals("F")) r = 0.6f;
         float alcoLevel = (units*10) / (weight * r);
 
-        editor = getSharedPreferences(MY_PREFS_FILE, MODE_PRIVATE).edit();
-        editor.putFloat("alcoLevel", alcoLevel);
-        editor.apply();
+        return alcoLevel;
     }
 
     public long calculateTimeDifference(Date date1, Date date2){

@@ -137,7 +137,7 @@ public class UserDataActivity extends AppCompatActivity {
 
     public void createDropdownMenu(){
 
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(context, R.array.countries, R.layout.spinner_item);    // Create an ArrayAdapter using the string array and a default spinner layout
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(context, R.array.countries, R.layout.spinner_item2);    // Create an ArrayAdapter using the string array and a default spinner layout
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);             // Specify the layout to use when the list of choices appears
         countriesSpinner.setAdapter(adapter);                // Apply the adapter to the spinner
     }

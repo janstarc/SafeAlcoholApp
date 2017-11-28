@@ -242,6 +242,10 @@ public class AddDrink extends AppCompatActivity implements View.OnClickListener 
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
         final EditText et = new EditText(context);
 
+        et.setInputType(8192);                                                 // Capitalize the first character of every word
+        et.setText(prefs.getString("customDrinkName", ""));      // Enter the custom drink name
+        et.setSelection(et.getText().length());                                // Put cursor to the end
+
         // set prompts.xml to alertdialog builder
         alertDialogBuilder.setView(et);
 
@@ -267,8 +271,6 @@ public class AddDrink extends AppCompatActivity implements View.OnClickListener 
         AlertDialog alertDialog = alertDialogBuilder.create();
         // show it
         alertDialog.show();
-
-
     }
 
     // Fill textbox
@@ -339,7 +341,7 @@ public class AddDrink extends AppCompatActivity implements View.OnClickListener 
             ContentValues values = new ContentValues();
             values.put(COLUMN_NAME_NAME, selectedDrink);
             values.put(COLUMN_NAME_AMOUNT, amount);
-            values.put(COLUMN_NAME_UNITS, newDrinkUnits);                        // TODO To add the units - new DB for drinks
+            values.put(COLUMN_NAME_UNITS, newDrinkUnits);
             values.put(COLUMN_NAME_PERCENTAGE, percent);
 
             // Custom timestamp
