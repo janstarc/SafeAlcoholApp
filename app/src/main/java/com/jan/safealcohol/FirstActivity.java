@@ -21,8 +21,6 @@ import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
 
-// Screen - 600dp*400dp
-
 public class FirstActivity extends AppCompatActivity  {
 
     private Button secondActivityButton;
@@ -71,9 +69,11 @@ public class FirstActivity extends AppCompatActivity  {
     public void onResume() {
         super.onResume();  // Always call the superclass method first
 
+        Log.d("unitsToDelete", "On resume called!");
         Intent intent = getIntent();
         drawButtons();
         String toastMessage = intent.getStringExtra("toast");
+
         if(toastMessage != null && !toastMessage.equals("")) {
             Toast.makeText(getApplicationContext(), toastMessage, Toast.LENGTH_LONG).show();
             intent.putExtra("toast", "");
@@ -81,17 +81,20 @@ public class FirstActivity extends AppCompatActivity  {
 
         updateUserMessages();
         try {
-            editor = getSharedPreferences(MY_PREFS_FILE, MODE_PRIVATE).edit();
-            prefs = getSharedPreferences(MY_PREFS_FILE, MODE_PRIVATE);
+
+            Log.d("unitsToDelete", "NDTimestamp: " + prefs.getString("newDrinkTimestamp", null));
 
             if(prefs.getString("newDrinkTimestamp", null) != null){     // If new drink was added
                 float newUnits = prefs.getFloat("newDrinkUnits", 0f);
+                Log.d("unitsToDelete", "Units from FirstActivity --> " + newUnits);
                 if(newUnits > 0){
+                    Log.d("unitsToDelete", "Adding new units");
                     updateUnits(newUnits);
                     editor.putString("newDrinkTimestamp", null);
                     editor.putFloat("newDrinkUnits", 0f);
                     editor.apply();
                 } else {            // Obviously, drink was deleted
+                    Log.d("unitsToDelete", "Deleting units --> Units to delete: " + newUnits);
                     reduceUnits(newUnits);
                     editor.putString("newDrinkTimestamp", null);
                     editor.putFloat("newDrinkUnits", 0f);
@@ -118,17 +121,20 @@ public class FirstActivity extends AppCompatActivity  {
         addDrinkActivity = (Button) findViewById(R.id.addDrinkActivity);
         addMealActivity = (Button) findViewById(R.id.addMealActivity);
         drunkImage = (ImageView) findViewById(R.id.drunkImage);
+        prefs = getSharedPreferences(MY_PREFS_FILE, MODE_PRIVATE);
+        editor = getSharedPreferences(MY_PREFS_FILE, MODE_PRIVATE).edit();
     }
 
     // Initialization of GUI at when the activity is started
     public void drawButtons(){
+
         secondActivityButton.setBackgroundResource(R.drawable.drinking_history_default);
         addDrinkActivity.setBackgroundResource(R.drawable.add_drink_home_default);
         addMealActivity.setBackgroundResource(R.drawable.add_meal_home_default);
         userDataButton.setBackgroundResource(R.drawable.profile_edit);
     }
 
-    // Function, that updates units every minute
+    // Function which updates units every minute
     public void startTimer(){
 
             timer = new Timer();
@@ -216,7 +222,7 @@ public class FirstActivity extends AppCompatActivity  {
      */
 
     public void checkIfUserIsRegistered(){
-        prefs = getSharedPreferences(MY_PREFS_FILE, MODE_PRIVATE);
+
 
         String fn = prefs.getString("firstname", null);
         String ln = prefs.getString("lastname", null);
@@ -247,8 +253,8 @@ public class FirstActivity extends AppCompatActivity  {
         Date currentTimestamp = new Date();
 
         // Get the unitsOld and unitsTimestamp from the SharedPref
-        prefs = getSharedPreferences(MY_PREFS_FILE, MODE_PRIVATE);
-        float unitsOld = prefs.getFloat("units", (float) 0.0);                    // Gets info from the SharedPref
+
+        float unitsOld = prefs.getFloat("units", 0f);                    // Gets info from the SharedPref
         String unitsTimestampString = prefs.getString("unitsTimestamp", dateFormat.format(currentTimestamp));        // Gets the timestamp from the DB
 
         // Convert unistTimestamp from SharedPref to Date + Calculate timeDiff
@@ -256,13 +262,12 @@ public class FirstActivity extends AppCompatActivity  {
         long timeDifferenceMin = calculateTimeDifference(currentTimestamp, unitsTimestamp);
         String gender = prefs.getString("gender", null);
 
-
-        // TODO Insert here!
+        // Include meal reduction units into the calculation
         float mealReductionUnits = calcMealReductionUnits();
-        Log.d("foodUnits", "Food units minus = " + mealReductionUnits);
 
+        // If there are was meal added and alco level needs to be reduced
         if(mealReductionUnits != 0){
-            editor = getSharedPreferences(MY_PREFS_FILE, MODE_PRIVATE).edit();
+
             float unitsNew = unitsOld - mealReductionUnits;
             if(unitsNew > 0){
                 editor.putFloat("units", unitsNew);
@@ -291,24 +296,18 @@ public class FirstActivity extends AppCompatActivity  {
             editor.apply();
         }
 
-        Float currentUnits = prefs.getFloat("units", (float) 0.0);
-        Float alcoLevel = prefs.getFloat("alcoLevel", (float) 0.0);
-        String country = prefs.getString("country", null);
-
         // Fill all three textboxes
-        fillTextLevel(currentUnits, alcoLevel, gender);
-        fillTextDrive(alcoLevel, country);
-        fillTextJokeSetPicture(alcoLevel);
+        fillTextLevel();
+        fillTextDrive();
+        fillTextJokeSetPicture();
     }
 
     public float calcMealReductionUnits(){
 
 
-        prefs = getSharedPreferences(MY_PREFS_FILE, MODE_PRIVATE);
-        editor = getSharedPreferences(MY_PREFS_FILE, MODE_PRIVATE).edit();
-        Date currentTimestamp = new Date();
-        String timestampString;
-        timestampString = dateFormat.format(currentTimestamp);
+
+
+
 
         // Get relevant info from the SharedPref
         boolean snackCalculated = prefs.getBoolean("snackCalculated", false);
@@ -319,27 +318,23 @@ public class FirstActivity extends AppCompatActivity  {
         String fullTime = prefs.getString("fullMealTimestamp", null);
 
         // If it wasn't yet calculated AND it was added to the SharedPref
-        if(snackCalculated == false && snackTime != null){
+        if(!snackCalculated && snackTime != null){
 
             editor.putBoolean("snackCalculated", true);
-            //editor.putString("snackTimestamp", timestampString);
             editor.apply();
             return 0.1f;
 
-        } else if (midsizeCalculated == false && midsizeTime != null){
+        } else if (!midsizeCalculated && midsizeTime != null){
 
             editor.putBoolean("midsizeMealCalculated", true);
-            //editor.putString("midsizeMealTimestamp", timestampString);
             editor.apply();
             return 0.3f;
 
-        } else if (fullmealCalculated == false && fullTime != null){
+        } else if (!fullmealCalculated && fullTime != null){
 
             editor.putBoolean("fullMealCalculated", true);
-            //editor.putString("fullMealTimestamp", timestampString);
             editor.apply();
             return 0.7f;
-
         }
 
         return 0f;
@@ -347,29 +342,30 @@ public class FirstActivity extends AppCompatActivity  {
 
     public void reduceUnits(float unitsReduction){
 
-        prefs = getSharedPreferences(MY_PREFS_FILE, MODE_PRIVATE);
-        editor = getSharedPreferences(MY_PREFS_FILE, MODE_PRIVATE).edit();
+
+
         String gender = prefs.getString("gender", null);
 
-        float currentUnits = prefs.getFloat("units", (float) 0.0);
-        float newUnits = currentUnits - unitsReduction;
+        float currentUnits = prefs.getFloat("units", 0f);
+        float newUnits = currentUnits + unitsReduction;                 // MUST be +, cause argument is always negative!
+        Log.d("unitsToDelete", "currentUnits: " + currentUnits + " | unitsReduction: " + unitsReduction + " | newUnits: " + newUnits);
         if(newUnits < 0) newUnits = 0f;
         editor.putFloat("units", newUnits);
+        editor.apply();
         calculateAlcoLevel(newUnits);
 
-        currentUnits = prefs.getFloat("units", (float) 0.0);
-        Float alcoLevel = prefs.getFloat("alcoLevel", (float) 0.0);
-        String country = prefs.getString("country", null);
         // Fill all three textboxes
-        fillTextLevel(currentUnits, alcoLevel, gender);
-        fillTextDrive(alcoLevel, country);
-        fillTextJokeSetPicture(alcoLevel);
+        fillTextLevel();
+        fillTextDrive();
+        fillTextJokeSetPicture();
 
     }
 
 
-    public void fillTextJokeSetPicture(Float alcoLevel){
+    public void fillTextJokeSetPicture(){
 
+
+        Float alcoLevel = prefs.getFloat("alcoLevel", 0f);
         String textOut = "";
         Log.d("Level: ", "Level: " + alcoLevel);
 
@@ -429,8 +425,11 @@ public class FirstActivity extends AppCompatActivity  {
         textJoke.setText(Html.fromHtml(textOut));
     }
 
-    public void fillTextDrive(Float alcoLevel, String country){
+    public void fillTextDrive(){
 
+
+        Float alcoLevel = prefs.getFloat("alcoLevel", 0f);
+        String country = prefs.getString("country", null);
         Float aboveLimit;
         String textOut = "";
 
@@ -476,7 +475,12 @@ public class FirstActivity extends AppCompatActivity  {
         textDrive.setText(Html.fromHtml(textOut));
     }
 
-    public void fillTextLevel(Float currentUnits, Float alcoLevel, String gender){
+    public void fillTextLevel(){
+
+
+        Float currentUnits = prefs.getFloat("units", 0f);
+        Float alcoLevel = prefs.getFloat("alcoLevel", 0f);
+        String gender = prefs.getString("gender", null);
 
         String textOut = "<font color=#273F4C>Current units: </font> " +
                          "<font color=#4684C4><big>" + myFormat.format(currentUnits) + "</big></font>" +
@@ -539,14 +543,14 @@ public class FirstActivity extends AppCompatActivity  {
 
     public void calculateAlcoLevel (float units){
 
-        prefs = getSharedPreferences(MY_PREFS_FILE, MODE_PRIVATE);
+
         int weight = prefs.getInt("weight", 50);
         String gender = prefs.getString("gender", "M");
         float r = 0.7f;
         if(gender.equals("F")) r = 0.6f;
         float alcoLevel = (units*10) / (weight * r);
 
-        editor = getSharedPreferences(MY_PREFS_FILE, MODE_PRIVATE).edit();
+
         editor.putFloat("alcoLevel", alcoLevel);
         editor.apply();
     }
@@ -554,7 +558,7 @@ public class FirstActivity extends AppCompatActivity  {
     // Welcome message and last meal message
     public void updateUserMessages(){
 
-        prefs = getSharedPreferences(MY_PREFS_FILE, MODE_PRIVATE);
+
         String fn = prefs.getString("firstname", null);
         String ln = prefs.getString("lastname", null);
         welcomeMessage.setText(fn + " " + ln);

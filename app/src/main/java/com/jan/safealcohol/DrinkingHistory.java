@@ -50,7 +50,7 @@ public class DrinkingHistory extends AppCompatActivity implements Serializable {
     private List itemIds = new ArrayList<>();
     private List name = new ArrayList<>();
     private List amount = new ArrayList<>();
-    private List units = new ArrayList<>();
+    private List<Float> units = new ArrayList<>();
     private List timestamp = new ArrayList<>();
     private List percent = new ArrayList<>();
     private HashMap picturesMap = new HashMap();
@@ -125,11 +125,24 @@ public class DrinkingHistory extends AppCompatActivity implements Serializable {
             Log.d("debug","LongClicked: " + pos);
 
             try {
-                if(items.size() != 1 && !items.get(0).getTitle().equals("No drinks on the list")){
+                if(items.size() == 1 && !items.get(0).getTitle().equals("No drinks on the list")){
                     String timestampS = timestamp.get(pos).toString();
-                    deleteDrinkFromDb(timestampS);
-                } else {
-                    Toast.makeText(getApplicationContext(), "No drinks left - impossible to delete", Toast.LENGTH_SHORT).show();
+                    float unitsToDelete = units.get(pos);
+                    deleteDrinkFromDb(timestampS, unitsToDelete);
+                }
+
+                if(items.size() == 0){
+                    Log.d("AlcoLevelCalc", "AlcoLevelCalc --> items.size == 0");
+                    prefs = getSharedPreferences(MY_PREFS_FILE, MODE_PRIVATE);
+                    editor = getSharedPreferences(MY_PREFS_FILE, MODE_PRIVATE).edit();
+
+                    float currentUnits = prefs.getFloat("units", -1f);
+                    if(currentUnits != -1f){
+                        editor.putString("newDrinkTimestamp", "NewDate");
+                        Log.d("unitsToDelete", "Units to delete --> " + currentUnits);
+                        editor.putFloat("newDrinkUnits", (-1)*currentUnits);
+                        editor.apply();
+                    }
                 }
             } catch (ParseException e) {
                 e.printStackTrace();
@@ -298,7 +311,7 @@ public class DrinkingHistory extends AppCompatActivity implements Serializable {
      * 1.) Deletes value with timestamp from the DB
      * 2.) Updates the list view
      */
-    public void deleteDrinkFromDb(String timestamp) throws ParseException {
+    public void deleteDrinkFromDb(String timestamp, Float unitsToDelete) throws ParseException {
 
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
 
@@ -306,10 +319,12 @@ public class DrinkingHistory extends AppCompatActivity implements Serializable {
         Log.d("debug", "SUCCESS DELETING ITEM WITH TIMESTAMP: " + timestamp);
         editor = getSharedPreferences(MY_PREFS_FILE, MODE_PRIVATE).edit();
         editor.putString("newDrinkTimestamp", "NewDate");
-        // TODO FIND UNITS OF DELETED DRINK!!!!!!!!!!!!
-        editor.putFloat("newDrinkUnits", 0f);
+
+        Log.d("unitsToDelete", "Units to delete --> " + unitsToDelete);
+        editor.putFloat("newDrinkUnits", (-1)*unitsToDelete);
         Toast.makeText(getApplicationContext(), "Drink successfully deleted", Toast.LENGTH_SHORT).show();
 
+        editor.apply();
         updateListView();
         dbToLog();
     }
