@@ -158,7 +158,7 @@ public class FirstActivity extends AppCompatActivity  {
             };
 
             // Schedule timer to execute TimerTask every minute
-            timer.schedule(timerTask, 60000, 60000);
+            timer.schedule(timerTask, 500, 500);
     }
 
     /**
@@ -272,6 +272,17 @@ public class FirstActivity extends AppCompatActivity  {
             editor.apply();
         }
 
+        if(prefs.getBoolean("listEmpty", false)){
+            Log.d("listEmpty", "List empty?");
+            editor.putFloat("units", 0);
+            String newTimestamp = dateFormat.format(currentTimestamp);              // Update last calculation value for units in
+            editor.putString("unitsTimestamp", newTimestamp);                       // shared pref file!
+            calculateAlcoLevel(0);
+            editor.putBoolean("listEmpty", false);
+
+            editor.apply();
+        }
+
         // To prevent changing timeStamp, without changing units. | newDrinkUnits == 0.0 --> Only update for onCreate and onUpdate, nothing new added! 
         if(timeDifferenceMin > 0 || newDrinkUnits != 0.0) {                 
 
@@ -282,6 +293,7 @@ public class FirstActivity extends AppCompatActivity  {
                 unitsMinus = (float) (timeDifferenceMin * (0.0167/2));
             }
 
+            unitsOld = prefs.getFloat("units", 0f);
             float unitsNew = (newDrinkUnits + unitsOld - unitsMinus - mealReductionUnits);               // units --> Current drink | unitsOld --> Prev units from SharedPref | unitsMinus --> timeDiff * decreaseOnMin
             if (unitsNew < 0) unitsNew = 0;                                         // To avoid neg. units --> You can be max sober
             calculateAlcoLevel(unitsNew);                                           // AlcoLevel depends on MORE FACTORS! It is not directly dividable from units!
