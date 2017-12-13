@@ -348,6 +348,7 @@ public class AddDrink extends AppCompatActivity implements View.OnClickListener 
             Date myDate = new Date();
             String date = dateFormat.format(myDate);
             values.put(COLUMN_NAME_TIMESTAMP, date);
+            Log.d("unitsTest", "ADDED - New drinks units: " + newDrinkUnits);
             editor.putFloat("newDrinkUnits", newDrinkUnits);
             editor.putString("newDrinkTimestamp", date);
             editor.apply();

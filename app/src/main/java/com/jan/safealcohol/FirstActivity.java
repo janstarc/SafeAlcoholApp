@@ -158,7 +158,7 @@ public class FirstActivity extends AppCompatActivity  {
             };
 
             // Schedule timer to execute TimerTask every minute
-            timer.schedule(timerTask, 500, 500);
+            timer.schedule(timerTask, 60000, 60000);
     }
 
     /**

@@ -90,7 +90,7 @@ public class DrinkingHistory extends AppCompatActivity implements Serializable {
         //alcoLevel = (TextView) findViewById(R.id.alcoLevel);
         instructions = (TextView) findViewById(R.id.uiText);
         String instText = "<font color=#4684C4><big>Drinking history</big></font><br>" +
-                "<font color=#273F4C><i></i></font>";
+                "<font color=#273F4C><i>(You can delete item with long click)</i></font>";
         instructions.setText(Html.fromHtml(instText));
         spinnerTime = (Spinner) findViewById(R.id.spinnerTime);
         prefs = getSharedPreferences(MY_PREFS_FILE, MODE_PRIVATE);
@@ -132,6 +132,8 @@ public class DrinkingHistory extends AppCompatActivity implements Serializable {
                     emptyList = false;
                     String timestampS = timestamp.get(pos).toString();
                     float unitsToDelete = units.get(pos);
+                    Log.d("unitsTest", "DELETE - Units: " + unitsToDelete);
+
                     deleteDrinkFromDb(timestampS, unitsToDelete);
                 }
 
@@ -326,8 +328,13 @@ public class DrinkingHistory extends AppCompatActivity implements Serializable {
 
         editor.putString("newDrinkTimestamp", "NewDate");
 
-        Log.d("unitsToDelete", "Units to delete --> " + unitsToDelete);
-        editor.putFloat("newDrinkUnits", (-1)*unitsToDelete);
+        //Log.d("unitsToDelete", "Units to delete --> " + unitsToDelete);
+        //Log.d("unitsTest", "DELETE New Drink units: " + unitsToDelete);
+        float oldUnits = prefs.getFloat("newDrinkUnits", 0);
+        float newUnitsToDelete = Math.abs(unitsToDelete) + Math.abs(oldUnits);
+        //Log.d("unitsTest", "New units to delete: " + newUnitsToDelete);
+
+        editor.putFloat("newDrinkUnits", (-1)*newUnitsToDelete);
         Toast.makeText(getApplicationContext(), "Drink successfully deleted", Toast.LENGTH_SHORT).show();
 
         editor.apply();
