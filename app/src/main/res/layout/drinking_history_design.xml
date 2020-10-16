@@ -27,7 +27,18 @@
             android:background="#495663"/>
 
 
+        <TextView
+            android:id="@+id/uiText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:text="@string/alcohol_units"
+            android:textAlignment="center"
+            android:textColor="@android:color/black"
+            android:textSize="20sp" />
 
+        <!--
         <TextView
             android:id="@+id/uiText"
             android:layout_width="wrap_content"
@@ -80,6 +91,7 @@
             android:textSize="20sp"
             android:layout_marginTop="10dp"
             android:textColor="#4684C4"/>
+           -->
 
         <Spinner
             android:id="@+id/spinnerTime"

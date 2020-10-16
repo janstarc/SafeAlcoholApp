@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Html;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -39,8 +40,9 @@ public class DrinkingHistory extends AppCompatActivity implements Serializable {
     private ListView myList;
     private ListAdapter adapter;
     ArrayList<ListItem> items = new ArrayList<>();
-    private TextView alcoUnits;
-    private TextView alcoLevel;
+    //private TextView alcoUnits;
+    //private TextView alcoLevel;
+    private TextView instructions;
     private FeedReaderDbHelper mDbHelper = new FeedReaderDbHelper(this);
     private Spinner spinnerTime;
     private Cursor cursor;
@@ -84,8 +86,12 @@ public class DrinkingHistory extends AppCompatActivity implements Serializable {
     public void defineVariables(){
 
         myList = (ListView) findViewById(R.id.listView);
-        alcoUnits = (TextView) findViewById(R.id.drinksSumText);
-        alcoLevel = (TextView) findViewById(R.id.alcoLevel);
+        //alcoUnits = (TextView) findViewById(R.id.drinksSumText);
+        //alcoLevel = (TextView) findViewById(R.id.alcoLevel);
+        instructions = (TextView) findViewById(R.id.uiText);
+        String instText = "<font color=#4684C4><big>Drinking history</big></font><br>" +
+                "<font color=#273F4C><i>(You can delete item with long click)</i></font>";
+        instructions.setText(Html.fromHtml(instText));
         spinnerTime = (Spinner) findViewById(R.id.spinnerTime);
         prefs = getSharedPreferences(MY_PREFS_FILE, MODE_PRIVATE);
         editor = getSharedPreferences(MY_PREFS_FILE, MODE_PRIVATE).edit();
@@ -126,6 +132,8 @@ public class DrinkingHistory extends AppCompatActivity implements Serializable {
                     emptyList = false;
                     String timestampS = timestamp.get(pos).toString();
                     float unitsToDelete = units.get(pos);
+                    Log.d("unitsTest", "DELETE - Units: " + unitsToDelete);
+
                     deleteDrinkFromDb(timestampS, unitsToDelete);
                 }
 
@@ -197,14 +205,16 @@ public class DrinkingHistory extends AppCompatActivity implements Serializable {
             }
 
         } else {
+            editor.putBoolean("listEmpty", true);
+            editor.apply();
             items.add(new ListItem("No drinks on the list", 0, ""));
         }
 
 
         float unitsFloat = prefs.getFloat("units", (float) 0.0);
         float levelAlco = prefs.getFloat("alcoLevel", (float) 0.0);
-        alcoUnits.setText(String.valueOf(numberFormat.format(unitsFloat)));
-        alcoLevel.setText(String.valueOf(numberFormat.format(levelAlco)));
+        //alcoUnits.setText(String.valueOf(numberFormat.format(unitsFloat)));
+        //alcoLevel.setText(String.valueOf(numberFormat.format(levelAlco)));
 
         // Pass values to adapter
         adapter = new ListAdapter(this, items);
@@ -318,8 +328,13 @@ public class DrinkingHistory extends AppCompatActivity implements Serializable {
 
         editor.putString("newDrinkTimestamp", "NewDate");
 
-        Log.d("unitsToDelete", "Units to delete --> " + unitsToDelete);
-        editor.putFloat("newDrinkUnits", (-1)*unitsToDelete);
+        //Log.d("unitsToDelete", "Units to delete --> " + unitsToDelete);
+        //Log.d("unitsTest", "DELETE New Drink units: " + unitsToDelete);
+        float oldUnits = prefs.getFloat("newDrinkUnits", 0);
+        float newUnitsToDelete = Math.abs(unitsToDelete) + Math.abs(oldUnits);
+        //Log.d("unitsTest", "New units to delete: " + newUnitsToDelete);
+
+        editor.putFloat("newDrinkUnits", (-1)*newUnitsToDelete);
         Toast.makeText(getApplicationContext(), "Drink successfully deleted", Toast.LENGTH_SHORT).show();
 
         editor.apply();
@@ -343,8 +358,8 @@ public class DrinkingHistory extends AppCompatActivity implements Serializable {
         if(unitsLocal < 0 || emptyList) unitsLocal = 0;
         float alcoLevelLocal = calculateAlcoLevelLocal(unitsLocal);
 
-        alcoUnits.setText(String.valueOf(numberFormat.format(unitsLocal)));
-        alcoLevel.setText(String.valueOf(numberFormat.format(alcoLevelLocal)));
+        //alcoUnits.setText(String.valueOf(numberFormat.format(unitsLocal)));
+        //alcoLevel.setText(String.valueOf(numberFormat.format(alcoLevelLocal)));
     }
 
     public float calculateAlcoLevelLocal (float units){

@@ -333,7 +333,7 @@ public class AddDrink extends AppCompatActivity implements View.OnClickListener 
 
             float amount  = Float.valueOf(amountText);
             float percent = Float.valueOf(percentText);
-            float newDrinkUnits = (amount * (percent) / 100) / 0.125f;
+            float newDrinkUnits = ((amount * percent) / 100) / 0.125f;
             Log.d("drinkCalc", "newDrinkUnits: " + newDrinkUnits);
             Log.d("selectedDrink", "Selected: " + selectedDrink);
 
@@ -348,6 +348,7 @@ public class AddDrink extends AppCompatActivity implements View.OnClickListener 
             Date myDate = new Date();
             String date = dateFormat.format(myDate);
             values.put(COLUMN_NAME_TIMESTAMP, date);
+            Log.d("unitsTest", "ADDED - New drinks units: " + newDrinkUnits);
             editor.putFloat("newDrinkUnits", newDrinkUnits);
             editor.putString("newDrinkTimestamp", date);
             editor.apply();

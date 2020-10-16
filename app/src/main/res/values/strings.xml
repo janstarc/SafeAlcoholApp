@@ -15,7 +15,7 @@
     <string name="searchEditText">Search</string>
     <string name="button2">Button</string>
     <string name="delete">Delete</string>
-    <string name="alcohol_units">Alcohol units:</string>
+    <string name="alcohol_units">Drinking history (You can delete an item with long click)</string>
     <string name="test">TEST</string>
     <string name="expected_level">Alco level:</string>
     <string name="_0">0</string>
