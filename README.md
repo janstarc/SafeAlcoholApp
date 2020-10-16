@@ -13,25 +13,10 @@ The first activity visible to the user when the app is opened. The main info in 
  - Sobriety (or drunkenness) phase message
  
   
- <div class="row" style="display: flex">
-  <div class="column" style="flex: 50%; padding: 5px;">
-    <img src="img/Home1.jpg" alt="Home 1"  height="550">
-  </div>
-  <div class="column">
-    <img src="img/Home2.jpg" alt="Home 2"  height="550">
-  </div>
-</div>
-<br><br><br>  
+<img src="img/Home1_Merged.jpg" alt="Home Merged 1"  height="550">
+<br><br>
 
-
-<div class="row" style="display: flex">
-  <div class="column" style="flex: 50%; padding: 5px;">
-    <img src="img/Home3.jpg" alt="Home 3"  height="550">
-  </div>
-  <div class="column">
-    <img src="img/Home4.jpg" alt="Home 4"  height="550">
-  </div>
-</div>
+<img src="img/Home2_Merged.jpg" alt="Home Merged 2"  height="550">
 
 ### 2. Add a drink
 Here, users can add drinks to the app. When a drink is added, alcohol units and breath alcohol content is calculated. The alcohol content of drinks (button's label text) is only informative - amount and percentage of every drink added can be edited. For the **Custom drink** (last drink on the list) also the name can be edited.
