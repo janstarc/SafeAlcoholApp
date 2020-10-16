@@ -173,7 +173,7 @@ public class AddMeal extends AppCompatActivity implements View.OnClickListener {
 
                 // If there is LESS than 15 min between snacks AND this is not the first meal added
                 if(timeDifference < 15 && timeDifference != -1){
-                    runFirstActivity("ERROR: You can add a snack every 15 minutes!");
+                    runFirstActivity("ERROR: You can add a new snack every 15 minutes!");
                     return;
                 }
 

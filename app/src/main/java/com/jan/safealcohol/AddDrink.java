@@ -304,7 +304,7 @@ public class AddDrink extends AppCompatActivity implements View.OnClickListener 
         String amountText = amount.getText().toString();
         String percentText = percent.getText().toString();
         if (amountText.equals("") || percentText.equals("")) {
-            Toast.makeText(getApplicationContext(), "Please fill all the fields", Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), "Please fill all fields", Toast.LENGTH_LONG).show();
         } else if (Float.valueOf(amountText) > 10.1f || Float.valueOf(amountText) < 0.1f) {
             Toast.makeText(getApplicationContext(), "Please check the amount again", Toast.LENGTH_LONG).show();
         } else if (Float.valueOf(percentText) > 100 || Float.valueOf(percentText) < 0) {

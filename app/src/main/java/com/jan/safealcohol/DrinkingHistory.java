@@ -90,7 +90,7 @@ public class DrinkingHistory extends AppCompatActivity implements Serializable {
         //alcoLevel = (TextView) findViewById(R.id.alcoLevel);
         instructions = (TextView) findViewById(R.id.uiText);
         String instText = "<font color=#4684C4><big>Drinking history</big></font><br>" +
-                "<font color=#273F4C><i>(You can delete item with long click)</i></font>";
+                "<font color=#273F4C><i>(You can delete an item with a long click)</i></font>";
         instructions.setText(Html.fromHtml(instText));
         spinnerTime = (Spinner) findViewById(R.id.spinnerTime);
         prefs = getSharedPreferences(MY_PREFS_FILE, MODE_PRIVATE);

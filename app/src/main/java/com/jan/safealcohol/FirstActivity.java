@@ -146,7 +146,7 @@ public class FirstActivity extends AppCompatActivity  {
                     runOnUiThread(new Runnable() {                  // To avoid changing view by other thread --> Crash!
                         @Override
                         public void run() {
-                            Log.d("timer", "TimerTask executed");
+                            // Log.d("timer", "TimerTask executed");
                             try {                                   // Recalculate & display things
                                 updateUnits(0.0f);
                             } catch (ParseException e) {
